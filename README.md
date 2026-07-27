@@ -1,31 +1,37 @@
-# Hand Tracking Template
+# Celestial Workshop
 
-A Unity starter project for the **Hands-First VR Accelerator** — a ready-to-explore showcase of the Meta Quest hand tracking ecosystem.
+## One-liner
+Our perspective from Earth is just one among many. What lies beyond?
 
-The template has two goals:
+## Overview
+The universe isn’t going to create itself. Welcome to the Celestial Workshop! Humans are looking for guidance from above. Your job is to take strange groupings of stars that are nowhere near one another in space and turn them into meaningful patterns as seen from Earth. Rotate each three-dimensional star structure until it matches the familiar constellation view from our planet, approve it, and send it into the heavens.
 
-- **Learn** the hand tracking ecosystem through focused, self-explanatory demos.
-- **Build fast** — start from a project where hands, interactions, and locomotion already work.
+## Core Experience
+Rotate a three-dimensional constellation (or asterism) structure until it matches its familiar view from Earth.
 
-https://github.com/user-attachments/assets/7f52eb77-aae0-483d-b88b-94745fb34eab
+## Platform
+Quest 3 with Hand Tracking
 
-(https://youtu.be/CX2hhSSefNk)
+## Primary Hand Interaction
+Physically grasping and rotating each three-dimensional star structure.
 
-## Getting Started
+## Secondary Hand Interactions
+- Pointing at stars on the blueprint to highlight their counterparts in the star structure
+- Tearing away a completed blueprint page to reveal the next one
+- Stamping the blueprint to mark the constellation as approved
+- Possibly spinning a celestial sphere by hand to see where in Earth’s sky the current constellation will appear
 
-This repository is a **GitHub template**, you generate your own copy from it instead of cloning it directly.
+## Example of the 3D nature of constellations
+[The Shape of Orion in 3 Dimensions](https://youtu.be/9uhVae828lM?si=EqARlqMws5nd313z&t=11)
 
-1. Click **Use this template → Create a new repository** at the top of this page.
-   *(See GitHub's guide: [Creating a repository from a template](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).)*
-2. Clone your new repository.
-3. Open it in **Unity 6000.3.12f1** (Unity 6). (any other version above Unity 6 will work)
-4. Open a scene, then press **Play** with Meta Quest Link, or build straight to your headset.
+## Concept Images
+<img width="1448" height="1086" alt="CelestialWorkshop_HeroImage" src="https://github.com/user-attachments/assets/93e155f9-b58b-4073-8905-afb6bed78836" />
+<img width="1448" height="1086" alt="CelestialWorkshop_ApprovedStamp" src="https://github.com/user-attachments/assets/24078609-1004-4edc-b654-474272525c90" />
+Source: _AI generated concept imagery - ChatGPT_
 
 ## Scenes
 
 All scenes live in **`Assets > Scenes`**.
-
-<img width="428" height="150" alt="image" src="https://github.com/user-attachments/assets/66607ef2-8bec-4381-b567-ede11884b994" />
 
 | Scene | What it shows |
 |---|---|
@@ -34,3 +40,6 @@ All scenes live in **`Assets > Scenes`**.
 | **ThrowingSample** | Throwing physics with hand tracking |
 
 The last two scenes come from Meta's [Unity-InteractionSDK-Samples](https://github.com/oculus-samples/Unity-InteractionSDK-Samples).
+
+Note: This repo started from the following template project as part of the Meta Hands-First Accelerator: https://github.com/Meta-Horizon-Start-Program/Hand-Tracking-Template
+
