@@ -31898,7 +31898,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 994456095}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!4 &994456100
 Transform:
   m_ObjectHideFlags: 0
@@ -32229,18 +32229,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1687988728}
     m_Modifications:
-    - target: {fileID: 2066805255561781319, guid: d977a91ede3020d48acc887216c8122e, type: 3}
-      propertyPath: m_text
-      value: 'A full pose library built with the same recognizers: rock, paper, scissors,
-        thumbs-up and more.
-
-        <color=#8BC34A><b>Try:</b> match a statue''s
-        pose with either hand, the recognized pose lights up.</color>'
-      objectReference: {fileID: 0}
-    - target: {fileID: 4267932078435631020, guid: d977a91ede3020d48acc887216c8122e, type: 3}
-      propertyPath: m_text
-      value: More Hand Poses
-      objectReference: {fileID: 0}
     - target: {fileID: 313743061488094753, guid: a5ba8cf90ab9bf24d88b0369e181b058, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -32312,6 +32300,18 @@ PrefabInstance:
     - target: {fileID: 8966442332241187323, guid: a5ba8cf90ab9bf24d88b0369e181b058, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2066805255561781319, guid: d977a91ede3020d48acc887216c8122e, type: 3}
+      propertyPath: m_text
+      value: 'A full pose library built with the same recognizers: rock, paper, scissors,
+        thumbs-up and more.
+
+        <color=#8BC34A><b>Try:</b> match a statue''s
+        pose with either hand, the recognized pose lights up.</color>'
+      objectReference: {fileID: 0}
+    - target: {fileID: 4267932078435631020, guid: d977a91ede3020d48acc887216c8122e, type: 3}
+      propertyPath: m_text
+      value: More Hand Poses
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -51173,8 +51173,34 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8983956804488510991, guid: 30bd24baaa7bbf04da2294539529d9c1, type: 3}
+      insertIndex: 1
+      addedObject: {fileID: 1712144914577857067}
   m_SourcePrefab: {fileID: 100100000, guid: 30bd24baaa7bbf04da2294539529d9c1, type: 3}
+--- !u!1 &1712144914577857066 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8983956804488510991, guid: 30bd24baaa7bbf04da2294539529d9c1, type: 3}
+  m_PrefabInstance: {fileID: 1712144914577857065}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1712144914577857067
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1712144914577857066}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b023183069df224080314a560e6e1ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Meta.XR.BuildingBlocks::Meta.XR.BuildingBlocks.BuildingBlock
+  blockId: e47682b9-c270-40b1-b16d-90b627a5ce1b
+  instanceId: d2474f02-18b0-496a-84da-e2fef87a1f5f
+  version: 1
+  installationRoutineCheckpoint:
+    _installationRoutineId: 
+    _installationVariants: []
 --- !u!1001 &1714488327033243760
 PrefabInstance:
   m_ObjectHideFlags: 0
