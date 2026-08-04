@@ -17,7 +17,7 @@ public class ConstellationGenerator : MonoBehaviour
     }
 
     [Header("Affinity Designer")]
-    public Vector2 artboardSize = new Vector2(1200f, 800f);
+    public Vector2 artboardSize = new Vector2(1920f, 1080f);
 
     [Header("Star Data")]
     public List<StarData> stars = new List<StarData>();
@@ -55,21 +55,39 @@ public class ConstellationGenerator : MonoBehaviour
 
     private const string GeneratedRootName = "Generated Constellation";
 
-    [ContextMenu("Rebuild Constellation")]
-    public void RebuildConstellation()
+    [ContextMenu("Rebuild Preview Constellation")]
+    public void RebuildConstellationPreview()
     {
-        ClearGeneratedObjects();
+        GenerateConstellation(transform);
+    }
+
+    public GameObject GenerateConstellation(Transform destinationParent)
+    {
+        if (destinationParent == null)
+        {
+            Debug.LogError(
+                "A destination parent is required to generate the constellation.",
+                this
+            );
+
+            return null;
+        }
+
+        ClearGeneratedObjects(destinationParent);
 
         if (stars == null || stars.Count == 0)
         {
             Debug.LogWarning("Add at least one star before rebuilding.");
-            return;
+            return null;
         }
 
         if (artboardSize.x <= 0f || artboardSize.y <= 0f)
         {
-            Debug.LogError("Artboard width and height must be greater than zero.");
-            return;
+            Debug.LogError(
+                "Artboard width and height must be greater than zero."
+            );
+
+            return null;
         }
 
         float maximumDistance = 0f;
@@ -82,7 +100,8 @@ public class ConstellationGenerator : MonoBehaviour
                 Debug.LogError(
                     $"Distance for {star.starName} must be greater than zero."
                 );
-                return;
+
+                return null;
             }
 
             maximumDistance =
@@ -95,7 +114,14 @@ public class ConstellationGenerator : MonoBehaviour
         GameObject generatedRootObject =
             new GameObject(GeneratedRootName);
 
-        generatedRootObject.transform.SetParent(transform, false);
+        generatedRootObject.transform.SetParent(
+            destinationParent,
+            false
+        );
+
+        generatedRootObject.transform.localPosition = Vector3.zero;
+        generatedRootObject.transform.localRotation = Quaternion.identity;
+        generatedRootObject.transform.localScale = Vector3.one;
 
         if (showEarthViewMarker && earthViewMarkerPrefab != null)
         {
@@ -134,7 +160,7 @@ public class ConstellationGenerator : MonoBehaviour
             Vector3 localPosition = direction * radialDistance;
             positions[i] = localPosition;
 
-            // Create an unscaled root for this star.
+            // Unscaled root representing the star's position.
             GameObject starRoot = new GameObject(star.starName);
 
             starRoot.transform.SetParent(
@@ -143,8 +169,10 @@ public class ConstellationGenerator : MonoBehaviour
             );
 
             starRoot.transform.localPosition = localPosition;
+            starRoot.transform.localRotation = Quaternion.identity;
+            starRoot.transform.localScale = Vector3.one;
 
-            // Create the visible sphere beneath it.
+            // Visible sphere beneath the unscaled star root.
             GameObject sphere =
                 GameObject.CreatePrimitive(PrimitiveType.Sphere);
 
@@ -162,11 +190,12 @@ public class ConstellationGenerator : MonoBehaviour
 
             if (starMaterial != null)
             {
-                sphere.GetComponent<Renderer>().sharedMaterial =
-                    starMaterial;
+                Renderer sphereRenderer =
+                    sphere.GetComponent<Renderer>();
+
+                sphereRenderer.sharedMaterial = starMaterial;
             }
 
-            // Create the label as a sibling of the sphere.
             if (showDebugLabels && starLabelPrefab != null)
             {
                 GameObject labelObject = Instantiate(
@@ -175,8 +204,12 @@ public class ConstellationGenerator : MonoBehaviour
                 );
 
                 labelObject.name = "Label";
+
                 labelObject.transform.localPosition =
                     Vector3.up * labelOffset;
+
+                labelObject.transform.localRotation =
+                    Quaternion.identity;
 
                 TMP_Text labelText =
                     labelObject.GetComponentInChildren<TMP_Text>();
@@ -184,7 +217,8 @@ public class ConstellationGenerator : MonoBehaviour
                 if (labelText != null)
                 {
                     labelText.text =
-                        $"{star.starName}\n{star.distanceLightYears:0} ly";
+                        $"{star.starName}\n" +
+                        $"{star.distanceLightYears:0} ly";
                 }
             }
         }
@@ -197,6 +231,8 @@ public class ConstellationGenerator : MonoBehaviour
                 generatedRootObject.transform
             );
         }
+
+        return generatedRootObject;
     }
 
     private void CreateCylinderBetweenPoints(
@@ -303,23 +339,34 @@ public class ConstellationGenerator : MonoBehaviour
         );
     }
 
-    [ContextMenu("Clear Constellation")]
-    public void ClearGeneratedObjects()
+    [ContextMenu("Clear Preview Constellation")]
+    public void ClearGeneratedObjectsPreview()
     {
-        Transform existing = transform.Find(GeneratedRootName);
+        ClearGeneratedObjects(transform);
+    }
 
-        if (existing == null)
+    private void ClearGeneratedObjects(Transform destinationParent)
+    {
+        if (destinationParent == null)
+        {
+            return;
+        }
+
+        Transform existingGeneratedRoot =
+            destinationParent.Find(GeneratedRootName);
+
+        if (existingGeneratedRoot == null)
         {
             return;
         }
 
         if (Application.isPlaying)
         {
-            Destroy(existing.gameObject);
+            Destroy(existingGeneratedRoot.gameObject);
         }
         else
         {
-            DestroyImmediate(existing.gameObject);
+            DestroyImmediate(existingGeneratedRoot.gameObject);
         }
     }
 }
