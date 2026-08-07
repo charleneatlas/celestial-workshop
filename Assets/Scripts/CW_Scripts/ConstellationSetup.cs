@@ -6,6 +6,13 @@ public sealed class ConstellationSetup : MonoBehaviour
     [SerializeField]
     private ConstellationGenerator constellationGenerator;
 
+    [Header("Rotation References")]
+    [SerializeField]
+    private Transform miniEarthReference;
+
+    [SerializeField]
+    private Transform skyRotationReference;
+
     [Header("Mini Constellation")]
     [SerializeField]
     private Transform miniConstellationPivot;
@@ -69,10 +76,15 @@ public sealed class ConstellationSetup : MonoBehaviour
 
     private void CopyRotationToSky()
     {
-        // This requires Mini Earth Reference and Sky Coordinate Frame
-        // to represent equivalent coordinate axes.
-        skyConstellationPivot.localRotation =
-            miniConstellationPivot.localRotation;
+        // Mini Earth Reference and Sky Rotation Reference should represent
+        // equivalent coordinate axes. Sky Coordinate Frame only controls placement.
+        Quaternion miniRelativeRotation =
+        Quaternion.Inverse(miniEarthReference.rotation) *
+        miniConstellationPivot.rotation;
+
+        skyConstellationPivot.rotation =
+            skyRotationReference.rotation *
+            miniRelativeRotation;
     }
 
     private bool ValidateReferences()
