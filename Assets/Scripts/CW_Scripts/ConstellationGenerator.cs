@@ -195,6 +195,10 @@ public class ConstellationGenerator : MonoBehaviour
 
                 sphereRenderer.sharedMaterial = starMaterial;
             }
+            Debug.LogWarning(
+                "No star material assigned. Generated stars will use the default material, and may not render in APK.",
+                this
+            );
 
             if (showDebugLabels && starLabelPrefab != null)
             {
@@ -274,6 +278,13 @@ public class ConstellationGenerator : MonoBehaviour
         {
             cylinder.GetComponent<Renderer>().sharedMaterial =
                 lineMaterial;
+        }
+        else
+        {
+            Debug.LogWarning(
+                "No line material assigned. Generated connections will use the default material, and may not render in APK.",
+                this
+            );
         }
 
         // Prevent the connection rods from interfering with hand grabbing.
