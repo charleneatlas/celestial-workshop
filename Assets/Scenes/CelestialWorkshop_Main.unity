@@ -42640,6 +42640,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   miniConstellationPivot: {fileID: 530830715}
   rotationAmount: 15
+  fingertip: {fileID: 1712144914577857068}
 --- !u!1 &403239391
 GameObject:
   m_ObjectHideFlags: 0
@@ -135301,6 +135302,11 @@ MonoBehaviour:
   installationRoutineCheckpoint:
     _installationRoutineId: 
     _installationVariants: []
+--- !u!4 &1712144914577857068 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6056091969224677600, guid: 30bd24baaa7bbf04da2294539529d9c1, type: 3}
+  m_PrefabInstance: {fileID: 1712144914577857065}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1714488327033243760
 PrefabInstance:
   m_ObjectHideFlags: 0

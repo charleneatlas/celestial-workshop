@@ -8,24 +8,39 @@ public class PokeRotationController : MonoBehaviour
     [SerializeField]
     private float rotationAmount = 15f;
 
+    [SerializeField]
+    private Transform fingertip;
+
+    private Vector3 previousFingerPosition;
+    private Vector3 fingerVelocity;
+
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        previousFingerPosition = fingertip.position;
     }
 
     // Update is called once per frame
     void Update()
     {
+        Vector3 currentPosition = fingertip.position;
 
+        if (Time.deltaTime > 0f)
+        {
+            fingerVelocity =
+                (currentPosition - previousFingerPosition) / Time.deltaTime;
+        }
+
+        previousFingerPosition = currentPosition;
     }
 
     public void PokeStar(Transform pokedStar)
     {
         Vector3 fromCenter =
-            pokedStar.position - transform.position;
+        pokedStar.position - miniConstellationPivot.position;
 
-        Vector3 pokeDirection = Camera.main.transform.forward;
+        Vector3 pokeDirection = fingerVelocity.normalized;
 
         Vector3 rotationAxis =
             Vector3.Cross(fromCenter, pokeDirection).normalized;
