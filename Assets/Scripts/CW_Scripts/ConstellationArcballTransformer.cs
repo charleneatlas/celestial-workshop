@@ -6,6 +6,9 @@ public class ConstellationArcballTransformer : MonoBehaviour, ITransformer
     [SerializeField]
     private Transform rotationPivot;
 
+    [SerializeField]
+    private ArcballVisualController arcballVisual;
+
     private IGrabbable grabbable;
 
     private Vector3 previousFromCenter;
@@ -31,6 +34,9 @@ public class ConstellationArcballTransformer : MonoBehaviour, ITransformer
             rotationPivot.position;
 
         hasPreviousGrabPoint = true;
+
+        // Show visual cue for rotation (semi-transparent sphere with radius defined by grab point)
+        arcballVisual?.Show(previousFromCenter.magnitude);
     }
 
     public void UpdateTransform()
@@ -74,5 +80,8 @@ public class ConstellationArcballTransformer : MonoBehaviour, ITransformer
     public void EndTransform()
     {
         hasPreviousGrabPoint = false;
+
+        // Hide visual cue for rotation (semi-transparent sphere with radius defined by grab point)
+        arcballVisual?.Hide();
     }
 }
