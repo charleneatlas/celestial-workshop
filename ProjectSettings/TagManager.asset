@@ -28,6 +28,7 @@ TagManager:
   - Bouncable
   - Target
   - Grabbable
+  - Star
   layers:
   - Default
   - TransparentFX

@@ -49,6 +49,17 @@ public sealed class ConstellationSetup : MonoBehaviour
             GenerateConstellations();
         }
 
+        // Make sure constellations pivoting around a sensible center
+        CenterRotationPivot(
+            miniVisualContainer,
+            miniConstellationPivot
+        );
+
+        CenterRotationPivot(
+            skyVisualContainer,
+            skyConstellationPivot
+        );
+
         // Make sure they match immediately, before the first visible update.
         CopyRotationToSky();
 
@@ -137,5 +148,67 @@ public sealed class ConstellationSetup : MonoBehaviour
         }
 
         return isValid;
+    }
+
+    private void CenterRotationPivot(
+    Transform constellationRoot,
+    Transform rotationPivot)
+    {
+        if (constellationRoot == null || rotationPivot == null)
+        {
+            Debug.LogWarning(
+                "Missing constellation root or rotation pivot."
+            );
+            return;
+        }
+
+        Transform[] children =
+            constellationRoot.GetComponentsInChildren<Transform>();
+
+        Vector3 totalPosition = Vector3.zero;
+        int starCount = 0;
+
+        foreach (Transform child in children)
+        {
+            if (child == constellationRoot)
+                continue;
+
+            if (!child.CompareTag("Star"))
+                continue;
+
+            totalPosition += child.position;
+            starCount++;
+        }
+
+        if (starCount == 0)
+        {
+            Debug.LogWarning(
+                $"No stars found under {constellationRoot.name}."
+            );
+            return;
+        }
+
+        Vector3 center = totalPosition / starCount;
+
+        // Preserve the constellation's world-space transform.
+        // Moving its parent pivot would otherwise move the constellation too.
+        Vector3 originalRootPosition = constellationRoot.position;
+        Quaternion originalRootRotation = constellationRoot.rotation;
+
+        // Move the actual pivot to the center of the stars.
+        rotationPivot.position = center;
+
+        // Put the constellation back where it was in world space.
+        // This changes its local offset relative to the newly centered pivot.
+        constellationRoot.SetPositionAndRotation(
+            originalRootPosition,
+            originalRootRotation
+        );
+
+        Debug.Log(
+            $"{rotationPivot.name}: centered using " +
+            $"{starCount} stars under {constellationRoot.name}. " +
+            $"World center = {center}"
+        );
     }
 }

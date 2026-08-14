@@ -177,6 +177,7 @@ public class ConstellationGenerator : MonoBehaviour
                 GameObject.CreatePrimitive(PrimitiveType.Sphere);
 
             sphere.name = "Sphere";
+            sphere.tag = "Star";
 
             sphere.transform.SetParent(
                 starRoot.transform,
