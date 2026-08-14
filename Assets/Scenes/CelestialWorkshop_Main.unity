@@ -16036,7 +16036,7 @@ MonoBehaviour:
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
   labelOffset: 0
-  showEarthViewMarker: 1
+  showEarthViewMarker: 0
   earthViewMarkerPrefab: {fileID: 524590744366372826, guid: 79c23caa737ce3a46b094d6ce4a69498, type: 3}
 --- !u!4 &65651446
 Transform:
@@ -99661,7 +99661,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1090696742
 Transform:
   m_ObjectHideFlags: 0
