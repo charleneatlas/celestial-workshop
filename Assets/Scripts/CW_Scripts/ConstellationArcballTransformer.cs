@@ -84,4 +84,19 @@ public class ConstellationArcballTransformer : MonoBehaviour, ITransformer
         // Hide visual cue for rotation (semi-transparent sphere with radius defined by grab point)
         arcballVisual?.Hide();
     }
+
+    public void RandomizeRotation()
+    {
+        if (grabbable == null)
+        {
+            Debug.LogWarning(
+                "Cannot randomize rotation: grabbable has not been initialized."
+            );
+            return;
+        }
+
+        grabbable.Transform.rotation = Random.rotationUniform;
+
+        hasPreviousGrabPoint = false;
+    }
 }
