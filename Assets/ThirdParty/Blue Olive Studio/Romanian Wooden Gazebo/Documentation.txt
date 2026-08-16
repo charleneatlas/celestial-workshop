@@ -1,0 +1,19 @@
+Romanian Wooden Gazebo Asset Package Documentation
+
+## Introduction
+Welcome to the My Unity Asset Package! This package provides a wooden gazebo, made in Romanian Folk style.
+
+
+## Installation Instructions
+1. Import the package into your Unity project by navigating to Assets -> Import Package -> Custom Package.
+2. Select the "Romanian Wooden Gazebo.unitypackage" file and click Import.
+3. Ensure that all necessary files are selected and click Import.
+
+## Usage Instructions
+### Setting Up
+1. Drag and drop the asset prefab into your scene.
+
+## Support Information
+For support, please contact us at blueolive.assets@gmail.com
+
+Thank you for downloading!
