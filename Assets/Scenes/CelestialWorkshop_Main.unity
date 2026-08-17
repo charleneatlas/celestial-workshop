@@ -320,7 +320,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8821756
 Transform:
   m_ObjectHideFlags: 0
@@ -16340,7 +16340,7 @@ MonoBehaviour:
   lineMaterial: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
   starDiameter: 0.05
   lineWidth: 0.008
-  showDebugLabels: 1
+  showDebugLabels: 0
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
   labelOffset: 0
   showEarthViewMarker: 0
@@ -17351,7 +17351,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &92531843
 RectTransform:
   m_ObjectHideFlags: 0
@@ -17649,8 +17649,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -0.9}
-  m_LocalScale: {x: 10, y: 10, z: 10}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 12, y: 12, z: 12}
+  m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 242918474}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -38455,6 +38455,7 @@ MonoBehaviour:
   - {fileID: 2124630947}
   blueprintPlane: {fileID: 1535418267}
   activationRadius: 0.025
+  constellationSetup: {fileID: 832476889}
   showDebugLogs: 1
 --- !u!1001 &279987791
 PrefabInstance:
@@ -40624,7 +40625,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &330667006
 Transform:
   m_ObjectHideFlags: 0
@@ -86006,11 +86007,13 @@ MonoBehaviour:
   mirrorRotation: 1
   tableConstellationAppearance:
     starMaterial: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+    starHighlightMaterial: {fileID: 2100000, guid: a65593b51c627a049b345cab7c363abb, type: 2}
     lineMaterial: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
     starDiameter: 0.05
     lineWidth: 0.008
   skyConstellationAppearance:
     starMaterial: {fileID: 2100000, guid: 61961a56c9803d54da89e6942382e482, type: 2}
+    starHighlightMaterial: {fileID: 2100000, guid: dd639d35abaa7b348bd4ccf96573dded, type: 2}
     lineMaterial: {fileID: 2100000, guid: 61961a56c9803d54da89e6942382e482, type: 2}
     starDiameter: 0.035
     lineWidth: 0.004
@@ -88953,7 +88956,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &898021405
 Transform:
   m_ObjectHideFlags: 0
@@ -90052,7 +90055,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &926961988
 Transform:
   m_ObjectHideFlags: 0
@@ -109650,7 +109653,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1249555499
 RectTransform:
   m_ObjectHideFlags: 0
@@ -123666,7 +123669,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1373946250
 Transform:
   m_ObjectHideFlags: 0
@@ -140258,7 +140261,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1557946026
 Transform:
   m_ObjectHideFlags: 0
@@ -142218,7 +142221,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1589590410
 Transform:
   m_ObjectHideFlags: 0
@@ -157050,7 +157053,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1807792124
 RectTransform:
   m_ObjectHideFlags: 0
@@ -170821,7 +170824,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1957308757
 RectTransform:
   m_ObjectHideFlags: 0
@@ -171503,7 +171506,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1965681691
 Transform:
   m_ObjectHideFlags: 0
@@ -176663,7 +176666,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2072527649
 RectTransform:
   m_ObjectHideFlags: 0
@@ -179321,7 +179324,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2123872221}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -198158,6 +198161,10 @@ PrefabInstance:
     - target: {fileID: 1535573200171482340, guid: 8362448f7bfebe84ba383b8d5f8ad251, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5092407987329068471, guid: 8362448f7bfebe84ba383b8d5f8ad251, type: 3}
+      propertyPath: starId
+      value: Gamma Cassiopeia
       objectReference: {fileID: 0}
     - target: {fileID: 6228578824134808141, guid: 8362448f7bfebe84ba383b8d5f8ad251, type: 3}
       propertyPath: m_Name

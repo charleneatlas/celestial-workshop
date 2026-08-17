@@ -17,6 +17,10 @@ public class BlueprintController : MonoBehaviour
     [SerializeField]
     private float activationRadius = 0.025f;
 
+    [Header("Constellation Highlighting")]
+    [SerializeField]
+    private ConstellationSetup constellationSetup;
+
     [Header("Debug")]
     [SerializeField]
     private bool showDebugLogs = true;
@@ -30,6 +34,14 @@ public class BlueprintController : MonoBehaviour
             if (star != null)
             {
                 star.SetHighlighted(false);
+
+                if (constellationSetup != null)
+                {
+                    constellationSetup.SetStarHighlighted(
+                        star.StarId,
+                        false
+                    );
+                }
             }
         }
     }
@@ -48,6 +60,14 @@ public class BlueprintController : MonoBehaviour
         {
             currentStar.SetHighlighted(false);
 
+            if (constellationSetup != null)
+            {
+                constellationSetup.SetStarHighlighted(
+                    currentStar.StarId,
+                    false
+                );
+            }
+
             if (showDebugLogs)
             {
                 Debug.Log(
@@ -63,6 +83,14 @@ public class BlueprintController : MonoBehaviour
         {
             currentStar.SetHighlighted(true);
 
+            if (constellationSetup != null)
+            {
+                constellationSetup.SetStarHighlighted(
+                    currentStar.StarId,
+                    true
+                );
+            }
+
             if (showDebugLogs)
             {
                 Debug.Log(
@@ -77,6 +105,14 @@ public class BlueprintController : MonoBehaviour
         if (currentStar != null)
         {
             currentStar.SetHighlighted(false);
+
+            if (constellationSetup != null)
+            {
+                constellationSetup.SetStarHighlighted(
+                    currentStar.StarId,
+                    false
+                );
+            }
 
             if (showDebugLogs)
             {

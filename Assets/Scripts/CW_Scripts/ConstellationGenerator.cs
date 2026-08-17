@@ -20,6 +20,7 @@ public class ConstellationGenerator : MonoBehaviour
     public class AppearanceSettings
     {
         public Material starMaterial;
+        public Material starHighlightMaterial;
         public Material lineMaterial;
 
         [Min(0.001f)]
@@ -90,7 +91,12 @@ public class ConstellationGenerator : MonoBehaviour
         }
 
         Material activeStarMaterial =
-    appearance != null ? appearance.starMaterial : starMaterial;
+            appearance != null ? appearance.starMaterial : starMaterial;
+
+        Material activeStarHighlightMaterial =
+            appearance != null
+                ? appearance.starHighlightMaterial
+                : null;
 
         Material activeLineMaterial =
             appearance != null ? appearance.lineMaterial : lineMaterial;
@@ -217,11 +223,10 @@ public class ConstellationGenerator : MonoBehaviour
             sphere.transform.localScale =
                 Vector3.one * activeStarDiameter;
 
+            Renderer sphereRenderer = sphere.GetComponent<Renderer>();
+
             if (activeStarMaterial != null)
             {
-                Renderer sphereRenderer =
-                    sphere.GetComponent<Renderer>();
-
                 sphereRenderer.sharedMaterial = activeStarMaterial;
             }
             else
@@ -231,6 +236,16 @@ public class ConstellationGenerator : MonoBehaviour
                     this
                 );
             }
+
+            GeneratedConstellationStar generatedStar =
+                starRoot.AddComponent<GeneratedConstellationStar>();
+
+            generatedStar.Initialize(
+                star.starName,
+                sphereRenderer,
+                activeStarMaterial,
+                activeStarHighlightMaterial
+            );
 
             if (showDebugLabels && starLabelPrefab != null)
             {

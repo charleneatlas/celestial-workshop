@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public sealed class ConstellationSetup : MonoBehaviour
@@ -42,6 +44,12 @@ public sealed class ConstellationSetup : MonoBehaviour
 
     private bool isInitialized;
 
+    private readonly Dictionary<string, List<GeneratedConstellationStar>>
+    generatedStarsById =
+        new Dictionary<string, List<GeneratedConstellationStar>>(
+            StringComparer.OrdinalIgnoreCase
+        );
+
     private void Start()
     {
         if (!ValidateReferences())
@@ -84,13 +92,20 @@ public sealed class ConstellationSetup : MonoBehaviour
 
     private void GenerateConstellations()
     {
+        GameObject miniGeneratedRoot =
         constellationGenerator.GenerateConstellation(
             miniVisualContainer,
             tableConstellationAppearance);
 
+        GameObject skyGeneratedRoot =
         constellationGenerator.GenerateConstellation(
             skyVisualContainer,
             skyConstellationAppearance);
+
+        BuildStarLookup(
+            miniGeneratedRoot,
+            skyGeneratedRoot
+        );
     }
 
     private void CopyRotationToSky()
@@ -236,5 +251,75 @@ public sealed class ConstellationSetup : MonoBehaviour
             $"{starCount} stars under {constellationRoot.name}. " +
             $"World center = {center}"
         );
+    }
+
+    private void BuildStarLookup(
+    GameObject miniGeneratedRoot,
+    GameObject skyGeneratedRoot)
+    {
+        generatedStarsById.Clear();
+
+        RegisterGeneratedStars(miniGeneratedRoot);
+        RegisterGeneratedStars(skyGeneratedRoot);
+    }
+
+    private void RegisterGeneratedStars(GameObject generatedRoot)
+    {
+        if (generatedRoot == null)
+        {
+            return;
+        }
+
+        GeneratedConstellationStar[] generatedStars =
+            generatedRoot.GetComponentsInChildren<GeneratedConstellationStar>();
+
+        foreach (GeneratedConstellationStar star in generatedStars)
+        {
+            if (star == null || string.IsNullOrEmpty(star.StarId))
+            {
+                continue;
+            }
+
+            if (!generatedStarsById.TryGetValue(
+                    star.StarId,
+                    out List<GeneratedConstellationStar> matchingStars))
+            {
+                matchingStars = new List<GeneratedConstellationStar>();
+
+                generatedStarsById.Add(
+                    star.StarId,
+                    matchingStars
+                );
+            }
+
+            matchingStars.Add(star);
+        }
+    }
+
+    public void SetStarHighlighted(
+        string starId,
+        bool highlighted)
+    {
+        if (string.IsNullOrEmpty(starId))
+        {
+            return;
+        }
+
+        if (!generatedStarsById.TryGetValue(
+                starId,
+                out List<GeneratedConstellationStar> matchingStars))
+        {
+            Debug.LogWarning(
+                $"No generated constellation star found with ID '{starId}'.",
+                this
+            );
+
+            return;
+        }
+
+        foreach (GeneratedConstellationStar star in matchingStars)
+        {
+            star.SetHighlighted(highlighted);
+        }
     }
 }
