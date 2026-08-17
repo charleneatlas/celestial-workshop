@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Oculus.Interaction.Surfaces;
+using TMPro;
 
 public class BlueprintController : MonoBehaviour
 {
@@ -20,6 +21,16 @@ public class BlueprintController : MonoBehaviour
     [Header("Constellation Highlighting")]
     [SerializeField]
     private ConstellationSetup constellationSetup;
+
+    [SerializeField]
+    private ConstellationGenerator constellationGenerator;
+
+    [SerializeField]
+    private TMP_Text distanceLabel;
+
+    [SerializeField]
+    private Vector3 distanceLabelOffset =
+        new Vector3(0f, -0.025f, 0f);
 
     [Header("Debug")]
     [SerializeField]
@@ -42,6 +53,8 @@ public class BlueprintController : MonoBehaviour
                         false
                     );
                 }
+                // Hide light year distance label
+                HideDistance();
             }
         }
     }
@@ -68,6 +81,9 @@ public class BlueprintController : MonoBehaviour
                 );
             }
 
+            // Hide light year distance label
+            HideDistance();
+
             if (showDebugLogs)
             {
                 Debug.Log(
@@ -91,6 +107,9 @@ public class BlueprintController : MonoBehaviour
                 );
             }
 
+            // Show distance of current star
+            ShowDistance(currentStar);
+
             if (showDebugLogs)
             {
                 Debug.Log(
@@ -113,6 +132,9 @@ public class BlueprintController : MonoBehaviour
                     false
                 );
             }
+
+            // Hide light year distance label
+            HideDistance();
 
             if (showDebugLogs)
             {
@@ -173,6 +195,37 @@ public class BlueprintController : MonoBehaviour
         }
 
         return null;
+    }
+
+    private void ShowDistance(BlueprintStar star)
+    {
+        if (star == null ||
+            distanceLabel == null ||
+            constellationGenerator == null)
+        {
+            return;
+        }
+
+        if (constellationGenerator.TryGetStarData(
+            star.StarId,
+            out ConstellationGenerator.StarData starData))
+        {
+            distanceLabel.text =
+                $"{starData.distanceLightYears:0} light years away";
+
+            distanceLabel.transform.position =
+                star.transform.position + distanceLabelOffset;
+
+            distanceLabel.gameObject.SetActive(true);
+        }
+    }
+
+    private void HideDistance()
+    {
+        if (distanceLabel != null)
+        {
+            distanceLabel.gameObject.SetActive(false);
+        }
     }
 
     private void OnDrawGizmosSelected()

@@ -430,4 +430,22 @@ public class ConstellationGenerator : MonoBehaviour
             DestroyImmediate(existingGeneratedRoot.gameObject);
         }
     }
+
+    public bool TryGetStarData(string starId, out StarData starData)
+    {
+        foreach (StarData star in stars)
+        {
+            if (string.Equals(
+                star.starName,
+                starId,
+                StringComparison.OrdinalIgnoreCase))
+            {
+                starData = star;
+                return true;
+            }
+        }
+
+        starData = null;
+        return false;
+    }
 }
