@@ -26532,6 +26532,18 @@ PrefabInstance:
       propertyPath: _palmGrabRules._indexRequirement
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 493681582, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
+      propertyPath: _pinchGrabRules._indexRequirement
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 493681582, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
+      propertyPath: _pinchGrabRules._thumbRequirement
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 493681582, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
+      propertyPath: _pinchGrabRules._middleRequirement
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 47957625437475666, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
       propertyPath: m_Layer
       value: 4
