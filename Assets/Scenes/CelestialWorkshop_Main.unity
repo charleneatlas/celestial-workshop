@@ -16027,11 +16027,11 @@ MonoBehaviour:
     distanceLightYears: 55
   maximumRadius: 1
   angularSpread: 0.7
-  starDiameter: 0.05
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
-  starMaterial: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  starMaterial: {fileID: 2100000, guid: 61961a56c9803d54da89e6942382e482, type: 2}
   lineMaterial: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  starDiameter: 0.05
   lineWidth: 0.008
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
@@ -17044,11 +17044,11 @@ MonoBehaviour:
     distanceLightYears: 55
   maximumRadius: 1
   angularSpread: 0.7
-  starDiameter: 0.05
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
   starMaterial: {fileID: 0}
   lineMaterial: {fileID: 0}
+  starDiameter: 0.05
   lineWidth: 0.008
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
@@ -41345,11 +41345,11 @@ MonoBehaviour:
     distanceLightYears: 55
   maximumRadius: 1
   angularSpread: 0.7
-  starDiameter: 0.05
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
   starMaterial: {fileID: 0}
   lineMaterial: {fileID: 0}
+  starDiameter: 0.05
   lineWidth: 0.008
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
@@ -57384,11 +57384,11 @@ MonoBehaviour:
     distanceLightYears: 55
   maximumRadius: 1
   angularSpread: 0.7
-  starDiameter: 0.05
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
   starMaterial: {fileID: 0}
   lineMaterial: {fileID: 0}
+  starDiameter: 0.05
   lineWidth: 0.008
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
@@ -63841,11 +63841,11 @@ MonoBehaviour:
     distanceLightYears: 55
   maximumRadius: 1
   angularSpread: 0.7
-  starDiameter: 0.05
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
   starMaterial: {fileID: 0}
   lineMaterial: {fileID: 0}
+  starDiameter: 0.05
   lineWidth: 0.008
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
@@ -83747,6 +83747,16 @@ MonoBehaviour:
   skyVisualContainer: {fileID: 106490063}
   generateOnStart: 1
   mirrorRotation: 1
+  tableConstellationAppearance:
+    starMaterial: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+    lineMaterial: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+    starDiameter: 0.05
+    lineWidth: 0.008
+  skyConstellationAppearance:
+    starMaterial: {fileID: 2100000, guid: 61961a56c9803d54da89e6942382e482, type: 2}
+    lineMaterial: {fileID: 2100000, guid: 61961a56c9803d54da89e6942382e482, type: 2}
+    starDiameter: 0.035
+    lineWidth: 0.004
 --- !u!4 &832476890
 Transform:
   m_ObjectHideFlags: 0
@@ -101755,11 +101765,11 @@ MonoBehaviour:
     distanceLightYears: 55
   maximumRadius: 1
   angularSpread: 0.7
-  starDiameter: 0.05
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
   starMaterial: {fileID: 0}
   lineMaterial: {fileID: 0}
+  starDiameter: 0.05
   lineWidth: 0.008
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
@@ -101830,11 +101840,11 @@ MonoBehaviour:
     distanceLightYears: 55
   maximumRadius: 1
   angularSpread: 0.7
-  starDiameter: 0.05
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
   starMaterial: {fileID: 0}
   lineMaterial: {fileID: 0}
+  starDiameter: 0.05
   lineWidth: 0.008
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
@@ -128621,11 +128631,11 @@ MonoBehaviour:
     distanceLightYears: 55
   maximumRadius: 1
   angularSpread: 0.7
-  starDiameter: 0.05
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
   starMaterial: {fileID: 0}
   lineMaterial: {fileID: 0}
+  starDiameter: 0.05
   lineWidth: 0.008
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
@@ -130630,11 +130640,11 @@ MonoBehaviour:
     distanceLightYears: 55
   maximumRadius: 1
   angularSpread: 0.7
-  starDiameter: 0.05
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
   starMaterial: {fileID: 0}
   lineMaterial: {fileID: 0}
+  starDiameter: 0.05
   lineWidth: 0.008
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
@@ -136171,11 +136181,11 @@ MonoBehaviour:
     distanceLightYears: 55
   maximumRadius: 1
   angularSpread: 0.7
-  starDiameter: 0.05
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
   starMaterial: {fileID: 0}
   lineMaterial: {fileID: 0}
+  starDiameter: 0.05
   lineWidth: 0.008
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
@@ -139209,11 +139219,11 @@ MonoBehaviour:
     distanceLightYears: 55
   maximumRadius: 1
   angularSpread: 0.7
-  starDiameter: 0.05
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
   starMaterial: {fileID: 0}
   lineMaterial: {fileID: 0}
+  starDiameter: 0.05
   lineWidth: 0.008
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
@@ -150325,11 +150335,11 @@ MonoBehaviour:
     distanceLightYears: 55
   maximumRadius: 1
   angularSpread: 0.7
-  starDiameter: 0.05
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
   starMaterial: {fileID: 0}
   lineMaterial: {fileID: 0}
+  starDiameter: 0.05
   lineWidth: 0.008
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
@@ -159589,11 +159599,11 @@ MonoBehaviour:
     distanceLightYears: 55
   maximumRadius: 1
   angularSpread: 0.7
-  starDiameter: 0.05
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
   starMaterial: {fileID: 0}
   lineMaterial: {fileID: 0}
+  starDiameter: 0.05
   lineWidth: 0.008
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
@@ -172404,11 +172414,11 @@ MonoBehaviour:
     distanceLightYears: 55
   maximumRadius: 1
   angularSpread: 0.7
-  starDiameter: 0.05
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
   starMaterial: {fileID: 0}
   lineMaterial: {fileID: 0}
+  starDiameter: 0.05
   lineWidth: 0.008
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
@@ -172479,11 +172489,11 @@ MonoBehaviour:
     distanceLightYears: 55
   maximumRadius: 1
   angularSpread: 0.7
-  starDiameter: 0.05
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
   starMaterial: {fileID: 0}
   lineMaterial: {fileID: 0}
+  starDiameter: 0.05
   lineWidth: 0.008
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
@@ -173596,11 +173606,11 @@ MonoBehaviour:
     distanceLightYears: 55
   maximumRadius: 1
   angularSpread: 0.7
-  starDiameter: 0.05
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
   starMaterial: {fileID: 0}
   lineMaterial: {fileID: 0}
+  starDiameter: 0.05
   lineWidth: 0.008
   showDebugLabels: 1
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}

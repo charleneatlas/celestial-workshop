@@ -16,6 +16,19 @@ public class ConstellationGenerator : MonoBehaviour
         public float distanceLightYears;
     }
 
+    [Serializable]
+    public class AppearanceSettings
+    {
+        public Material starMaterial;
+        public Material lineMaterial;
+
+        [Min(0.001f)]
+        public float starDiameter = 0.05f;
+
+        [Min(0.001f)]
+        public float lineWidth = 0.01f;
+    }
+
     [Header("Affinity Designer")]
     public Vector2 artboardSize = new Vector2(1920f, 1080f);
 
@@ -29,17 +42,19 @@ public class ConstellationGenerator : MonoBehaviour
     [Min(0.01f)]
     public float angularSpread = 0.7f;
 
-    [Min(0.001f)]
-    public float starDiameter = 0.05f;
-
     public bool useLogarithmicDistance;
 
     [Range(0.01f, 0.9f)]
     public float logarithmicMinimumRadius = 0.2f;
 
-    [Header("Optional Appearance")]
+    [Header("Preview / Default Appearance")]
+    [Tooltip("The appearance of runtime generated constellations is set in ConstellationSetup()")]
     public Material starMaterial;
+
     public Material lineMaterial;
+
+    [Min(0.001f)]
+    public float starDiameter = 0.05f;
 
     [Min(0.001f)]
     public float lineWidth = 0.01f;
@@ -61,7 +76,8 @@ public class ConstellationGenerator : MonoBehaviour
         GenerateConstellation(transform);
     }
 
-    public GameObject GenerateConstellation(Transform destinationParent)
+    public GameObject GenerateConstellation(Transform destinationParent,
+    AppearanceSettings appearance = null)
     {
         if (destinationParent == null)
         {
@@ -72,6 +88,18 @@ public class ConstellationGenerator : MonoBehaviour
 
             return null;
         }
+
+        Material activeStarMaterial =
+    appearance != null ? appearance.starMaterial : starMaterial;
+
+        Material activeLineMaterial =
+            appearance != null ? appearance.lineMaterial : lineMaterial;
+
+        float activeStarDiameter =
+            appearance != null ? appearance.starDiameter : starDiameter;
+
+        float activeLineWidth =
+            appearance != null ? appearance.lineWidth : lineWidth;
 
         ClearGeneratedObjects(destinationParent);
 
@@ -187,19 +215,22 @@ public class ConstellationGenerator : MonoBehaviour
             sphere.transform.localPosition = Vector3.zero;
             sphere.transform.localRotation = Quaternion.identity;
             sphere.transform.localScale =
-                Vector3.one * starDiameter;
+                Vector3.one * activeStarDiameter;
 
-            if (starMaterial != null)
+            if (activeStarMaterial != null)
             {
                 Renderer sphereRenderer =
                     sphere.GetComponent<Renderer>();
 
-                sphereRenderer.sharedMaterial = starMaterial;
+                sphereRenderer.sharedMaterial = activeStarMaterial;
             }
-            Debug.LogWarning(
-                "No star material assigned. Generated stars will use the default material, and may not render in APK.",
-                this
-            );
+            else
+            {
+                Debug.LogWarning(
+                    "No star material assigned. Generated stars will use the default material.",
+                    this
+                );
+            }
 
             if (showDebugLabels && starLabelPrefab != null)
             {
@@ -233,7 +264,9 @@ public class ConstellationGenerator : MonoBehaviour
             CreateCylinderBetweenPoints(
                 positions[i],
                 positions[i + 1],
-                generatedRootObject.transform
+                generatedRootObject.transform,
+                activeLineMaterial,
+                activeLineWidth
             );
         }
 
@@ -243,7 +276,9 @@ public class ConstellationGenerator : MonoBehaviour
     private void CreateCylinderBetweenPoints(
     Vector3 start,
     Vector3 end,
-    Transform parent
+    Transform parent,
+    Material material,
+    float width
 )
     {
         Vector3 direction = end - start;
@@ -270,20 +305,19 @@ public class ConstellationGenerator : MonoBehaviour
         // A Unity primitive cylinder has a default height of 2 units,
         // so the Y scale is half the desired connection length.
         cylinder.transform.localScale = new Vector3(
-            lineWidth,
+            width,
             length * 0.5f,
-            lineWidth
+            width
         );
 
-        if (lineMaterial != null)
+        if (material != null)
         {
-            cylinder.GetComponent<Renderer>().sharedMaterial =
-                lineMaterial;
+            cylinder.GetComponent<Renderer>().sharedMaterial = material;
         }
         else
         {
             Debug.LogWarning(
-                "No line material assigned. Generated connections will use the default material, and may not render in APK.",
+                "No line material assigned. Generated connections will use the default material.",
                 this
             );
         }

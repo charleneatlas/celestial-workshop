@@ -34,6 +34,12 @@ public sealed class ConstellationSetup : MonoBehaviour
     [SerializeField]
     private bool mirrorRotation = true;
 
+    [SerializeField]
+    private ConstellationGenerator.AppearanceSettings tableConstellationAppearance;
+
+    [SerializeField]
+    private ConstellationGenerator.AppearanceSettings skyConstellationAppearance;
+
     private bool isInitialized;
 
     private void Start()
@@ -79,10 +85,12 @@ public sealed class ConstellationSetup : MonoBehaviour
     private void GenerateConstellations()
     {
         constellationGenerator.GenerateConstellation(
-            miniVisualContainer);
+            miniVisualContainer,
+            tableConstellationAppearance);
 
         constellationGenerator.GenerateConstellation(
-            skyVisualContainer);
+            skyVisualContainer,
+            skyConstellationAppearance);
     }
 
     private void CopyRotationToSky()
@@ -142,6 +150,24 @@ public sealed class ConstellationSetup : MonoBehaviour
         {
             Debug.LogError(
                 "ConstellationSetup is missing the Sky Visual Container.",
+                this);
+
+            isValid = false;
+        }
+
+        if (miniEarthReference == null)
+        {
+            Debug.LogError(
+                "ConstellationSetup is missing the Mini Earth Reference.",
+                this);
+
+            isValid = false;
+        }
+
+        if (skyRotationReference == null)
+        {
+            Debug.LogError(
+                "ConstellationSetup is missing the Sky Rotation Reference.",
                 this);
 
             isValid = false;
