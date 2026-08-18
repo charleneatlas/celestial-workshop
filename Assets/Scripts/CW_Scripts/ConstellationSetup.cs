@@ -29,6 +29,13 @@ public sealed class ConstellationSetup : MonoBehaviour
     [SerializeField]
     private Transform skyVisualContainer;
 
+    [SerializeField]
+    private Transform skyObserverReference;
+
+    [SerializeField]
+    [Min(1f)]
+    private float skyDistanceScale = 30f;
+
     [Header("Runtime")]
     [SerializeField]
     private bool generateOnStart = true;
@@ -100,7 +107,9 @@ public sealed class ConstellationSetup : MonoBehaviour
         GameObject skyGeneratedRoot =
         constellationGenerator.GenerateConstellation(
             skyVisualContainer,
-            skyConstellationAppearance);
+            skyConstellationAppearance,
+            skyObserverReference,
+            skyDistanceScale);
 
         BuildStarLookup(
             miniGeneratedRoot,
@@ -184,6 +193,16 @@ public sealed class ConstellationSetup : MonoBehaviour
             Debug.LogError(
                 "ConstellationSetup is missing the Sky Rotation Reference.",
                 this);
+
+            isValid = false;
+        }
+
+        if (skyObserverReference == null)
+        {
+            Debug.LogError(
+                "ConstellationSetup is missing the Sky Observer Reference.",
+                this
+            );
 
             isValid = false;
         }

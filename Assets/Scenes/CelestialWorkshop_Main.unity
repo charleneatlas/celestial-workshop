@@ -86175,7 +86175,7 @@ GameObject:
   - component: {fileID: 832476890}
   - component: {fileID: 832476889}
   m_Layer: 0
-  m_Name: Constellation System
+  m_Name: Constellation Setup
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -86200,6 +86200,8 @@ MonoBehaviour:
   miniVisualContainer: {fileID: 150452317}
   skyConstellationPivot: {fileID: 242918474}
   skyVisualContainer: {fileID: 106490063}
+  skyObserverReference: {fileID: 412556933}
+  skyDistanceScale: 200
   generateOnStart: 1
   mirrorRotation: 1
   tableConstellationAppearance:

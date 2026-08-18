@@ -77,8 +77,11 @@ public class ConstellationGenerator : MonoBehaviour
         GenerateConstellation(transform);
     }
 
-    public GameObject GenerateConstellation(Transform destinationParent,
-    AppearanceSettings appearance = null)
+    public GameObject GenerateConstellation(
+        Transform destinationParent,
+        AppearanceSettings appearance = null,
+        Transform observerReference = null,
+        float distanceScale = 1f)
     {
         if (destinationParent == null)
         {
@@ -191,7 +194,34 @@ public class ConstellationGenerator : MonoBehaviour
                 maximumDistance
             );
 
-            Vector3 localPosition = direction * radialDistance;
+            Vector3 localPosition;
+
+            if (observerReference == null)
+            {
+                // Existing behavior.
+                // Used for the tabletop constellation and editor preview.
+                localPosition = direction * radialDistance;
+            }
+            else
+            {
+                // For the distant sky constellation, the rays originate
+                // from the fixed observer position in the workshop.
+
+                Vector3 worldDirection =
+                    generatedRootObject.transform.TransformDirection(direction);
+
+                Vector3 worldPosition =
+                    observerReference.position +
+                    worldDirection * radialDistance * distanceScale;
+
+                // Convert the desired world position back into the
+                // generated constellation's local coordinate system.
+                localPosition =
+                    generatedRootObject.transform.InverseTransformPoint(
+                        worldPosition
+                    );
+            }
+
             positions[i] = localPosition;
 
             // Unscaled root representing the star's position.
