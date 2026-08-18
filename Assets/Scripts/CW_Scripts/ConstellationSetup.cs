@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -100,18 +101,14 @@ public sealed class ConstellationSetup : MonoBehaviour
             skyConstellationPivot
         );
 
-        // Start the puzzle in a randomized, unsolved orientation.
-        if (solveController != null)
-        {
-            solveController.ResetSolve();
-        }
-
         // Make the remote constellation immediately match
         // the randomized tabletop constellation.
         CopyRotationToSky();
 
-
         isInitialized = true;
+
+        // Start the puzzle in a randomized, unsolved orientation.
+        StartCoroutine(RandomizeAfterInitialization());
     }
 
     private void LateUpdate()
@@ -375,5 +372,19 @@ public sealed class ConstellationSetup : MonoBehaviour
         {
             star.SetHighlighted(highlighted);
         }
+    }
+
+    private IEnumerator RandomizeAfterInitialization()
+    {
+        // Wait until all Start() methods have had a chance to initialize.
+        yield return null;
+
+        if (solveController != null)
+        {
+            solveController.ResetSolve();
+        }
+
+        // Immediately make the sky match the newly randomized table rotation.
+        CopyRotationToSky();
     }
 }
