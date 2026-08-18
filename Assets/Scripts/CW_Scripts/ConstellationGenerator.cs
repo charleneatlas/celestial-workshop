@@ -81,7 +81,9 @@ public class ConstellationGenerator : MonoBehaviour
         Transform destinationParent,
         AppearanceSettings appearance = null,
         Transform observerReference = null,
-        float distanceScale = 1f)
+        float distanceScale = 1f,
+        Vector3 directionEulerOffset = default,
+        float angularScale = 1f)
     {
         if (destinationParent == null)
         {
@@ -183,10 +185,14 @@ public class ConstellationGenerator : MonoBehaviour
                 ConvertAffinityPosition(star.affinityPosition);
 
             Vector3 direction = new Vector3(
-                normalizedBlueprintPosition.x * angularSpread,
-                normalizedBlueprintPosition.y * angularSpread,
+                normalizedBlueprintPosition.x * angularSpread * angularScale,
+                normalizedBlueprintPosition.y * angularSpread * angularScale,
                 1f
             ).normalized;
+
+            direction =
+                Quaternion.Euler(directionEulerOffset) *
+                direction;
 
             float radialDistance = CalculateRadialDistance(
                 star.distanceLightYears,

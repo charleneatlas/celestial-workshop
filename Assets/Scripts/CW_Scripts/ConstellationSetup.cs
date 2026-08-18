@@ -36,6 +36,18 @@ public sealed class ConstellationSetup : MonoBehaviour
     [Min(1f)]
     private float skyDistanceScale = 30f;
 
+    [SerializeField]
+    [Range(-90f, 90f)]
+    private float skyElevationDegrees = 30f;
+
+    [SerializeField]
+    [Range(-180f, 180f)]
+    private float skyAzimuthDegrees = 0f;
+
+    [SerializeField]
+    [Range(0.1f, 2f)]
+    private float skyAngularScale = 0.6f;
+
     [Header("Runtime")]
     [SerializeField]
     private bool generateOnStart = true;
@@ -109,7 +121,14 @@ public sealed class ConstellationSetup : MonoBehaviour
             skyVisualContainer,
             skyConstellationAppearance,
             skyObserverReference,
-            skyDistanceScale);
+            skyDistanceScale,
+            new Vector3(
+                -skyElevationDegrees,
+                skyAzimuthDegrees,
+                0f
+            ),
+            skyAngularScale
+        );
 
         BuildStarLookup(
             miniGeneratedRoot,
