@@ -65,6 +65,9 @@ public sealed class ConstellationSetup : MonoBehaviour
     [SerializeField]
     private ConstellationGenerator.AppearanceSettings skyConstellationAppearance;
 
+    [SerializeField]
+    private ConstellationSolveController solveController;
+
     private bool isInitialized;
 
     private readonly Dictionary<string, List<GeneratedConstellationStar>>
@@ -97,8 +100,16 @@ public sealed class ConstellationSetup : MonoBehaviour
             skyConstellationPivot
         );
 
-        // Make sure they match immediately, before the first visible update.
+        // Start the puzzle in a randomized, unsolved orientation.
+        if (solveController != null)
+        {
+            solveController.ResetSolve();
+        }
+
+        // Make the remote constellation immediately match
+        // the randomized tabletop constellation.
         CopyRotationToSky();
+
 
         isInitialized = true;
     }

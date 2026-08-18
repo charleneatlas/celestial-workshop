@@ -36487,7 +36487,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ConstellationSolveController
   solveDirection: {fileID: 830396144}
   skyObserverReference: {fileID: 412556933}
-  solveToleranceDegrees: 2
+  solveToleranceDegrees: 3
   requiredHoldTime: 0.5
   solvedVisual: {fileID: 143205144}
   onSolved:
@@ -86220,6 +86220,7 @@ MonoBehaviour:
     lineMaterial: {fileID: 2100000, guid: 61961a56c9803d54da89e6942382e482, type: 2}
     starDiameter: 5
     lineWidth: 1
+  solveController: {fileID: 242918475}
 --- !u!4 &832476890
 Transform:
   m_ObjectHideFlags: 0
