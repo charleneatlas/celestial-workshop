@@ -37,6 +37,10 @@ public sealed class ConstellationSetup : MonoBehaviour
     private float skyDistanceScale = 30f;
 
     [SerializeField]
+    [Range(0f, 1f)]
+    private float skyDepthScale = 0.1f;
+
+    [SerializeField]
     [Range(-90f, 90f)]
     private float skyElevationDegrees = 30f;
 
@@ -127,7 +131,8 @@ public sealed class ConstellationSetup : MonoBehaviour
                 skyAzimuthDegrees,
                 0f
             ),
-            skyAngularScale
+            skyAngularScale,
+            skyDepthScale
         );
 
         BuildStarLookup(

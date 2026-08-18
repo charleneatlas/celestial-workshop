@@ -83,7 +83,8 @@ public class ConstellationGenerator : MonoBehaviour
         Transform observerReference = null,
         float distanceScale = 1f,
         Vector3 directionEulerOffset = default,
-        float angularScale = 1f)
+        float angularScale = 1f,
+        float depthScale = 1f)
     {
         if (destinationParent == null)
         {
@@ -216,9 +217,30 @@ public class ConstellationGenerator : MonoBehaviour
                 Vector3 worldDirection =
                     generatedRootObject.transform.TransformDirection(direction);
 
+                float scaledDistance =
+                    radialDistance * distanceScale;
+
+                // The farthest star defines the distant "shell."
+                float shellDistance =
+                    maximumRadius * distanceScale;
+
+                // depthScale = 1:
+                //     preserve the original depth.
+                //
+                // depthScale = 0:
+                //     pull every star onto the same distant shell.
+                //
+                // Values in between preserve some of the relative depth.
+                float compressedDistance =
+                    Mathf.Lerp(
+                        shellDistance,
+                        scaledDistance,
+                        depthScale
+                    );
+
                 Vector3 worldPosition =
                     observerReference.position +
-                    worldDirection * radialDistance * distanceScale;
+                    worldDirection * compressedDistance;
 
                 // Convert the desired world position back into the
                 // generated constellation's local coordinate system.

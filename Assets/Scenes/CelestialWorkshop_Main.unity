@@ -85884,13 +85884,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 830396143}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.017149955, y: 0.9561513, z: -0.28672263, w: 0.057190992}
+  m_LocalRotation: {x: 0.002570745, y: 0.96422595, z: -0.2649041, w: 0.009357269}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 242918474}
-  m_LocalEulerAnglesHint: {x: 33.385, y: 173.154, z: 0}
+  m_LocalEulerAnglesHint: {x: 30.724, y: 178.888, z: 0}
 --- !u!1 &830514310
 GameObject:
   m_ObjectHideFlags: 0
@@ -86202,6 +86202,7 @@ MonoBehaviour:
   skyVisualContainer: {fileID: 106490063}
   skyObserverReference: {fileID: 412556933}
   skyDistanceScale: 800
+  skyDepthScale: 0.5
   skyElevationDegrees: 30
   skyAzimuthDegrees: 0
   skyAngularScale: 0.3
