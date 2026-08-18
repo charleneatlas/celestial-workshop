@@ -32,6 +32,12 @@ public class BlueprintController : MonoBehaviour
     private Vector3 distanceLabelOffset =
         new Vector3(0f, -0.025f, 0f);
 
+    [Header("Tutorial")]
+    [SerializeField]
+    private GameObject tutorialHandVisual;
+
+    private bool tutorialDismissed;
+
     [Header("Debug")]
     [SerializeField]
     private bool showDebugLogs = true;
@@ -97,6 +103,9 @@ public class BlueprintController : MonoBehaviour
         // Turn on the new highlight.
         if (currentStar != null)
         {
+            // Player has successfully used the blueprint interaction.
+            DismissTutorial();
+
             currentStar.SetHighlighted(true);
 
             if (constellationSetup != null)
@@ -225,6 +234,21 @@ public class BlueprintController : MonoBehaviour
         if (distanceLabel != null)
         {
             distanceLabel.gameObject.SetActive(false);
+        }
+    }
+
+    private void DismissTutorial()
+    {
+        if (tutorialDismissed)
+        {
+            return;
+        }
+
+        tutorialDismissed = true;
+
+        if (tutorialHandVisual != null)
+        {
+            tutorialHandVisual.SetActive(false);
         }
     }
 

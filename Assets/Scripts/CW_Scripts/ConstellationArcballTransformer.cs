@@ -9,6 +9,12 @@ public class ConstellationArcballTransformer : MonoBehaviour, ITransformer
     [SerializeField]
     private ArcballVisualController arcballVisual;
 
+    [Header("Tutorial")]
+    [SerializeField]
+    private GameObject tutorialHandVisual;
+
+    private bool tutorialDismissed;
+
     private IGrabbable grabbable;
 
     private Vector3 previousFromCenter;
@@ -37,6 +43,9 @@ public class ConstellationArcballTransformer : MonoBehaviour, ITransformer
 
         // Show visual cue for rotation (semi-transparent sphere with radius defined by grab point)
         arcballVisual?.Show(previousFromCenter.magnitude);
+
+        // Player has successfully begun the arcball interaction.
+        DismissTutorial();
     }
 
     public void UpdateTransform()
@@ -98,5 +107,20 @@ public class ConstellationArcballTransformer : MonoBehaviour, ITransformer
         grabbable.Transform.rotation = Random.rotationUniform;
 
         hasPreviousGrabPoint = false;
+    }
+
+    private void DismissTutorial()
+    {
+        if (tutorialDismissed)
+        {
+            return;
+        }
+
+        tutorialDismissed = true;
+
+        if (tutorialHandVisual != null)
+        {
+            tutorialHandVisual.SetActive(false);
+        }
     }
 }
