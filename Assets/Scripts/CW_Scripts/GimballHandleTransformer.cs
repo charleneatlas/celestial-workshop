@@ -151,4 +151,41 @@ public class GimbalHandleTransformer : MonoBehaviour, ITransformer
                 return _pivotTransform.up;
         }
     }
+
+    private void OnDrawGizmos()
+    {
+        if (_pivotTransform == null || _handleTransform == null)
+            return;
+
+        Vector3 axis = GetWorldAxis();
+
+        Vector3 offset = _handleTransform.position - _pivotTransform.position;
+        Vector3 planarOffset = Vector3.ProjectOnPlane(offset, axis);
+
+        float radius = planarOffset.magnitude;
+
+        if (radius < 0.0001f)
+            return;
+
+        const int segments = 64;
+
+        Vector3 startDirection = planarOffset.normalized;
+        Vector3 previousPoint =
+            _pivotTransform.position + startDirection * radius;
+
+        for (int i = 1; i <= segments; i++)
+        {
+            float angle = 360f * i / segments;
+
+            Vector3 direction =
+                Quaternion.AngleAxis(angle, axis) * startDirection;
+
+            Vector3 point =
+                _pivotTransform.position + direction * radius;
+
+            Gizmos.DrawLine(previousPoint, point);
+
+            previousPoint = point;
+        }
+    }
 }
