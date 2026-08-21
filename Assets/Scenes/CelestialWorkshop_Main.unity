@@ -36883,6 +36883,7 @@ GameObject:
   m_Component:
   - component: {fileID: 242918474}
   - component: {fileID: 242918475}
+  - component: {fileID: 242918476}
   m_Layer: 0
   m_Name: Sky Constellation Pivot
   m_TagString: Untagged
@@ -36922,14 +36923,87 @@ MonoBehaviour:
   solveDirection: {fileID: 830396144}
   skyObserverReference: {fileID: 412556933}
   solveToleranceDegrees: 3
-  requiredHoldTime: 0.5
+  nearSolveToleranceDegrees: 10
+  requiredHoldTime: 0.4
+  onNearSolveEntered:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 242918476}
+        m_TargetAssemblyTypeName: SkyConstellationHighlightController, Assembly-CSharp
+        m_MethodName: SetNearSolve
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onNearSolveExited:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 242918476}
+        m_TargetAssemblyTypeName: SkyConstellationHighlightController, Assembly-CSharp
+        m_MethodName: SetNormal
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   solvedVisual: {fileID: 143205144}
   onSolved:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 242918476}
+        m_TargetAssemblyTypeName: SkyConstellationHighlightController, Assembly-CSharp
+        m_MethodName: SetSolved
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  onReset:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 242918476}
+        m_TargetAssemblyTypeName: SkyConstellationHighlightController, Assembly-CSharp
+        m_MethodName: SetNormal
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   tableArcballTransformer: {fileID: 34321733}
   showDebugRays: 1
   debugRayLength: 5
+--- !u!114 &242918476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 242918473}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6636260e25c00444b13e3dca248906f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SkyConstellationHighlightController
+  normalColor: {r: 0.1882353, g: 0.34509805, b: 0.49803922, a: 0.14509805}
+  nearSolveColor: {r: 0.37254903, g: 0.5294118, b: 0.6862745, a: 0.5803922}
+  solvedColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &245008139
 GameObject:
   m_ObjectHideFlags: 0
@@ -87956,6 +88030,7 @@ MonoBehaviour:
   skyElevationDegrees: 30
   skyAzimuthDegrees: 0
   skyAngularScale: 0.3
+  skyConstellationHighlightController: {fileID: 242918476}
   generateOnStart: 1
   mirrorRotation: 1
   tableConstellationAppearance:
@@ -187518,7 +187593,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8983956804488274479, guid: 30bd24baaa7bbf04da2294539529d9c1, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 28.143
+      value: 28.119
       objectReference: {fileID: 0}
     - target: {fileID: 8983956804488274479, guid: 30bd24baaa7bbf04da2294539529d9c1, type: 3}
       propertyPath: m_LocalRotation.w

@@ -53,6 +53,10 @@ public sealed class ConstellationSetup : MonoBehaviour
     [Range(0.1f, 2f)]
     private float skyAngularScale = 0.6f;
 
+    [Header("Sky Constellation Highlighting")]
+    [SerializeField]
+    private SkyConstellationHighlightController skyConstellationHighlightController;
+
     [Header("Runtime")]
     [SerializeField]
     private bool generateOnStart = true;
@@ -124,29 +128,38 @@ public sealed class ConstellationSetup : MonoBehaviour
     private void GenerateConstellations()
     {
         GameObject miniGeneratedRoot =
-        constellationGenerator.GenerateConstellation(
-            miniVisualContainer,
-            tableConstellationAppearance);
+            constellationGenerator.GenerateConstellation(
+                miniVisualContainer,
+                tableConstellationAppearance
+            );
 
         GameObject skyGeneratedRoot =
-        constellationGenerator.GenerateConstellation(
-            skyVisualContainer,
-            skyConstellationAppearance,
-            skyObserverReference,
-            skyDistanceScale,
-            new Vector3(
-                -skyElevationDegrees,
-                skyAzimuthDegrees,
-                0f
-            ),
-            skyAngularScale,
-            skyDepthScale
-        );
+            constellationGenerator.GenerateConstellation(
+                skyVisualContainer,
+                skyConstellationAppearance,
+                skyObserverReference,
+                skyDistanceScale,
+                new Vector3(
+                    -skyElevationDegrees,
+                    skyAzimuthDegrees,
+                    0f
+                ),
+                skyAngularScale,
+                skyDepthScale
+            );
 
         BuildStarLookup(
             miniGeneratedRoot,
             skyGeneratedRoot
         );
+
+        // Give the highlight controller ONLY the generated sky constellation.
+        if (skyConstellationHighlightController != null)
+        {
+            skyConstellationHighlightController.SetConstellation(
+                skyGeneratedRoot
+            );
+        }
     }
 
     private void CopyRotationToSky()
@@ -154,8 +167,8 @@ public sealed class ConstellationSetup : MonoBehaviour
         // Mini Earth Reference and Sky Rotation Reference should represent
         // equivalent coordinate axes. Sky Coordinate Frame only controls placement.
         Quaternion miniRelativeRotation =
-        Quaternion.Inverse(miniEarthReference.rotation) *
-        miniConstellationPivot.rotation;
+            Quaternion.Inverse(miniEarthReference.rotation) *
+            miniConstellationPivot.rotation;
 
         skyConstellationPivot.rotation =
             skyRotationReference.rotation *
@@ -170,7 +183,8 @@ public sealed class ConstellationSetup : MonoBehaviour
         {
             Debug.LogError(
                 "ConstellationSetup is missing its ConstellationGenerator.",
-                this);
+                this
+            );
 
             isValid = false;
         }
@@ -179,7 +193,8 @@ public sealed class ConstellationSetup : MonoBehaviour
         {
             Debug.LogError(
                 "ConstellationSetup is missing the Mini Constellation Pivot.",
-                this);
+                this
+            );
 
             isValid = false;
         }
@@ -188,7 +203,8 @@ public sealed class ConstellationSetup : MonoBehaviour
         {
             Debug.LogError(
                 "ConstellationSetup is missing the Mini Visual Container.",
-                this);
+                this
+            );
 
             isValid = false;
         }
@@ -197,7 +213,8 @@ public sealed class ConstellationSetup : MonoBehaviour
         {
             Debug.LogError(
                 "ConstellationSetup is missing the Sky Constellation Pivot.",
-                this);
+                this
+            );
 
             isValid = false;
         }
@@ -206,7 +223,8 @@ public sealed class ConstellationSetup : MonoBehaviour
         {
             Debug.LogError(
                 "ConstellationSetup is missing the Sky Visual Container.",
-                this);
+                this
+            );
 
             isValid = false;
         }
@@ -215,7 +233,8 @@ public sealed class ConstellationSetup : MonoBehaviour
         {
             Debug.LogError(
                 "ConstellationSetup is missing the Mini Earth Reference.",
-                this);
+                this
+            );
 
             isValid = false;
         }
@@ -224,7 +243,8 @@ public sealed class ConstellationSetup : MonoBehaviour
         {
             Debug.LogError(
                 "ConstellationSetup is missing the Sky Rotation Reference.",
-                this);
+                this
+            );
 
             isValid = false;
         }
@@ -243,8 +263,8 @@ public sealed class ConstellationSetup : MonoBehaviour
     }
 
     private void CenterRotationPivot(
-    Transform constellationRoot,
-    Transform rotationPivot)
+        Transform constellationRoot,
+        Transform rotationPivot)
     {
         if (constellationRoot == null || rotationPivot == null)
         {
@@ -305,8 +325,8 @@ public sealed class ConstellationSetup : MonoBehaviour
     }
 
     private void BuildStarLookup(
-    GameObject miniGeneratedRoot,
-    GameObject skyGeneratedRoot)
+        GameObject miniGeneratedRoot,
+        GameObject skyGeneratedRoot)
     {
         generatedStarsById.Clear();
 
@@ -335,7 +355,8 @@ public sealed class ConstellationSetup : MonoBehaviour
                     star.StarId,
                     out List<GeneratedConstellationStar> matchingStars))
             {
-                matchingStars = new List<GeneratedConstellationStar>();
+                matchingStars =
+                    new List<GeneratedConstellationStar>();
 
                 generatedStarsById.Add(
                     star.StarId,
