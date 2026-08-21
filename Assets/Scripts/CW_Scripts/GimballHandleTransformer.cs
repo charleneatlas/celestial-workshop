@@ -24,9 +24,49 @@ public class GimbalHandleTransformer : MonoBehaviour, ITransformer
     private Vector3 _previousDirection;
     private float _handleRadius;
 
+    // Absolute orientation reference.
+    private Vector3 _zeroDirection;
+    private Quaternion _zeroHandleRotation;
+    private bool _orientationInitialized;
+
     public void Initialize(IGrabbable grabbable)
     {
         _grabbable = grabbable;
+    }
+
+    private void Start()
+    {
+        InitializeOrientationReference();
+    }
+
+    private void InitializeOrientationReference()
+    {
+        if (_pivotTransform == null ||
+            _handleTransform == null)
+        {
+            return;
+        }
+
+        Vector3 axis = GetWorldAxis();
+
+        Vector3 handleOffset =
+            _handleTransform.position - _pivotTransform.position;
+
+        Vector3 planarHandleOffset =
+            Vector3.ProjectOnPlane(handleOffset, axis);
+
+        if (planarHandleOffset.sqrMagnitude < 0.000001f)
+        {
+            return;
+        }
+
+        // Remember where this handle was originally placed around the ring.
+        _zeroDirection = planarHandleOffset.normalized;
+
+        // Remember how the handle was originally oriented there.
+        _zeroHandleRotation = _handleTransform.rotation;
+
+        _orientationInitialized = true;
     }
 
     public void BeginTransform()
@@ -118,12 +158,19 @@ public class GimbalHandleTransformer : MonoBehaviour, ITransformer
             _pivotTransform.position +
             currentDirection * _handleRadius;
 
-        // Make the handle itself rotate as though attached to the ring.
-        if (_rotateHandleOrientation)
+        // Orient the handle based on its absolute position around
+        // the ring, rather than accumulating rotation every frame.
+        if (_rotateHandleOrientation && _orientationInitialized)
         {
+            float totalHandleAngle = Vector3.SignedAngle(
+                _zeroDirection,
+                currentDirection,
+                axis
+            );
+
             _handleTransform.rotation =
-                Quaternion.AngleAxis(angleDelta, axis) *
-                _handleTransform.rotation;
+                Quaternion.AngleAxis(totalHandleAngle, axis) *
+                _zeroHandleRotation;
         }
 
         _previousDirection = currentDirection;
@@ -159,8 +206,11 @@ public class GimbalHandleTransformer : MonoBehaviour, ITransformer
 
         Vector3 axis = GetWorldAxis();
 
-        Vector3 offset = _handleTransform.position - _pivotTransform.position;
-        Vector3 planarOffset = Vector3.ProjectOnPlane(offset, axis);
+        Vector3 offset =
+            _handleTransform.position - _pivotTransform.position;
+
+        Vector3 planarOffset =
+            Vector3.ProjectOnPlane(offset, axis);
 
         float radius = planarOffset.magnitude;
 
@@ -170,18 +220,22 @@ public class GimbalHandleTransformer : MonoBehaviour, ITransformer
         const int segments = 64;
 
         Vector3 startDirection = planarOffset.normalized;
+
         Vector3 previousPoint =
-            _pivotTransform.position + startDirection * radius;
+            _pivotTransform.position +
+            startDirection * radius;
 
         for (int i = 1; i <= segments; i++)
         {
             float angle = 360f * i / segments;
 
             Vector3 direction =
-                Quaternion.AngleAxis(angle, axis) * startDirection;
+                Quaternion.AngleAxis(angle, axis) *
+                startDirection;
 
             Vector3 point =
-                _pivotTransform.position + direction * radius;
+                _pivotTransform.position +
+                direction * radius;
 
             Gizmos.DrawLine(previousPoint, point);
 
