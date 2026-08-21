@@ -39019,11 +39019,12 @@ MonoBehaviour:
   - {fileID: 2146354494}
   - {fileID: 2124630947}
   blueprintPlane: {fileID: 1535418267}
+  blueprintVisual: {fileID: 2010194441}
   activationRadius: 0.025
   constellationSetup: {fileID: 832476889}
   constellationGenerator: {fileID: 65651445}
   distanceLabel: {fileID: 512684826}
-  distanceLabelOffset: {x: 0, y: 0.05, z: 0}
+  distanceLabelOffset: {x: 0, y: 0, z: -0.05}
   tutorialHandVisual: {fileID: 1244498393}
   showDebugLogs: 1
 --- !u!54 &277464593

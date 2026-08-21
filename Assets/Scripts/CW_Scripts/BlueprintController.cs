@@ -13,6 +13,9 @@ public class BlueprintController : MonoBehaviour
     [SerializeField]
     private PlaneSurface blueprintPlane;
 
+    [SerializeField]
+    private Transform blueprintVisual;
+
     [Header("Touch Settings")]
     [Tooltip("Maximum distance along the blueprint surface for a star to count as touched.")]
     [SerializeField]
@@ -223,7 +226,8 @@ public class BlueprintController : MonoBehaviour
                 $"{starData.distanceLightYears:0} light years away";
 
             distanceLabel.transform.position =
-                star.transform.position + distanceLabelOffset;
+                star.transform.position +
+                blueprintVisual.TransformDirection(distanceLabelOffset);
 
             distanceLabel.gameObject.SetActive(true);
         }
