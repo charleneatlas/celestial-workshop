@@ -17629,7 +17629,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: f332ba1459a24b2479765d94ee05e47b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -27835,7 +27835,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: f332ba1459a24b2479765d94ee05e47b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -59448,6 +59448,7 @@ GameObject:
   - component: {fileID: 466232764}
   - component: {fileID: 466232763}
   - component: {fileID: 466232768}
+  - component: {fileID: 466232769}
   - component: {fileID: 466232767}
   m_Layer: 0
   m_Name: ZAxisRotationHandle
@@ -59465,7 +59466,7 @@ Transform:
   m_GameObject: {fileID: 466232761}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: -0.00069980853, y: 0.3723, z: -0.0748}
+  m_LocalPosition: {x: 0, y: 0.3723, z: -0.0748}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -59595,10 +59596,34 @@ MonoBehaviour:
   _interactableView: {fileID: 466232764}
   _whenHover:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 466232769}
+        m_TargetAssemblyTypeName: GimbalRingHighlight, Assembly-CSharp
+        m_MethodName: SetHover
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _whenUnhover:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 466232769}
+        m_TargetAssemblyTypeName: GimbalRingHighlight, Assembly-CSharp
+        m_MethodName: SetUnhover
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _whenSelect:
     m_PersistentCalls:
       m_Calls:
@@ -59655,6 +59680,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   ringRenderer: {fileID: 738549083}
   idleAlpha: 0.05
+  hoverAlpha: 0.4
+  activeAlpha: 1
+--- !u!114 &466232769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466232761}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01f568731a3e924c863b745f435f502, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  ringRenderer: {fileID: 167700743}
+  idleAlpha: 0.1
+  hoverAlpha: 0.4
   activeAlpha: 1
 --- !u!1 &466696273
 GameObject:
@@ -98114,6 +98156,7 @@ GameObject:
   - component: {fileID: 1043153112}
   - component: {fileID: 1043153113}
   - component: {fileID: 1043153115}
+  - component: {fileID: 1043153116}
   - component: {fileID: 1043153114}
   m_Layer: 0
   m_Name: YAxisRotationHandle
@@ -98131,7 +98174,7 @@ Transform:
   m_GameObject: {fileID: 1043153108}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.00069980853, y: 0.17030025, z: -0.26809943}
+  m_LocalPosition: {x: 0, y: 0.17030025, z: -0.26809943}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -98261,10 +98304,34 @@ MonoBehaviour:
   _interactableView: {fileID: 1043153112}
   _whenHover:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1043153116}
+        m_TargetAssemblyTypeName: GimbalRingHighlight, Assembly-CSharp
+        m_MethodName: SetHover
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _whenUnhover:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1043153116}
+        m_TargetAssemblyTypeName: GimbalRingHighlight, Assembly-CSharp
+        m_MethodName: SetUnhover
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _whenSelect:
     m_PersistentCalls:
       m_Calls:
@@ -98321,6 +98388,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   ringRenderer: {fileID: 1897861612}
   idleAlpha: 0.05
+  hoverAlpha: 0.4
+  activeAlpha: 1
+--- !u!114 &1043153116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1043153108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01f568731a3e924c863b745f435f502, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GimbalRingHighlight
+  ringRenderer: {fileID: 1945433539}
+  idleAlpha: 0.1
+  hoverAlpha: 0.4
   activeAlpha: 1
 --- !u!1 &1044544718
 GameObject:
@@ -128136,6 +128220,7 @@ GameObject:
   - component: {fileID: 1426396560}
   - component: {fileID: 1426396559}
   - component: {fileID: 1426396564}
+  - component: {fileID: 1426396565}
   - component: {fileID: 1426396563}
   m_Layer: 0
   m_Name: XAxisRotationHandle
@@ -128152,14 +128237,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1426396557}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.001, y: 0.17030025, z: -0.224}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.0211002, z: -0.0748}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 105176169}
   m_Father: {fileID: 1904326628}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &1426396559
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -128283,10 +128368,34 @@ MonoBehaviour:
   _interactableView: {fileID: 1426396560}
   _whenHover:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1426396565}
+        m_TargetAssemblyTypeName: GimbalRingHighlight, Assembly-CSharp
+        m_MethodName: SetHover
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _whenUnhover:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1426396565}
+        m_TargetAssemblyTypeName: GimbalRingHighlight, Assembly-CSharp
+        m_MethodName: SetUnhover
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   _whenSelect:
     m_PersistentCalls:
       m_Calls:
@@ -128343,6 +128452,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: '::'
   ringRenderer: {fileID: 1359514602}
   idleAlpha: 0.05
+  hoverAlpha: 0.4
+  activeAlpha: 1
+--- !u!114 &1426396565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1426396557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01f568731a3e924c863b745f435f502, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  ringRenderer: {fileID: 105176171}
+  idleAlpha: 0.1
+  hoverAlpha: 0.4
   activeAlpha: 1
 --- !u!1001 &1426731875
 PrefabInstance:
@@ -173197,7 +173323,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: f332ba1459a24b2479765d94ee05e47b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
