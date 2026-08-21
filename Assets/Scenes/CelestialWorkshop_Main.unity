@@ -38970,6 +38970,7 @@ GameObject:
   - component: {fileID: 277464593}
   - component: {fileID: 277464594}
   - component: {fileID: 277464592}
+  - component: {fileID: 277464595}
   m_Layer: 0
   m_Name: Blueprint
   m_TagString: Untagged
@@ -39075,6 +39076,115 @@ MonoBehaviour:
   _kinematicWhileSelected: 1
   _throwWhenUnselected: 1
   _forceKinematicDisabled: 0
+--- !u!114 &277464595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 277464590}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1464721f2283eb14e94a33e812b47be4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Oculus.Interaction::Oculus.Interaction.InteractableUnityEventWrapper
+  _interactableView: {fileID: 327485345}
+  _whenHover:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1971518396}
+        m_TargetAssemblyTypeName: GimbalRingHighlight, Assembly-CSharp
+        m_MethodName: SetHover
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2068259867}
+        m_TargetAssemblyTypeName: GimbalRingHighlight, Assembly-CSharp
+        m_MethodName: SetHover
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1960362770}
+        m_TargetAssemblyTypeName: GimbalRingHighlight, Assembly-CSharp
+        m_MethodName: SetHover
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _whenUnhover:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 1971518396}
+        m_TargetAssemblyTypeName: GimbalRingHighlight, Assembly-CSharp
+        m_MethodName: SetUnhover
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 2068259867}
+        m_TargetAssemblyTypeName: GimbalRingHighlight, Assembly-CSharp
+        m_MethodName: SetUnhover
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1960362770}
+        m_TargetAssemblyTypeName: GimbalRingHighlight, Assembly-CSharp
+        m_MethodName: SetUnhover
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  _whenSelect:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenUnselect:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenInteractorViewAdded:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenInteractorViewRemoved:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenSelectingInteractorViewAdded:
+    m_PersistentCalls:
+      m_Calls: []
+  _whenSelectingInteractorViewRemoved:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &279987791
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -174504,6 +174614,7 @@ GameObject:
   - component: {fileID: 1960362767}
   - component: {fileID: 1960362769}
   - component: {fileID: 1960362768}
+  - component: {fileID: 1960362770}
   m_Layer: 0
   m_Name: Grabbable Frame_Bottom (1)
   m_TagString: Untagged
@@ -174551,7 +174662,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: f332ba1459a24b2479765d94ee05e47b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -174583,6 +174694,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1960362766}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1960362770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1960362766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01f568731a3e924c863b745f435f502, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GimbalRingHighlight
+  ringRenderer: {fileID: 1960362768}
+  idleAlpha: 0.1
+  hoverAlpha: 0.4
+  activeAlpha: 1
 --- !u!4 &1962408227 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2000871609035830223, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
@@ -175053,6 +175180,7 @@ GameObject:
   - component: {fileID: 1971518393}
   - component: {fileID: 1971518395}
   - component: {fileID: 1971518394}
+  - component: {fileID: 1971518396}
   m_Layer: 0
   m_Name: Grabbable Frame_Left (1)
   m_TagString: Untagged
@@ -175100,7 +175228,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: f332ba1459a24b2479765d94ee05e47b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -175132,6 +175260,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1971518392}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &1971518396
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1971518392}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01f568731a3e924c863b745f435f502, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GimbalRingHighlight
+  ringRenderer: {fileID: 1971518394}
+  idleAlpha: 0.1
+  hoverAlpha: 0.4
+  activeAlpha: 1
 --- !u!1 &1972291435
 GameObject:
   m_ObjectHideFlags: 0
@@ -179358,6 +179502,7 @@ GameObject:
   - component: {fileID: 2068259864}
   - component: {fileID: 2068259866}
   - component: {fileID: 2068259865}
+  - component: {fileID: 2068259867}
   m_Layer: 0
   m_Name: Grabbable Frame_Right (1)
   m_TagString: Untagged
@@ -179405,7 +179550,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: f332ba1459a24b2479765d94ee05e47b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -179437,6 +179582,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2068259863}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2068259867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2068259863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d01f568731a3e924c863b745f435f502, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GimbalRingHighlight
+  ringRenderer: {fileID: 2068259865}
+  idleAlpha: 0.1
+  hoverAlpha: 0.4
+  activeAlpha: 1
 --- !u!1 &2068354393
 GameObject:
   m_ObjectHideFlags: 0

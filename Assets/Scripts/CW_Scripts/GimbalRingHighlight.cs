@@ -5,7 +5,7 @@ public class GimbalRingHighlight : MonoBehaviour
     [SerializeField] private Renderer ringRenderer;
     [SerializeField] private float idleAlpha = 0.10f;
     [SerializeField] private float hoverAlpha = 0.40f;
-    [SerializeField] private float activeAlpha = 0.8f;
+    [SerializeField] private float activeAlpha = 1.0f;
 
     private Material ringMaterial;
 
