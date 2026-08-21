@@ -26658,7 +26658,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 493681580, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 493681582, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
       propertyPath: _rigidbody
@@ -36135,6 +36135,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: TrackballTutorial_OVRRightHandVisual
       objectReference: {fileID: 0}
+    - target: {fileID: 5646261449770922228, guid: 60b3563798ac75f4abeb8414f2fc9795, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6841327965226614775, guid: 60b3563798ac75f4abeb8414f2fc9795, type: 3}
       propertyPath: m_LocalPosition.x
       value: -0.052861508
@@ -38981,8 +38985,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 277464590}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.10834636, z: 0, w: 0.99411327}
-  m_LocalPosition: {x: -0.0448, y: 0.1244, z: -0.212}
+  m_LocalRotation: {x: 0.5056392, y: 0.21251826, z: 0.28126878, w: -0.7874344}
+  m_LocalPosition: {x: -0.3580203, y: 0.2980156, z: -0.16034317}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -46315,7 +46319,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &372308631
 Transform:
   m_ObjectHideFlags: 0
@@ -59461,7 +59465,7 @@ Transform:
   m_GameObject: {fileID: 466232761}
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: -0.00069980853, y: 0.4383994, z: -0.0748}
+  m_LocalPosition: {x: -0.00069980853, y: 0.3723, z: -0.0748}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -59650,8 +59654,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   ringRenderer: {fileID: 738549083}
-  idleAlpha: 0.1
-  activeAlpha: 0.8
+  idleAlpha: 0.05
+  activeAlpha: 1
 --- !u!1 &466696273
 GameObject:
   m_ObjectHideFlags: 0
@@ -82065,7 +82069,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.5844712, y: 0.5844714, z: 0.5844714}
+  m_LocalScale: {x: 0.43982044, y: 0.4398206, z: 0.4398206}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 62762971}
@@ -98316,8 +98320,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   ringRenderer: {fileID: 1897861612}
-  idleAlpha: 0.1
-  activeAlpha: 0.8
+  idleAlpha: 0.05
+  activeAlpha: 1
 --- !u!1 &1044544718
 GameObject:
   m_ObjectHideFlags: 0
@@ -125527,7 +125531,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: -0.5, z: -0.5, w: 0.5}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0.41727084, y: 0.41727093, z: 0.41727093}
+  m_LocalScale: {x: 0.32383555, y: 0.32383564, z: 0.32383564}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 62762971}
@@ -128149,7 +128153,7 @@ Transform:
   m_GameObject: {fileID: 1426396557}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.00069980853, y: 0.17030025, z: -0.26809943}
+  m_LocalPosition: {x: -0.001, y: 0.17030025, z: -0.224}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -128338,8 +128342,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   ringRenderer: {fileID: 1359514602}
-  idleAlpha: 0.1
-  activeAlpha: 0.8
+  idleAlpha: 0.05
+  activeAlpha: 1
 --- !u!1001 &1426731875
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -163991,8 +163995,8 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0.000000059604645, z: 0, w: -1}
   m_LocalPosition: {x: 0.011, y: 1.75, z: -0.235}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalScale: {x: 0.6, y: 0.6, z: 0.6}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 746857094}
   - {fileID: 150452312}
