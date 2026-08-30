@@ -84,7 +84,8 @@ public class ConstellationGenerator : MonoBehaviour
         float distanceScale = 1f,
         Vector3 directionEulerOffset = default,
         float angularScale = 1f,
-        float depthScale = 1f)
+        float depthScale = 1f,
+        bool includeConnectionColliders = true)
     {
         if (destinationParent == null)
         {
@@ -339,7 +340,8 @@ public class ConstellationGenerator : MonoBehaviour
                 positions[i + 1],
                 generatedRootObject.transform,
                 activeLineMaterial,
-                activeLineWidth
+                activeLineWidth,
+                includeConnectionColliders
             );
         }
 
@@ -351,8 +353,8 @@ public class ConstellationGenerator : MonoBehaviour
     Vector3 end,
     Transform parent,
     Material material,
-    float width
-)
+    float width,
+    bool includeCollider)
     {
         Vector3 direction = end - start;
         float length = direction.magnitude;
@@ -398,7 +400,7 @@ public class ConstellationGenerator : MonoBehaviour
         // Prevent the connection rods from interfering with hand grabbing.
         Collider cylinderCollider = cylinder.GetComponent<Collider>();
 
-        if (cylinderCollider != null)
+        if (!includeCollider && cylinderCollider != null)
         {
             if (Application.isPlaying)
             {

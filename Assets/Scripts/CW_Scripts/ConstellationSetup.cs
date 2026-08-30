@@ -177,7 +177,8 @@ public sealed class ConstellationSetup : MonoBehaviour
                     0f
                 ),
                 skyAngularScale,
-                skyDepthScale
+                skyDepthScale,
+                false
             );
 
         BuildStarLookup(
