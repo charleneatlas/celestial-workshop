@@ -26814,7 +26814,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7665534328767522528, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
       propertyPath: m_Name
-      value: Mini Constellation Pivot ARCBALL GRAB
+      value: Mini Constellation Pivot GIMBAL GRAB
       objectReference: {fileID: 0}
     - target: {fileID: 7665534328767522528, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
       propertyPath: m_Layer
@@ -90244,7 +90244,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7139472689391087741, guid: c157287ee188ff24e9182ea09eb5316b, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1953331102}
   m_SourcePrefab: {fileID: 100100000, guid: c157287ee188ff24e9182ea09eb5316b, type: 3}
 --- !u!1 &883578954
 GameObject:
@@ -163776,7 +163779,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7665534328767522528, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
       propertyPath: m_Name
-      value: Mini Constellation Pivot ARCBALL GRAB - BACKUP
+      value: Mini Constellation Pivot ARCBALL GRAB
       objectReference: {fileID: 0}
     - target: {fileID: 7665534328767522528, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
       propertyPath: m_Layer
@@ -174197,6 +174200,33 @@ Transform:
   - {fileID: 579304274}
   m_Father: {fileID: 786687177}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1953331098 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7139472689391087741, guid: c157287ee188ff24e9182ea09eb5316b, type: 3}
+  m_PrefabInstance: {fileID: 882653177}
+  m_PrefabAsset: {fileID: 0}
+--- !u!64 &1953331102
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1953331098}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 7807538432633192378, guid: 288e7e3269df81242897312eec673812, type: 3}
 --- !u!1 &1956758573
 GameObject:
   m_ObjectHideFlags: 0

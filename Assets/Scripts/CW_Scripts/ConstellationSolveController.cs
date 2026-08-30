@@ -165,13 +165,14 @@ public class ConstellationSolveController : MonoBehaviour
             solvedVisual.SetActive(false);
         }
 
+        // Restore visual state after resetting.
+        onReset?.Invoke();
+
+        // Randomize rotation of constellation to be ready for next game loop / solve
         if (tableArcballTransformer != null)
         {
             tableArcballTransformer.RandomizeRotation();
         }
-
-        // Restore visual state after resetting.
-        onReset?.Invoke();
 
         Debug.Log("Constellation reset.");
     }

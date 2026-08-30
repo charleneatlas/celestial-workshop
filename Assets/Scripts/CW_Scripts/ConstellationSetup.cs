@@ -83,6 +83,11 @@ public sealed class ConstellationSetup : MonoBehaviour
     private bool isSettling;
 
     private Quaternion canonicalMiniRelativeRotation;
+
+    private Rigidbody miniConstellationRigidbody;
+
+    private Vector3 miniConstellationStartLocalPosition;
+
     private bool isInitialized;
 
     private readonly Dictionary<string, List<GeneratedConstellationStar>>
@@ -114,6 +119,9 @@ public sealed class ConstellationSetup : MonoBehaviour
             skyVisualContainer,
             skyConstellationPivot
         );
+
+        // Save the tabletop constellation's position for reset.
+        miniConstellationStartLocalPosition = miniConstellationPivot.localPosition;
 
         // Preserve the sky constellation's generated solved orientation.
         Quaternion generatedSolvedSkyRotation =
@@ -235,6 +243,21 @@ public sealed class ConstellationSetup : MonoBehaviour
             );
 
             isValid = false;
+        }
+        else
+        {
+            miniConstellationRigidbody =
+                miniConstellationPivot.GetComponent<Rigidbody>();
+
+            if (miniConstellationRigidbody == null)
+            {
+                Debug.LogError(
+                    "Mini Constellation Pivot is missing its Rigidbody.",
+                    this
+                );
+
+                isValid = false;
+            }
         }
 
         if (miniVisualContainer == null)
@@ -485,6 +508,14 @@ public sealed class ConstellationSetup : MonoBehaviour
 
         CopyRotationToSky();
 
+        // The sky constellation is now placed and should no longer
+        // follow the tabletop constellation.
+        mirrorRotation = false;
+
+        // Release the tabletop constellation to physics.
+        miniConstellationRigidbody.useGravity = true;
+        miniConstellationRigidbody.isKinematic = false;
+
         isSettling = false;
     }
 
@@ -504,11 +535,18 @@ public sealed class ConstellationSetup : MonoBehaviour
     {
         gimbalRoot.SetActive(true);
 
-        // Later:
+        // reset Rigidbody state of mini constellation
+        miniConstellationRigidbody.useGravity = false;
+        miniConstellationRigidbody.isKinematic = true;
+
         // restore mini constellation position
-        // reset Rigidbody state
+        miniConstellationPivot.localPosition =
+            miniConstellationStartLocalPosition;
+
         // restore rotation mirroring
-        // reset solve VFX
+        mirrorRotation = true;
+
+        // Later: reset solve VFX
     }
 
     [ContextMenu("Snap To Canonical Solve")]
