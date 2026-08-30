@@ -73,6 +73,7 @@ public sealed class ConstellationSetup : MonoBehaviour
     [SerializeField]
     private ConstellationSolveController solveController;
 
+    private Quaternion canonicalMiniRelativeRotation;
     private bool isInitialized;
 
     private readonly Dictionary<string, List<GeneratedConstellationStar>>
@@ -105,9 +106,19 @@ public sealed class ConstellationSetup : MonoBehaviour
             skyConstellationPivot
         );
 
+        // Preserve the sky constellation's generated solved orientation.
+        Quaternion generatedSolvedSkyRotation =
+            skyConstellationPivot.rotation;
+
         // Take into account the perspective from which observer is viewing the sky constellation. 
         // Align sky rotation axes to view space so gimbal input maps intuitively in the sky.
         AlignSkyRotationReferenceToView();
+
+        // Determine the relative rotation that reproduces the original
+        // generated solved orientation in the new sky view-space frame.
+        canonicalMiniRelativeRotation =
+            Quaternion.Inverse(skyRotationReference.rotation) *
+            generatedSolvedSkyRotation;
 
         // Make the remote constellation immediately match
         // the randomized tabletop constellation.
@@ -424,6 +435,16 @@ public sealed class ConstellationSetup : MonoBehaviour
         }
 
         // Immediately make the sky match the newly randomized table rotation.
+        CopyRotationToSky();
+    }
+
+    [ContextMenu("Snap To Canonical Solve")]
+    private void SnapToCanonicalSolve()
+    {
+        miniConstellationPivot.rotation =
+            miniEarthReference.rotation *
+            canonicalMiniRelativeRotation;
+
         CopyRotationToSky();
     }
 }
