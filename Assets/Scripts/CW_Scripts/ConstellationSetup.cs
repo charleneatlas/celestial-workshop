@@ -105,6 +105,10 @@ public sealed class ConstellationSetup : MonoBehaviour
             skyConstellationPivot
         );
 
+        // Take into account the perspective from which observer is viewing the sky constellation. 
+        // Align sky rotation axes to view space so gimbal input maps intuitively in the sky.
+        AlignSkyRotationReferenceToView();
+
         // Make the remote constellation immediately match
         // the randomized tabletop constellation.
         CopyRotationToSky();
@@ -173,6 +177,20 @@ public sealed class ConstellationSetup : MonoBehaviour
         skyConstellationPivot.rotation =
             skyRotationReference.rotation *
             miniRelativeRotation;
+    }
+
+    private void AlignSkyRotationReferenceToView()
+    {
+        Vector3 viewDirection =
+            (skyConstellationPivot.position - skyObserverReference.position)
+            .normalized;
+
+        Vector3 viewUp =
+            Vector3.ProjectOnPlane(Vector3.up, viewDirection)
+            .normalized;
+
+        skyRotationReference.rotation =
+            Quaternion.LookRotation(viewDirection, viewUp);
     }
 
     private bool ValidateReferences()
