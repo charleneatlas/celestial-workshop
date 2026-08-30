@@ -70,8 +70,14 @@ public sealed class ConstellationSetup : MonoBehaviour
     [SerializeField]
     private ConstellationGenerator.AppearanceSettings skyConstellationAppearance;
 
+    [Header("Solve")]
     [SerializeField]
     private ConstellationSolveController solveController;
+
+    [SerializeField]
+    private float solveSettleDuration = 0.6f; // seconds
+
+    private bool isSettling;
 
     private Quaternion canonicalMiniRelativeRotation;
     private bool isInitialized;
@@ -438,6 +444,47 @@ public sealed class ConstellationSetup : MonoBehaviour
         CopyRotationToSky();
     }
 
+    private IEnumerator SettleToCanonicalSolve()
+    {
+        isSettling = true;
+
+        Quaternion startRotation =
+            miniConstellationPivot.rotation;
+
+        Quaternion targetRotation =
+            miniEarthReference.rotation *
+            canonicalMiniRelativeRotation;
+
+        float elapsed = 0f;
+
+        while (elapsed < solveSettleDuration)
+        {
+            elapsed += Time.deltaTime;
+
+            float t =
+                Mathf.Clamp01(elapsed / solveSettleDuration);
+
+            // Smooth ease-in/ease-out.
+            t = t * t * (3f - 2f * t);
+
+            miniConstellationPivot.rotation =
+                Quaternion.Slerp(
+                    startRotation,
+                    targetRotation,
+                    t
+                );
+
+            yield return null;
+        }
+
+        miniConstellationPivot.rotation =
+            targetRotation;
+
+        CopyRotationToSky();
+
+        isSettling = false;
+    }
+
     [ContextMenu("Snap To Canonical Solve")]
     private void SnapToCanonicalSolve()
     {
@@ -446,5 +493,16 @@ public sealed class ConstellationSetup : MonoBehaviour
             canonicalMiniRelativeRotation;
 
         CopyRotationToSky();
+    }
+
+    [ContextMenu("Test Canonical Settle")]
+    private void TestCanonicalSettle()
+    {
+        if (!Application.isPlaying || isSettling)
+        {
+            return;
+        }
+
+        StartCoroutine(SettleToCanonicalSolve());
     }
 }
