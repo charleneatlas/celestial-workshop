@@ -485,6 +485,14 @@ public sealed class ConstellationSetup : MonoBehaviour
         isSettling = false;
     }
 
+    public void HandleSolved()
+    {
+        if (!isSettling)
+        {
+            StartCoroutine(SettleToCanonicalSolve());
+        }
+    }
+
     [ContextMenu("Snap To Canonical Solve")]
     private void SnapToCanonicalSolve()
     {
