@@ -23,6 +23,9 @@ public sealed class ConstellationSetup : MonoBehaviour
     [SerializeField]
     private Transform miniVisualContainer;
 
+    [SerializeField]
+    private GameObject gimbalRoot;
+
     [Header("Sky Constellation")]
     [SerializeField]
     private Transform skyConstellationPivot;
@@ -489,8 +492,23 @@ public sealed class ConstellationSetup : MonoBehaviour
     {
         if (!isSettling)
         {
+            //Debug.Log($"Hiding gimbal: {gimbalRoot.name}", this);
+            gimbalRoot.SetActive(false);
+            //Debug.Log($"Gimbal activeSelf after hide: {gimbalRoot.activeSelf}", this);
+
             StartCoroutine(SettleToCanonicalSolve());
         }
+    }
+
+    public void HandleReset()
+    {
+        gimbalRoot.SetActive(true);
+
+        // Later:
+        // restore mini constellation position
+        // reset Rigidbody state
+        // restore rotation mirroring
+        // reset solve VFX
     }
 
     [ContextMenu("Snap To Canonical Solve")]

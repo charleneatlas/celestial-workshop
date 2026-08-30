@@ -16038,15 +16038,15 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 62762970}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0, y: 0.1703, z: -0.0748}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.17029959, z: -0.074800864}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1897861611}
   - {fileID: 1359514601}
   - {fileID: 738549082}
-  m_Father: {fileID: 1904326628}
+  m_Father: {fileID: 1681033681}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &62773193
 PrefabInstance:
@@ -37010,6 +37010,18 @@ MonoBehaviour:
       - m_Target: {fileID: 242918476}
         m_TargetAssemblyTypeName: SkyConstellationHighlightController, Assembly-CSharp
         m_MethodName: SetNormal
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 832476889}
+        m_TargetAssemblyTypeName: ConstellationSetup, Assembly-CSharp
+        m_MethodName: HandleReset
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -59683,13 +59695,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 466232761}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: 0.5}
-  m_LocalPosition: {x: 0, y: 0.3723, z: -0.0748}
+  m_LocalRotation: {x: 0.50000006, y: 0.5, z: -0.5, w: 0.50000006}
+  m_LocalPosition: {x: 0, y: 0.3723005, z: -0.074800864}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 167700741}
-  m_Father: {fileID: 1904326628}
+  m_Father: {fileID: 1681033681}
   m_LocalEulerAnglesHint: {x: 90, y: 90, z: 0}
 --- !u!114 &466232763
 MonoBehaviour:
@@ -88067,6 +88079,7 @@ MonoBehaviour:
   skyRotationReference: {fileID: 1071834818}
   miniConstellationPivot: {fileID: 150452312}
   miniVisualContainer: {fileID: 150452317}
+  gimbalRoot: {fileID: 1681033680}
   skyConstellationPivot: {fileID: 242918474}
   skyVisualContainer: {fileID: 106490063}
   skyObserverReference: {fileID: 412556933}
@@ -98405,13 +98418,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1043153108}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.17030025, z: -0.26809943}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.1703004, z: -0.2680979}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1945433538}
-  m_Father: {fileID: 1904326628}
+  m_Father: {fileID: 1681033681}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1043153110
 Rigidbody:
@@ -128481,13 +128494,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1426396557}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0.0211002, z: -0.0748}
+  m_LocalRotation: {x: 0.7071068, y: -0, z: -0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 0.02110044, z: -0.074800864}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 105176169}
-  m_Father: {fileID: 1904326628}
+  m_Father: {fileID: 1681033681}
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &1426396559
 MonoBehaviour:
@@ -142934,7 +142947,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1904326628}
+    m_TransformParent: {fileID: 1681033681}
     m_Modifications:
     - target: {fileID: 5646261449770922228, guid: 60b3563798ac75f4abeb8414f2fc9795, type: 3}
       propertyPath: m_Name
@@ -142946,27 +142959,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6841327965226614775, guid: 60b3563798ac75f4abeb8414f2fc9795, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.667
+      value: 1.6669999
       objectReference: {fileID: 0}
     - target: {fileID: 6841327965226614775, guid: 60b3563798ac75f4abeb8414f2fc9795, type: 3}
       propertyPath: m_LocalScale.y
-      value: 1.667
+      value: 1.6669999
       objectReference: {fileID: 0}
     - target: {fileID: 6841327965226614775, guid: 60b3563798ac75f4abeb8414f2fc9795, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.667
+      value: 1.6669999
       objectReference: {fileID: 0}
     - target: {fileID: 6841327965226614775, guid: 60b3563798ac75f4abeb8414f2fc9795, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.14
+      value: -0.13999984
       objectReference: {fileID: 0}
     - target: {fileID: 6841327965226614775, guid: 60b3563798ac75f4abeb8414f2fc9795, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.374
+      value: -1.3740002
       objectReference: {fileID: 0}
     - target: {fileID: 6841327965226614775, guid: 60b3563798ac75f4abeb8414f2fc9795, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.662
+      value: -0.6620003
       objectReference: {fileID: 0}
     - target: {fileID: 6841327965226614775, guid: 60b3563798ac75f4abeb8414f2fc9795, type: 3}
       propertyPath: m_LocalRotation.w
@@ -154545,6 +154558,42 @@ Transform:
   - {fileID: 953090261}
   m_Father: {fileID: 233311980}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1681033680
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1681033681}
+  m_Layer: 0
+  m_Name: Gimbal Root
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1681033681
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1681033680}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1546534316}
+  - {fileID: 1043153109}
+  - {fileID: 1426396558}
+  - {fileID: 466232762}
+  - {fileID: 62762971}
+  m_Father: {fileID: 1904326628}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1681627496 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7843222961528071403, guid: d977a91ede3020d48acc887216c8122e, type: 3}
@@ -164478,11 +164527,7 @@ Transform:
   - {fileID: 400025642}
   - {fileID: 345672504}
   - {fileID: 1042305275}
-  - {fileID: 1546534316}
-  - {fileID: 1043153109}
-  - {fileID: 1426396558}
-  - {fileID: 466232762}
-  - {fileID: 62762971}
+  - {fileID: 1681033681}
   m_Father: {fileID: 2098200690}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1906475439
