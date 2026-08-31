@@ -56,9 +56,28 @@ public sealed class ConstellationSetup : MonoBehaviour
     [Range(0.1f, 2f)]
     private float skyAngularScale = 0.6f;
 
+    [Header("Sky Constellation Appearance")]
+    [SerializeField]
+    private ConstellationGenerator.AppearanceSettings tableConstellationAppearance;
+
+    [SerializeField]
+    private ConstellationGenerator.AppearanceSettings skyConstellationAppearance;
+
     [Header("Sky Constellation Highlighting")]
     [SerializeField]
     private SkyConstellationHighlightController skyConstellationHighlightController;
+
+    [Header("Sky Stamp VFX")]
+    [SerializeField]
+    private Transform skyStampVisualContainer;
+
+    [SerializeField]
+    private ConstellationGenerator.AppearanceSettings skyStampAppearance;
+
+    [SerializeField]
+    private SkyStamp3DVFX skyStampVFX;
+
+    private GameObject skyStampGeneratedRoot;
 
     [Header("Runtime")]
     [SerializeField]
@@ -66,12 +85,6 @@ public sealed class ConstellationSetup : MonoBehaviour
 
     [SerializeField]
     private bool mirrorRotation = true;
-
-    [SerializeField]
-    private ConstellationGenerator.AppearanceSettings tableConstellationAppearance;
-
-    [SerializeField]
-    private ConstellationGenerator.AppearanceSettings skyConstellationAppearance;
 
     [Header("Solve")]
     [SerializeField]
@@ -119,6 +132,9 @@ public sealed class ConstellationSetup : MonoBehaviour
             skyVisualContainer,
             skyConstellationPivot
         );
+
+        // Create constellation copy used for VFX at solve
+        GenerateSkyStampConstellation();
 
         // Save the tabletop constellation's position for reset.
         miniConstellationStartLocalPosition = miniConstellationPivot.localPosition;
@@ -192,6 +208,30 @@ public sealed class ConstellationSetup : MonoBehaviour
             skyConstellationHighlightController.SetConstellation(
                 skyGeneratedRoot
             );
+        }
+    }
+
+    private void GenerateSkyStampConstellation()
+    {
+        skyStampGeneratedRoot =
+            constellationGenerator.GenerateConstellation(
+                skyStampVisualContainer,
+                skyStampAppearance,
+                skyObserverReference,
+                skyDistanceScale,
+                new Vector3(
+                    -skyElevationDegrees,
+                    skyAzimuthDegrees,
+                    0f
+                ),
+                skyAngularScale,
+                skyDepthScale,
+                false
+            );
+
+        if (skyStampVFX != null)
+        {
+            skyStampVFX.Initialize(skyStampGeneratedRoot);
         }
     }
 
@@ -504,8 +544,7 @@ public sealed class ConstellationSetup : MonoBehaviour
             yield return null;
         }
 
-        miniConstellationPivot.rotation =
-            targetRotation;
+        miniConstellationPivot.rotation = targetRotation;
 
         CopyRotationToSky();
 
@@ -513,7 +552,13 @@ public sealed class ConstellationSetup : MonoBehaviour
         // follow the tabletop constellation.
         mirrorRotation = false;
 
-        // Release the tabletop constellation to physics.
+        // Play celebratory VFX
+        if (skyStampVFX != null)
+        {
+            skyStampVFX.Play();
+        }
+
+        // Release the tabletop constellation to physics to allow to fall to tabletop.
         miniConstellationRigidbody.useGravity = true;
         miniConstellationRigidbody.isKinematic = false;
 
@@ -547,7 +592,11 @@ public sealed class ConstellationSetup : MonoBehaviour
         // restore rotation mirroring
         mirrorRotation = true;
 
-        // Later: reset solve VFX
+        // Reset solve VFX
+        if (skyStampVFX != null)
+        {
+            skyStampVFX.ResetVFX();
+        }
     }
 
     [ContextMenu("Snap To Canonical Solve")]

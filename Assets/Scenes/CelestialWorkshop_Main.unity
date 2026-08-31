@@ -17799,7 +17799,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: -0.9}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
-  m_Children: []
+  m_Children:
+  - {fileID: 1711656386}
   m_Father: {fileID: 242918474}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &107158704
@@ -88088,9 +88089,6 @@ MonoBehaviour:
   skyElevationDegrees: 30
   skyAzimuthDegrees: 0
   skyAngularScale: 0.3
-  skyConstellationHighlightController: {fileID: 242918476}
-  generateOnStart: 1
-  mirrorRotation: 1
   tableConstellationAppearance:
     starMaterial: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
     starHighlightMaterial: {fileID: 2100000, guid: a65593b51c627a049b345cab7c363abb, type: 2}
@@ -88103,6 +88101,17 @@ MonoBehaviour:
     lineMaterial: {fileID: 2100000, guid: 61961a56c9803d54da89e6942382e482, type: 2}
     starDiameter: 5
     lineWidth: 1
+  skyConstellationHighlightController: {fileID: 242918476}
+  skyStampVisualContainer: {fileID: 1711656386}
+  skyStampAppearance:
+    starMaterial: {fileID: 2100000, guid: 0efec7491e1dd194b9a0b964123166f7, type: 2}
+    starHighlightMaterial: {fileID: 2100000, guid: dd639d35abaa7b348bd4ccf96573dded, type: 2}
+    lineMaterial: {fileID: 2100000, guid: 0efec7491e1dd194b9a0b964123166f7, type: 2}
+    starDiameter: 5
+    lineWidth: 1
+  skyStampVFX: {fileID: 1711656387}
+  generateOnStart: 1
+  mirrorRotation: 1
   solveController: {fileID: 242918475}
   solveSettleDuration: 0.6
 --- !u!4 &832476890
@@ -156750,6 +156759,55 @@ Transform:
   - {fileID: 1330569203}
   m_Father: {fileID: 1746597619}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1711656385
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1711656386}
+  - component: {fileID: 1711656387}
+  m_Layer: 0
+  m_Name: Sky Stamp Visual Container
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1711656386
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711656385}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 106490063}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1711656387
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1711656385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edd62d7e746e6e34c9266964da81d76e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: '::'
+  impactDuration: 5
+  holdDuration: 1
+  disappearDuration: 5
+  starImpactScale: 2.5
+  lineImpactThickness: 3.5
 --- !u!1 &1711840148
 GameObject:
   m_ObjectHideFlags: 0
