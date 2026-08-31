@@ -26726,7 +26726,19 @@ PrefabInstance:
       value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 4289706931025778868, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289706931025778868, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
       propertyPath: m_Constraints
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289706931025778868, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
+      propertyPath: m_Interpolate
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4289706931025778868, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
+      propertyPath: m_CollisionDetection
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5825366166222829643, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
@@ -26752,7 +26764,7 @@ PrefabInstance:
     - target: {fileID: 6418746134552452932, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
       propertyPath: _oneGrabTransformer
       value: 
-      objectReference: {fileID: 34321733}
+      objectReference: {fileID: 0}
     - target: {fileID: 7001587203448011866, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -88081,6 +88093,7 @@ MonoBehaviour:
   miniConstellationPivot: {fileID: 150452312}
   miniVisualContainer: {fileID: 150452317}
   gimbalRoot: {fileID: 1681033680}
+  handGrabInteractable: {fileID: 2025995556}
   skyConstellationPivot: {fileID: 242918474}
   skyVisualContainer: {fileID: 106490063}
   skyObserverReference: {fileID: 412556933}
@@ -178113,6 +178126,11 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2025995556 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 493681580, guid: 08bd653119f9db54fb91155eb09c459a, type: 3}
+  m_PrefabInstance: {fileID: 150452311}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2026681910
 GameObject:
   m_ObjectHideFlags: 0

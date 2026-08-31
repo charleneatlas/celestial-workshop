@@ -26,6 +26,9 @@ public sealed class ConstellationSetup : MonoBehaviour
     [SerializeField]
     private GameObject gimbalRoot;
 
+    [SerializeField]
+    private GameObject handGrabInteractable;
+
     [Header("Sky Constellation")]
     [SerializeField]
     private Transform skyConstellationPivot;
@@ -311,6 +314,16 @@ public sealed class ConstellationSetup : MonoBehaviour
             isValid = false;
         }
 
+        if (handGrabInteractable == null)
+        {
+            Debug.LogError(
+                "ConstellationSetup is missing the Hand Grab Interactable.",
+                this
+            );
+
+            isValid = false;
+        }
+
         if (skyConstellationPivot == null)
         {
             Debug.LogError(
@@ -562,6 +575,9 @@ public sealed class ConstellationSetup : MonoBehaviour
         miniConstellationRigidbody.useGravity = true;
         miniConstellationRigidbody.isKinematic = false;
 
+        // Turn on the tabletop constellation's HandGrabInteractable to allow it to be grabbed by player
+        handGrabInteractable.SetActive(true);
+
         isSettling = false;
     }
 
@@ -579,15 +595,18 @@ public sealed class ConstellationSetup : MonoBehaviour
 
     public void HandleReset()
     {
+        // Turn the gimbal back on
         gimbalRoot.SetActive(true);
+
+        // Turn back off the ability to grab mini constellation
+        handGrabInteractable.SetActive(false);
 
         // reset Rigidbody state of mini constellation
         miniConstellationRigidbody.useGravity = false;
         miniConstellationRigidbody.isKinematic = true;
 
         // restore mini constellation position
-        miniConstellationPivot.localPosition =
-            miniConstellationStartLocalPosition;
+        miniConstellationPivot.localPosition = miniConstellationStartLocalPosition;
 
         // restore rotation mirroring
         mirrorRotation = true;
