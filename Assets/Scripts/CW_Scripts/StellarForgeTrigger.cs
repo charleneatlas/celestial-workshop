@@ -13,6 +13,9 @@ public sealed class StellarForgeTrigger : MonoBehaviour
     [SerializeField]
     private ParticleSystem impactParticles;
 
+    [SerializeField]
+    private AudioSource forgeAudioSource;
+
     [Header("Detection")]
     [Tooltip("How close the constellation center must be horizontally to the forge center.")]
     [SerializeField]
@@ -105,6 +108,11 @@ public sealed class StellarForgeTrigger : MonoBehaviour
             );
 
             impactParticles.Play(true);
+        }
+
+        if (forgeAudioSource != null)
+        {
+            forgeAudioSource.Play();
         }
 
         StartCoroutine(ResetAfterDelay());
