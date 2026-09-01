@@ -621,7 +621,10 @@ public sealed class ConstellationSetup : MonoBehaviour
         }
 
         // Reset stellar forge
-        stellarForgeTrigger.ResetTrigger();
+        if (stellarForgeTrigger != null)
+        {
+            stellarForgeTrigger.ResetTrigger();
+        }
     }
 
     [ContextMenu("Snap To Canonical Solve")]
