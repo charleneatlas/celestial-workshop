@@ -96,6 +96,9 @@ public sealed class ConstellationSetup : MonoBehaviour
     [SerializeField]
     private float solveSettleDuration = 0.6f; // seconds
 
+    [SerializeField]
+    private StellarForgeTrigger stellarForgeTrigger;
+
     private bool isSettling;
 
     private Quaternion canonicalMiniRelativeRotation;
@@ -616,6 +619,9 @@ public sealed class ConstellationSetup : MonoBehaviour
         {
             skyStampVFX.ResetVFX();
         }
+
+        // Reset stellar forge
+        stellarForgeTrigger.ResetTrigger();
     }
 
     [ContextMenu("Snap To Canonical Solve")]
