@@ -17,7 +17,7 @@
   </application>
   <uses-feature android:name="android.hardware.vr.headtracking" android:version="1" android:required="true" />
   <horizonos:uses-horizonos-sdk horizonos:minSdkVersion="60" horizonos:targetSdkVersion="207" />
-  <uses-feature android:name="oculus.software.handtracking" android:required="false" />
+  <uses-feature android:name="oculus.software.handtracking" android:required="true" />
   <uses-permission android:name="com.oculus.permission.HAND_TRACKING" />
   <uses-permission android:name="com.oculus.permission.USE_ANCHOR_API" />
   <uses-feature android:name="com.oculus.feature.PASSTHROUGH" android:required="false" />
