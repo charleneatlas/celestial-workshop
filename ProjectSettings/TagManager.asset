@@ -29,6 +29,14 @@ TagManager:
   - Target
   - Grabbable
   - Star
+  - QDSUIBackplate
+  - PassThroughButton
+  - PassThrough
+  - Locomotion
+  - LocoButton
+  - LocoText
+  - QDSUILineDrawing
+  - QDSUIToggleThumbnail
   layers:
   - Default
   - TransparentFX
