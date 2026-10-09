@@ -15448,6 +15448,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MobilePine_6_1 (34)
       objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -17826,6 +17830,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MobilePine_6_1 (36)
       objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -18320,7 +18328,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 106490063}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sky Visual Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19057,7 +19065,7 @@ GameObject:
   - component: {fileID: 109669872}
   - component: {fileID: 109669871}
   - component: {fileID: 109669870}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19375,7 +19383,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 112258612}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sky Coordinate Frame
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24859,6 +24867,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MobilePine_6_1 (31)
       objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -27106,7 +27118,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 143205145}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: ConstellationName_RevealOnSolve
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -35110,6 +35122,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MobilePine_6_1 (39)
       objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -38408,7 +38424,7 @@ GameObject:
   - component: {fileID: 242918474}
   - component: {fileID: 242918475}
   - component: {fileID: 242918476}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sky Constellation Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -47686,6 +47702,10 @@ PrefabInstance:
     - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
       propertyPath: m_Name
       value: MobilePine_6_1 (27)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -61627,6 +61647,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MobilePine_6_10 (16)
       objectReference: {fileID: 0}
+    - target: {fileID: 415666432440484722, guid: cffc9ca9faf76514591a49dc7e494b28, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -61746,7 +61770,7 @@ GameObject:
   m_Component:
   - component: {fileID: 427335956}
   - component: {fileID: 427335957}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: SolveAudio
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61932,6 +61956,10 @@ PrefabInstance:
     - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
       propertyPath: m_Name
       value: MobilePine_6_1 (28)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -65384,6 +65412,10 @@ PrefabInstance:
     - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
       propertyPath: m_Name
       value: MobilePine_6_1 (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -105797,6 +105829,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MobilePine_6_1 (21)
       objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -107723,7 +107759,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 830396144}
-  m_Layer: 4
+  m_Layer: 6
   m_Name: SolveDirection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109057,7 +109093,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 857639853}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Front Trees TinyWorld
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109115,7 +109151,7 @@ GameObject:
   - component: {fileID: 858176893}
   - component: {fileID: 858176895}
   - component: {fileID: 858176894}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114146,6 +114182,10 @@ PrefabInstance:
     - target: {fileID: 415666432440484722, guid: cffc9ca9faf76514591a49dc7e494b28, type: 3}
       propertyPath: m_Name
       value: MobilePine_6_10 (18)
+      objectReference: {fileID: 0}
+    - target: {fileID: 415666432440484722, guid: cffc9ca9faf76514591a49dc7e494b28, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -124892,6 +124932,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MobilePine_6_1 (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -130079,6 +130123,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MobilePine_6_1 (16)
       objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -132818,6 +132866,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MobilePine_6_10 (15)
       objectReference: {fileID: 0}
+    - target: {fileID: 415666432440484722, guid: cffc9ca9faf76514591a49dc7e494b28, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -135150,6 +135202,96 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &1255350889
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1255350890}
+  - component: {fileID: 1255350892}
+  - component: {fileID: 1255350891}
+  m_Layer: 0
+  m_Name: Mask
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1255350890
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1255350889}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 8.352, y: 8.352, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1735069868}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &1255350891
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1255350889}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: f3db4dabc90a30d44aabf748827376e1, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1255350892
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1255350889}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1256042821
 GameObject:
   m_ObjectHideFlags: 0
@@ -139909,6 +140051,10 @@ PrefabInstance:
     - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
       propertyPath: m_Name
       value: MobilePine_6_1 (38)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -148577,6 +148723,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MobilePine_6_10 (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 415666432440484722, guid: cffc9ca9faf76514591a49dc7e494b28, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -150435,6 +150585,10 @@ PrefabInstance:
     - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
       propertyPath: m_Name
       value: MobilePine_6_1 (45)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -152354,6 +152508,10 @@ PrefabInstance:
     - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
       propertyPath: m_Name
       value: MobilePine_6_1 (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -165604,6 +165762,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MobilePine_6_1 (6)
       objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -172263,7 +172425,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1535469582}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Audio
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -173141,6 +173303,10 @@ PrefabInstance:
     - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
       propertyPath: m_Name
       value: MobilePine_6_1 (20)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -181020,6 +181186,10 @@ PrefabInstance:
     - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
       propertyPath: m_Name
       value: MobilePine_6_1 (46)
+      objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -189331,6 +189501,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MobilePine_6_1 (30)
       objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -192455,7 +192629,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1711656386}
   - component: {fileID: 1711656387}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Sky Stamp Visual Container
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -192935,6 +193109,63 @@ Transform:
   - {fileID: 497208755}
   - {fileID: 1916266004}
   m_Father: {fileID: 714619331}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1735069866
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1735069868}
+  - component: {fileID: 1735069867}
+  m_Layer: 0
+  m_Name: Circular Window
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1735069867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735069866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 704311e76527af642a49af78d4e94e89, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CircularWindow
+  radius: 4.176
+  maskQuad: {fileID: 1255350890}
+  rimRenderer: {fileID: 1967395739}
+  rimOversize: 1.2
+  maskedRoots:
+  - {fileID: 112258612}
+  - {fileID: 109669873}
+  surround: 0
+  targetCamera: {fileID: 1712144914577857069}
+  windowSky: {fileID: 0}
+  passthroughLayer: {fileID: 0}
+--- !u!4 &1735069868
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735069866}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.10491941, y: -0.028461497, z: -0.0030039805, w: 0.99406886}
+  m_LocalPosition: {x: 3.551, y: 5.744, z: 35.97}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1255350890}
+  - {fileID: 1967395741}
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1736001609
 GameObject:
@@ -201896,6 +202127,10 @@ PrefabInstance:
     - target: {fileID: 415666432440484722, guid: cffc9ca9faf76514591a49dc7e494b28, type: 3}
       propertyPath: m_Name
       value: MobilePine_6_10 (12)
+      objectReference: {fileID: 0}
+    - target: {fileID: 415666432440484722, guid: cffc9ca9faf76514591a49dc7e494b28, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -220049,6 +220284,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: MobilePine_6_1 (42)
       objectReference: {fileID: 0}
+    - target: {fileID: 2568073935145454126, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -225986,6 +226225,10 @@ PrefabInstance:
     - target: {fileID: 415666432440484722, guid: cffc9ca9faf76514591a49dc7e494b28, type: 3}
       propertyPath: m_Name
       value: MobilePine_6_10 (21)
+      objectReference: {fileID: 0}
+    - target: {fileID: 415666432440484722, guid: cffc9ca9faf76514591a49dc7e494b28, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -232079,6 +232322,96 @@ Transform:
   - {fileID: 1807792124}
   m_Father: {fileID: 484355856}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1967395738
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1967395741}
+  - component: {fileID: 1967395740}
+  - component: {fileID: 1967395739}
+  m_Layer: 0
+  m_Name: Rim
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!23 &1967395739
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967395738}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 0
+  m_ReflectionProbeUsage: 0
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: ffafbf1767146e54c88041804c9ecc30, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 1
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1967395740
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967395738}
+  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1967395741
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1967395738}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 10.022401, y: 10.022401, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1735069868}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1967407231
 GameObject:
   m_ObjectHideFlags: 0
@@ -237967,6 +238300,10 @@ PrefabInstance:
     - target: {fileID: 415666432440484722, guid: cffc9ca9faf76514591a49dc7e494b28, type: 3}
       propertyPath: m_Name
       value: MobilePine_6_10
+      objectReference: {fileID: 0}
+    - target: {fileID: 415666432440484722, guid: cffc9ca9faf76514591a49dc7e494b28, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -245344,6 +245681,11 @@ MonoBehaviour:
 --- !u!4 &1712144914577857068 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6056091969224677600, guid: 30bd24baaa7bbf04da2294539529d9c1, type: 3}
+  m_PrefabInstance: {fileID: 1712144914577857065}
+  m_PrefabAsset: {fileID: 0}
+--- !u!20 &1712144914577857069 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 8983956804486770163, guid: 30bd24baaa7bbf04da2294539529d9c1, type: 3}
   m_PrefabInstance: {fileID: 1712144914577857065}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &1712144914577857070 stripped
@@ -264646,3 +264988,4 @@ SceneRoots:
   - {fileID: 2098200690}
   - {fileID: 654648133}
   - {fileID: 109669873}
+  - {fileID: 1735069868}
