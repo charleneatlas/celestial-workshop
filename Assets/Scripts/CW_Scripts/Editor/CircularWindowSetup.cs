@@ -25,6 +25,10 @@ public static class CircularWindowSetup
     private const string MaskMaterialPath = "Assets/Materials/CW_Materials/WindowStencilMask.mat";
     private const string RimMaterialPath = "Assets/Materials/CW_Materials/WindowRim.mat";
 
+    private const string PunchOutObjectName = "Passthrough Punch-Out";
+    private const string PunchOutShaderName = "CelestialWorkshop/PassthroughPunchOut";
+    private const string PunchOutMaterialPath = "Assets/Materials/CW_Materials/PassthroughPunchOut.mat";
+
     private static readonly string[] RendererPaths =
     {
         "Assets/Settings/Mobile_Renderer.asset",
@@ -71,6 +75,7 @@ public static class CircularWindowSetup
                 }
             }
 
+            RemovePassthrough(window);
             Undo.DestroyObjectImmediate(window.gameObject);
         }
 
@@ -142,6 +147,99 @@ public static class CircularWindowSetup
 
         Selection.activeGameObject = window.gameObject;
         return window;
+    }
+
+    [MenuItem(MenuRoot + "Setup Passthrough")]
+    private static void SetupPassthroughMenu()
+    {
+        SetupPassthrough();
+    }
+
+    /// <summary>
+    /// Adds what the Passthrough surround needs: the camera-centered punch-out
+    /// sphere and a disabled OVRPassthroughLayer on the camera rig, wired into
+    /// the CircularWindow. Leaves the surround on VRSky. Safe to re-run.
+    /// </summary>
+    public static bool SetupPassthrough()
+    {
+        CircularWindow window = Object.FindFirstObjectByType<CircularWindow>(FindObjectsInactive.Include);
+        if (window == null)
+        {
+            Debug.LogError("CircularWindow: run Setup first.");
+            return false;
+        }
+
+        var serialized = new SerializedObject(window);
+        var viewer = serialized.FindProperty("targetCamera").objectReferenceValue as Camera;
+        if (viewer == null)
+        {
+            viewer = Camera.main;
+            serialized.FindProperty("targetCamera").objectReferenceValue = viewer;
+        }
+
+        var rig = Object.FindFirstObjectByType<OVRCameraRig>(FindObjectsInactive.Include);
+        if (viewer == null || rig == null)
+        {
+            Debug.LogError($"CircularWindow: missing camera ({viewer != null}) or OVRCameraRig ({rig != null}).");
+            return false;
+        }
+
+        Material punchOutMaterial = EnsureMaterial(PunchOutMaterialPath, PunchOutShaderName);
+        if (punchOutMaterial == null)
+        {
+            return false;
+        }
+
+        SerializedProperty punchOutProperty = serialized.FindProperty("punchOut");
+        var punchOut = punchOutProperty.objectReferenceValue as GameObject;
+        if (punchOut == null)
+        {
+            punchOut = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            punchOut.name = PunchOutObjectName;
+            Object.DestroyImmediate(punchOut.GetComponent<Collider>());
+            punchOut.transform.SetParent(viewer.transform, false);
+            ConfigureEffectRenderer(punchOut.GetComponent<MeshRenderer>(), punchOutMaterial);
+            punchOut.SetActive(false);
+            Undo.RegisterCreatedObjectUndo(punchOut, "Create Passthrough Punch-Out");
+            punchOutProperty.objectReferenceValue = punchOut;
+        }
+
+        SerializedProperty layerProperty = serialized.FindProperty("passthroughLayer");
+        var passthroughLayer = layerProperty.objectReferenceValue as OVRPassthroughLayer;
+        if (passthroughLayer == null)
+        {
+            passthroughLayer = rig.GetComponent<OVRPassthroughLayer>();
+            if (passthroughLayer == null)
+            {
+                passthroughLayer = Undo.AddComponent<OVRPassthroughLayer>(rig.gameObject);
+            }
+
+            passthroughLayer.enabled = false;
+            layerProperty.objectReferenceValue = passthroughLayer;
+        }
+
+        serialized.ApplyModifiedProperties();
+        EditorUtility.SetDirty(window);
+        Debug.Log(
+            "CircularWindow: passthrough ready. Set Surround to Passthrough, or press P in Play mode to toggle.",
+            window
+        );
+        return true;
+    }
+
+    private static void RemovePassthrough(CircularWindow window)
+    {
+        var serialized = new SerializedObject(window);
+
+        if (serialized.FindProperty("punchOut").objectReferenceValue is GameObject punchOut)
+        {
+            Undo.DestroyObjectImmediate(punchOut);
+        }
+
+        if (serialized.FindProperty("passthroughLayer").objectReferenceValue is OVRPassthroughLayer passthroughLayer)
+        {
+            Undo.DestroyObjectImmediate(passthroughLayer);
+        }
     }
 
     private static int EnsureLayer()
@@ -320,14 +418,17 @@ public static class CircularWindowSetup
         quad.name = name;
         Object.DestroyImmediate(quad.GetComponent<Collider>());
         quad.transform.SetParent(parent, false);
-
-        var quadRenderer = quad.GetComponent<MeshRenderer>();
-        quadRenderer.sharedMaterial = material;
-        quadRenderer.shadowCastingMode = ShadowCastingMode.Off;
-        quadRenderer.receiveShadows = false;
-        quadRenderer.lightProbeUsage = LightProbeUsage.Off;
-        quadRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+        ConfigureEffectRenderer(quad.GetComponent<MeshRenderer>(), material);
         return quad;
+    }
+
+    private static void ConfigureEffectRenderer(MeshRenderer effectRenderer, Material material)
+    {
+        effectRenderer.sharedMaterial = material;
+        effectRenderer.shadowCastingMode = ShadowCastingMode.Off;
+        effectRenderer.receiveShadows = false;
+        effectRenderer.lightProbeUsage = LightProbeUsage.Off;
+        effectRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
     }
 
     private static void AssignTargets(CircularWindow window, IReadOnlyList<Transform> targets, int layer)

@@ -1,11 +1,15 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// World-space circular window. A stencil disc (Mask) marks where masked
 /// content may draw; everything under Masked Roots is kept on the
 /// WindowMasked layer, which the URP renderers only draw where the stencil
 /// is set. A soft rim quad covers the hard stencil edge.
+/// Surround switches what's outside the window: the VR skybox, or
+/// passthrough (a punch-out clears the sky outside the window to transparent
+/// over the passthrough underlay).
 /// </summary>
 [ExecuteAlways]
 public sealed class CircularWindow : MonoBehaviour
@@ -43,25 +47,31 @@ public sealed class CircularWindow : MonoBehaviour
     [SerializeField]
     private Surround surround = Surround.VRSky;
 
-    [Tooltip("Camera whose background changes with the surround mode.")]
+    [Tooltip("Viewer camera (CenterEyeAnchor). Used for fitting and to size the passthrough punch-out.")]
     [SerializeField]
     private Camera targetCamera;
 
-    [Tooltip("Optional sky drawn only inside the window (on the WindowMasked layer) for passthrough mode.")]
+    [Tooltip("Camera-centered sphere that clears the sky outside the window to transparent in passthrough mode.")]
     [SerializeField]
-    private GameObject windowSky;
+    private GameObject punchOut;
 
-    [Tooltip("Optional passthrough component (e.g. OVRPassthroughLayer) enabled in passthrough mode.")]
+    [Tooltip("Passthrough underlay enabled in passthrough mode.")]
     [SerializeField]
-    private Behaviour passthroughLayer;
+    private OVRPassthroughLayer passthroughLayer;
+
+    [Tooltip("Play mode key that flips between VR sky and passthrough (Editor / Link testing).")]
+    [SerializeField]
+    private Key toggleSurroundKey = Key.P;
+
+    // Punch-out sphere radius as a fraction of the camera's far clip plane:
+    // behind all content, in front of the far-plane skybox.
+    private const float PunchOutFarClipFraction = 0.9f;
 
     private static readonly int RimRadiusId = Shader.PropertyToID("_Radius");
 
     private int maskedLayer = -1;
     private MaterialPropertyBlock rimProperties;
-    private CameraClearFlags vrSkyClearFlags = CameraClearFlags.Skybox;
-    private Color vrSkyBackground;
-    private bool cameraStateCaptured;
+    private bool surroundDirty;
 
     public float Radius
     {
@@ -74,6 +84,8 @@ public sealed class CircularWindow : MonoBehaviour
     }
 
     public IReadOnlyList<Transform> MaskedRoots => maskedRoots;
+
+    public Surround CurrentSurround => surround;
 
     private void OnEnable()
     {
@@ -95,9 +107,42 @@ public sealed class CircularWindow : MonoBehaviour
     {
         ApplyShape();
 
-        if (isActiveAndEnabled)
+        // SetActive isn't allowed during OnValidate; apply on the next Update.
+        surroundDirty = true;
+    }
+
+    private void Update()
+    {
+        if (surroundDirty)
         {
+            surroundDirty = false;
             ApplySurround();
+        }
+
+        if (!Application.isPlaying)
+        {
+            return;
+        }
+
+        // OVRManager may start after this component, so keep it in sync
+        // rather than setting it once. Only at runtime, so the scene's saved
+        // setting stays off.
+        bool passthrough = surround == Surround.Passthrough;
+        if (OVRManager.instance != null && OVRManager.instance.isInsightPassthroughEnabled != passthrough)
+        {
+            OVRManager.instance.isInsightPassthroughEnabled = passthrough;
+        }
+
+        if (toggleSurroundKey == Key.None)
+        {
+            return;
+        }
+
+        Keyboard keyboard = Keyboard.current;
+        if (keyboard != null && keyboard[toggleSurroundKey].wasPressedThisFrame)
+        {
+            SetSurround(surround == Surround.VRSky ? Surround.Passthrough : Surround.VRSky);
+            Debug.Log($"CircularWindow: surround -> {surround}", this);
         }
     }
 
@@ -248,44 +293,28 @@ public sealed class CircularWindow : MonoBehaviour
 
     private void ApplySurround()
     {
+        // The camera keeps its skybox in both modes. In passthrough mode the
+        // punch-out clears the sky outside the window to transparent, so the
+        // sky inside the window is exactly the VR one.
         bool passthrough = surround == Surround.Passthrough;
 
-        if (windowSky != null)
+        if (punchOut != null)
         {
-            windowSky.SetActive(passthrough);
+            if (targetCamera != null)
+            {
+                float diameter = targetCamera.farClipPlane * PunchOutFarClipFraction * 2f;
+                punchOut.transform.localScale = Vector3.one * diameter;
+            }
+
+            if (punchOut.activeSelf != passthrough)
+            {
+                punchOut.SetActive(passthrough);
+            }
         }
 
         if (passthroughLayer != null)
         {
             passthroughLayer.enabled = passthrough;
-        }
-
-        if (targetCamera == null)
-        {
-            return;
-        }
-
-        if (!cameraStateCaptured && !passthrough)
-        {
-            vrSkyClearFlags = targetCamera.clearFlags;
-            vrSkyBackground = targetCamera.backgroundColor;
-            cameraStateCaptured = true;
-        }
-
-        if (passthrough)
-        {
-            targetCamera.clearFlags = CameraClearFlags.SolidColor;
-            targetCamera.backgroundColor = Color.clear;
-        }
-        else
-        {
-            // Without a captured state (e.g. scene saved in passthrough mode), fall back to the skybox.
-            targetCamera.clearFlags = cameraStateCaptured ? vrSkyClearFlags : CameraClearFlags.Skybox;
-
-            if (cameraStateCaptured)
-            {
-                targetCamera.backgroundColor = vrSkyBackground;
-            }
         }
     }
 
