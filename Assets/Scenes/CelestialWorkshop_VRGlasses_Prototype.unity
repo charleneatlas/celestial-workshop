@@ -191267,7 +191267,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!23 &1696153063
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -193241,7 +193241,7 @@ MonoBehaviour:
   maskedRoots:
   - {fileID: 112258612}
   - {fileID: 109669873}
-  surround: 0
+  surround: 1
   targetCamera: {fileID: 1712144914577857069}
   punchOut: {fileID: 1696153062}
   passthroughLayer: {fileID: 1712144914577857071}
@@ -245808,7 +245808,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1712144914577857066}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 555725d48e9051a4bb6b8d45178c2fdd, type: 3}
   m_Name: 
