@@ -19071,7 +19071,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &109669870
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -135219,7 +135219,7 @@ GameObject:
   - component: {fileID: 1255350892}
   - component: {fileID: 1255350891}
   m_Layer: 0
-  m_Name: Mask
+  m_Name: Mask Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -135235,7 +135235,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 8.352, y: 8.352, z: 1}
+  m_LocalScale: {x: 0.44, y: 0.44, z: 0.44}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1735069868}
@@ -135265,7 +135265,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f3db4dabc90a30d44aabf748827376e1, type: 2}
+  - {fileID: 2100000, guid: 587aa0e781d247b4287fa95e9ac33dd0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -135296,7 +135296,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1255350889}
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &1256042821
 GameObject:
   m_ObjectHideFlags: 0
@@ -193215,8 +193215,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1735069868}
   - component: {fileID: 1735069867}
+  - component: {fileID: 1735069869}
   m_Layer: 0
-  m_Name: Circular Window
+  m_Name: Spherical Volume
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -193234,13 +193235,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 704311e76527af642a49af78d4e94e89, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CircularWindow
-  radius: 4.176
+  shape: 1
+  radius: 0.22
   maskQuad: {fileID: 1255350890}
   rimRenderer: {fileID: 1967395739}
   rimOversize: 1.2
   maskedRoots:
   - {fileID: 112258612}
-  - {fileID: 109669873}
   surround: 1
   targetCamera: {fileID: 1712144914577857069}
   punchOut: {fileID: 1696153062}
@@ -193254,8 +193255,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1735069866}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.10491941, y: -0.028461497, z: -0.0030039805, w: 0.99406886}
-  m_LocalPosition: {x: 3.551, y: 5.744, z: 35.97}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4, y: 4.95, z: 28.92}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -193263,6 +193264,32 @@ Transform:
   - {fileID: 1967395741}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1735069869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1735069866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 345a96817790fde45b9d818893933bdd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NearFieldSkyProxy
+  volume: {fileID: 1735069867}
+  viewer: {fileID: 1712144914577857069}
+  skyConstellationPivot: {fileID: 242918474}
+  skyObserverReference: {fileID: 412556933}
+  skyRoots:
+  - {fileID: 112258612}
+  - {fileID: 412556933}
+  - {fileID: 1071834818}
+  forwardDistance: 0.8
+  heightBelowEyes: 0.3
+  volumeRadius: 0.22
+  contentFill: 0.8
+  trackingTimeout: 3
+  settleDelay: 0.5
 --- !u!1 &1736001609
 GameObject:
   m_ObjectHideFlags: 0
@@ -232430,7 +232457,7 @@ GameObject:
   - component: {fileID: 1967395740}
   - component: {fileID: 1967395739}
   m_Layer: 0
-  m_Name: Rim
+  m_Name: Rim Sphere
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -232461,7 +232488,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ffafbf1767146e54c88041804c9ecc30, type: 2}
+  - {fileID: 2100000, guid: ee70509522d57b943889ea5ba8da58f3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -232492,7 +232519,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1967395738}
-  m_Mesh: {fileID: 10210, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!4 &1967395741
 Transform:
   m_ObjectHideFlags: 0
@@ -232503,7 +232530,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 10.022401, y: 10.022401, z: 1}
+  m_LocalScale: {x: 0.44, y: 0.44, z: 0.44}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1735069868}

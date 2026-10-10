@@ -22,7 +22,17 @@ public sealed class CircularWindow : MonoBehaviour
         Passthrough
     }
 
+    public enum Shape
+    {
+        Disc,
+        Sphere
+    }
+
     [Header("Shape")]
+    [Tooltip("Disc: flat quads (mask clips to a circle). Sphere: sphere meshes scaled to the diameter; the mask writes stencil over the whole silhouette.")]
+    [SerializeField]
+    private Shape shape = Shape.Disc;
+
     [SerializeField]
     [Min(0.01f)]
     private float radius = 5f;
@@ -167,6 +177,21 @@ public sealed class CircularWindow : MonoBehaviour
     public void ApplyShape()
     {
         float diameter = radius * 2f;
+
+        if (shape == Shape.Sphere)
+        {
+            if (maskQuad != null)
+            {
+                maskQuad.localScale = Vector3.one * diameter;
+            }
+
+            if (rimRenderer != null)
+            {
+                rimRenderer.transform.localScale = Vector3.one * diameter;
+            }
+
+            return;
+        }
 
         if (maskQuad != null)
         {
