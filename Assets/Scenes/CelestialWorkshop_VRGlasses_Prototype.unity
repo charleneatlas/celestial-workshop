@@ -193284,10 +193284,23 @@ MonoBehaviour:
   - {fileID: 112258612}
   - {fileID: 412556933}
   - {fileID: 1071834818}
+  placeInFrontOfHead: 0
+  fallbackEyeHeight: 1.2
   forwardDistance: 0.8
   heightBelowEyes: 0.3
   volumeRadius: 0.22
   contentFill: 0.8
+  gimbalOnVolume: 1
+  gimbalRoot: {fileID: 1681033681}
+  gimbalCenter: {fileID: 62762971}
+  miniEarthReference: {fileID: 1904326628}
+  skyRotationReference: {fileID: 1071834818}
+  gimbalRadiusFactor: 1.15
+  hideWhileGimbalOnVolume:
+  - {fileID: 746857093}
+  - {fileID: 1546534315}
+  hideRenderersUnder:
+  - {fileID: 150452312}
   trackingTimeout: 3
   settleDelay: 0.5
 --- !u!1 &1736001609

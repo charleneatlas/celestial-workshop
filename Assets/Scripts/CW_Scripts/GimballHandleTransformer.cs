@@ -24,10 +24,29 @@ public class GimbalHandleTransformer : MonoBehaviour, ITransformer
     private Vector3 _previousDirection;
     private float _handleRadius;
 
-    // Absolute orientation reference.
-    private Vector3 _zeroDirection;
-    private Quaternion _zeroHandleRotation;
+    // Absolute orientation reference, in the pivot's local space so the
+    // whole gimbal can be moved, rotated or scaled at runtime.
+    private Vector3 _zeroDirectionLocal;
+    private Quaternion _zeroHandleRotationLocal;
     private bool _orientationInitialized;
+
+    private Quaternion _targetAxisRemap = Quaternion.identity;
+    private bool _hasTargetAxisRemap;
+
+    /// <summary>
+    /// When set, the target spins in place about (remap * ring axis) instead of
+    /// orbiting the pivot. Lets the gimbal sit somewhere other than the target,
+    /// e.g. around a view whose rotation is mirrored from the target.
+    /// </summary>
+    public Quaternion TargetAxisRemap
+    {
+        get => _targetAxisRemap;
+        set
+        {
+            _targetAxisRemap = value;
+            _hasTargetAxisRemap = true;
+        }
+    }
 
     public void Initialize(IGrabbable grabbable)
     {
@@ -61,10 +80,12 @@ public class GimbalHandleTransformer : MonoBehaviour, ITransformer
         }
 
         // Remember where this handle was originally placed around the ring.
-        _zeroDirection = planarHandleOffset.normalized;
+        _zeroDirectionLocal =
+            _pivotTransform.InverseTransformDirection(planarHandleOffset.normalized);
 
         // Remember how the handle was originally oriented there.
-        _zeroHandleRotation = _handleTransform.rotation;
+        _zeroHandleRotationLocal =
+            Quaternion.Inverse(_pivotTransform.rotation) * _handleTransform.rotation;
 
         _orientationInitialized = true;
     }
@@ -147,11 +168,22 @@ public class GimbalHandleTransformer : MonoBehaviour, ITransformer
         );
 
         // Rotate the constellation/object.
-        _rotationTarget.RotateAround(
-            _pivotTransform.position,
-            axis,
-            angleDelta
-        );
+        if (_hasTargetAxisRemap)
+        {
+            _rotationTarget.Rotate(
+                _targetAxisRemap * axis,
+                angleDelta,
+                Space.World
+            );
+        }
+        else
+        {
+            _rotationTarget.RotateAround(
+                _pivotTransform.position,
+                axis,
+                angleDelta
+            );
+        }
 
         // Move the handle onto the same circular path.
         _handleTransform.position =
@@ -162,15 +194,19 @@ public class GimbalHandleTransformer : MonoBehaviour, ITransformer
         // the ring, rather than accumulating rotation every frame.
         if (_rotateHandleOrientation && _orientationInitialized)
         {
+            Vector3 zeroDirection =
+                _pivotTransform.TransformDirection(_zeroDirectionLocal);
+
             float totalHandleAngle = Vector3.SignedAngle(
-                _zeroDirection,
+                zeroDirection,
                 currentDirection,
                 axis
             );
 
             _handleTransform.rotation =
                 Quaternion.AngleAxis(totalHandleAngle, axis) *
-                _zeroHandleRotation;
+                _pivotTransform.rotation *
+                _zeroHandleRotationLocal;
         }
 
         _previousDirection = currentDirection;

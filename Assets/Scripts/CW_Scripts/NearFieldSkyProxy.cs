@@ -5,12 +5,14 @@ using UnityEngine;
 /// <summary>
 /// Prototype: shows the sky constellation as a near-field, object-scale volume
 /// instead of out in the sky. Once the head is tracked, it places the volume
-/// (a sphere-shaped CircularWindow) in front of the viewer and moves the sky's
-/// frame, observer and rotation references together as one rotated, uniformly
-/// scaled group so the constellation sits inside the volume.
+/// (a sphere-shaped CircularWindow) at its authored position (or in front of the
+/// viewer) and moves the sky's frame, observer and rotation references together
+/// as one rotated, uniformly scaled group so the constellation sits inside it.
 /// Moving them together keeps every relative direction intact, so rotation
 /// mirroring and solve keep roughly working; the solve direction now points
 /// back toward the viewer's head position at placement time.
+/// Optionally moves the gimbal onto the volume, so its rings turn the
+/// constellation inside about the ring's own axis.
 /// </summary>
 public sealed class NearFieldSkyProxy : MonoBehaviour
 {
@@ -33,6 +35,14 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
     private List<Transform> skyRoots = new List<Transform>();
 
     [Header("Placement")]
+    [Tooltip("Off: keep the volume where it was placed in the scene. On: place it relative to the head.")]
+    [SerializeField]
+    private bool placeInFrontOfHead;
+
+    [Tooltip("Eye height above the rig used for the view direction when the head never tracks.")]
+    [SerializeField]
+    private float fallbackEyeHeight = 1.2f;
+
     [Tooltip("Horizontal distance from the eyes to the volume's center.")]
     [SerializeField]
     [Min(0.1f)]
@@ -51,6 +61,38 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
     [Range(0.1f, 1f)]
     private float contentFill = 0.8f;
 
+    [Header("Gimbal On Volume")]
+    [SerializeField]
+    private bool gimbalOnVolume = true;
+
+    [SerializeField]
+    private Transform gimbalRoot;
+
+    [Tooltip("Center of the gimbal rings; lands on the volume's center.")]
+    [SerializeField]
+    private Transform gimbalCenter;
+
+    [Tooltip("Frame the gimbal rotates the mini constellation in (Mini Earth Reference).")]
+    [SerializeField]
+    private Transform miniEarthReference;
+
+    [Tooltip("Frame the mini's rotation is mirrored into on the sky (Sky Reference Rotation).")]
+    [SerializeField]
+    private Transform skyRotationReference;
+
+    [Tooltip("Innermost ring's radius as a multiple of the volume's radius.")]
+    [SerializeField]
+    [Min(0.1f)]
+    private float gimbalRadiusFactor = 1.15f;
+
+    [Tooltip("Deactivated while the gimbal is on the volume.")]
+    [SerializeField]
+    private List<GameObject> hideWhileGimbalOnVolume = new List<GameObject>();
+
+    [Tooltip("Renderers under these are turned off while the gimbal is on the volume; the transforms stay live for rotation mirroring.")]
+    [SerializeField]
+    private List<Transform> hideRenderersUnder = new List<Transform>();
+
     [Header("Timing")]
     [Tooltip("Place anyway after this long without head tracking (Editor without a headset).")]
     [SerializeField]
@@ -63,13 +105,24 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
     private float settleDelay = 0.5f;
 
     private Transform proxyGroup;
+    private Vector3 authoredCenter;
+    private Vector3 rigHomePosition;
+    private bool gimbalMoved;
+
+    private void Awake()
+    {
+        authoredCenter = transform.position;
+
+        OVRCameraRig rig = viewer != null ? viewer.GetComponentInParent<OVRCameraRig>() : null;
+        rigHomePosition = rig != null ? rig.transform.position : authoredCenter;
+    }
 
     private IEnumerator Start()
     {
-        float waited = 0f;
-        while (!IsHeadTracked() && waited < trackingTimeout)
+        // Real time, so a long first-frame hitch (Editor, Link) doesn't use up the timeout.
+        float giveUpAt = Time.realtimeSinceStartup + trackingTimeout;
+        while (!IsHeadTracked() && Time.realtimeSinceStartup < giveUpAt)
         {
-            waited += Time.deltaTime;
             yield return null;
         }
 
@@ -100,19 +153,27 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
             return;
         }
 
+        // Before tracking the eye sits at the rig origin, which is on the floor.
+        bool tracked = IsHeadTracked();
         Transform eye = viewer.transform;
-        Vector3 forward = Vector3.ProjectOnPlane(eye.forward, Vector3.up);
-        forward = forward.sqrMagnitude > 0.0001f ? forward.normalized : Vector3.forward;
+        Vector3 eyePosition = tracked ? eye.position : rigHomePosition + Vector3.up * fallbackEyeHeight;
 
-        Vector3 center =
-            eye.position +
-            forward * forwardDistance +
-            Vector3.down * heightBelowEyes;
+        Vector3 center = authoredCenter;
+        if (placeInFrontOfHead && tracked)
+        {
+            Vector3 forward = Vector3.ProjectOnPlane(eye.forward, Vector3.up);
+            forward = forward.sqrMagnitude > 0.0001f ? forward.normalized : Vector3.forward;
+
+            center =
+                eyePosition +
+                forward * forwardDistance +
+                Vector3.down * heightBelowEyes;
+        }
 
         // Rotate the sky so its original view direction (observer -> pivot)
         // becomes the new one (eye -> volume center), then shrink it around the pivot.
         Vector3 originalView = skyConstellationPivot.position - skyObserverReference.position;
-        Vector3 newView = center - eye.position;
+        Vector3 newView = center - eyePosition;
         Quaternion rotation =
             Quaternion.LookRotation(newView, Vector3.up) *
             Quaternion.Inverse(Quaternion.LookRotation(originalView, Vector3.up));
@@ -139,10 +200,87 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
         volume.Radius = volumeRadius;
 
         Debug.Log(
-            $"NearFieldSkyProxy: volume at {center} (r {volumeRadius:F2} m, {newView.magnitude:F2} m from eyes), " +
-            $"sky scaled x{scale:G3}",
+            $"NearFieldSkyProxy: volume at {center} (r {volumeRadius:F2} m, {newView.magnitude:F2} m from eyes, " +
+            $"head {(tracked ? "tracked" : "NOT tracked, used fallback eye")}), sky scaled x{scale:G3}",
             this
         );
+
+        if (gimbalOnVolume)
+        {
+            MoveGimbalOntoVolume(center);
+        }
+    }
+
+    // Poses the gimbal around the volume the way it sat around the mini
+    // constellation. The sky turns as S * E^-1 * mini, so the handles spin the
+    // mini about E * S^-1 * ringAxis to turn the sky about the ring's own axis.
+    private void MoveGimbalOntoVolume(Vector3 center)
+    {
+        if (gimbalMoved)
+        {
+            return;
+        }
+
+        if (gimbalRoot == null || gimbalCenter == null || miniEarthReference == null || skyRotationReference == null)
+        {
+            Debug.LogWarning("NearFieldSkyProxy: missing gimbal references, leaving the gimbal where it is.", this);
+            return;
+        }
+
+        gimbalRoot.SetParent(null, true);
+
+        // Measure before rotating, while the rings still line up with the world axes.
+        float ringRadius = MeasureRingRadius();
+        if (ringRadius > 0f)
+        {
+            gimbalRoot.localScale *= volumeRadius * gimbalRadiusFactor / ringRadius;
+        }
+
+        Quaternion skyFromEarth = skyRotationReference.rotation * Quaternion.Inverse(miniEarthReference.rotation);
+        gimbalRoot.rotation = skyFromEarth * gimbalRoot.rotation;
+        gimbalRoot.position += center - gimbalCenter.position;
+
+        Quaternion earthFromSky = Quaternion.Inverse(skyFromEarth);
+        foreach (GimbalHandleTransformer handle in gimbalRoot.GetComponentsInChildren<GimbalHandleTransformer>(true))
+        {
+            handle.TargetAxisRemap = earthFromSky;
+        }
+
+        foreach (GameObject hidden in hideWhileGimbalOnVolume)
+        {
+            if (hidden != null)
+            {
+                hidden.SetActive(false);
+            }
+        }
+
+        foreach (Transform root in hideRenderersUnder)
+        {
+            if (root == null)
+            {
+                continue;
+            }
+
+            foreach (Renderer hiddenRenderer in root.GetComponentsInChildren<Renderer>(true))
+            {
+                hiddenRenderer.enabled = false;
+            }
+        }
+
+        gimbalMoved = true;
+    }
+
+    // Radius of the innermost ring, so every ring stays outside the volume.
+    private float MeasureRingRadius()
+    {
+        float radius = float.MaxValue;
+        foreach (Renderer ring in gimbalCenter.GetComponentsInChildren<Renderer>())
+        {
+            Vector3 extents = ring.bounds.extents;
+            radius = Mathf.Min(radius, Mathf.Max(extents.x, extents.y, extents.z));
+        }
+
+        return radius == float.MaxValue ? 0f : radius;
     }
 
     // Largest distance from the pivot to any star's bounds, so the
