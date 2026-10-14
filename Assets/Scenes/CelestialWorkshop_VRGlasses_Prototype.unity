@@ -182891,17 +182891,26 @@ MonoBehaviour:
   trackingGrace: 0.2
   centerFraction: 0.25
   frontWeight: 1
+  regionHysteresis: 0.15
   tiltFrameWithView: 0
   selectDeadZone: 0.015
   gain: 1
   minLeverFraction: 0.35
+  guideStyle: 1
   guideMaterial: {fileID: 2100000, guid: 80b5943a4f4c6044cb0436bbb3b0a62d, type: 2}
+  tubeMaterial: {fileID: 2100000, guid: 72664ac10b5556146b65911a9039c5fd, type: 2}
   guideRadiusFraction: 0.85
   guideWidth: 0.002
+  tubeSides: 6
+  backFade: 0.2
   guideColor: {r: 0.75, g: 0.9, b: 1, a: 1}
-  offeredAlpha: 0.35
+  offeredAlpha: 0.2
   selectedAlpha: 0.8
   gripMarkerSize: 0.008
+  showPreview: 1
+  previewArcDegrees: 40
+  previewAlpha: 0.1
+  centerPreviewScale: 0.6
 --- !u!4 &1633549549
 Transform:
   m_ObjectHideFlags: 0

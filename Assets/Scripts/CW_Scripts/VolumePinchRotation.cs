@@ -3,12 +3,14 @@ using Oculus.Interaction;
 using Oculus.Interaction.Input;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 /// <summary>
 /// Prototype: pinch anywhere inside the near-field volume to rotate the
 /// constellation about one fixed workspace axis.
-/// Where the pinch lands picks which two axes are offered (the axis the pinch
-/// sits on is dropped, since its circle would have no radius there); the first
+/// Where the hand is picks which two axes are offered (the axis the hand
+/// sits on is dropped, since its circle would have no radius there). Before
+/// pinching, short arcs preview that pair; the pinch commits it, and the first
 /// deliberate hand movement locks one of them for the rest of the pinch.
 /// Rotation follows the hand's angle around the locked axis, so the grabbed
 /// spot stays under the fingers without the hand having to reach the guide.
@@ -18,6 +20,12 @@ using UnityEngine.InputSystem;
 /// </summary>
 public sealed class VolumePinchRotation : MonoBehaviour
 {
+    public enum GuideStyle
+    {
+        LineRenderer,
+        Tube
+    }
+
     private enum State
     {
         Idle,
@@ -32,7 +40,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
     [SerializeField]
     private CircularWindow volume;
 
-    [Tooltip("Viewer camera (CenterEyeAnchor). Fixes the workspace axes on the first pinch.")]
+    [Tooltip("Viewer camera (CenterEyeAnchor). Fixes the workspace axes the first time a hand enters.")]
     [SerializeField]
     private Camera viewer;
 
@@ -80,7 +88,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
     [Range(0f, 1f)]
     private float pinchOffStrength = 0.5f;
 
-    [Tooltip("A pinch starts a rotation within this multiple of the volume's radius.")]
+    [Tooltip("A pinch starts a rotation (and the preview shows) within this multiple of the volume's radius.")]
     [SerializeField]
     [Min(0.1f)]
     private float entryRadiusFactor = 1.1f;
@@ -91,15 +99,20 @@ public sealed class VolumePinchRotation : MonoBehaviour
     private float trackingGrace = 0.2f;
 
     [Header("Axis Offer")]
-    [Tooltip("Inside this fraction of the radius the pinch direction is noise: offer the front pair (X and Y).")]
+    [Tooltip("Inside this fraction of the radius the hand direction is noise: offer the front pair (X and Y).")]
     [SerializeField]
     [Range(0f, 1f)]
     private float centerFraction = 0.25f;
 
-    [Tooltip("Weight on the front/back component when classifying. Below 1 makes the sides and top easier to reach.")]
+    [Tooltip("Weight on the front/back component when classifying. Above 1 keeps a deep front reach in the front pair; below 1 makes the sides and top easier to reach.")]
     [SerializeField]
-    [Range(0.1f, 1f)]
+    [Range(0.5f, 2f)]
     private float frontWeight = 1f;
+
+    [Tooltip("A new region must beat the current one by this fraction before the offered pair switches.")]
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float regionHysteresis = 0.15f;
 
     [Tooltip("Off: workspace up is world up. On: tilted with the view down to the volume, like the gimbal.")]
     [SerializeField]
@@ -123,17 +136,35 @@ public sealed class VolumePinchRotation : MonoBehaviour
     private float minLeverFraction = 0.35f;
 
     [Header("Guides")]
-    [Tooltip("Translucent unlit material; tinted with _BaseColor.")]
+    [Tooltip("LineRenderer: camera-facing ribbons. Tube: a thin 3D mesh with the same circle.")]
+    [SerializeField]
+    private GuideStyle guideStyle = GuideStyle.Tube;
+
+    [Tooltip("LineRenderer style and grip dot material; tinted with _BaseColor.")]
     [SerializeField]
     private Material guideMaterial;
+
+    [Tooltip("Tube style material; tinted with _BaseColor, vertex alpha fades arc ends and the back of rings (Particles/Unlit).")]
+    [SerializeField]
+    private Material tubeMaterial;
 
     [SerializeField]
     [Range(0.1f, 1f)]
     private float guideRadiusFraction = 0.85f;
 
+    [Tooltip("Line width, or tube diameter.")]
     [SerializeField]
     [Min(0.0005f)]
     private float guideWidth = 0.002f;
+
+    [SerializeField]
+    [Range(3, 12)]
+    private int tubeSides = 6;
+
+    [Tooltip("Tube only: brightness of the half of each ring away from the viewer. 1 = full ring, 0 = front half only.")]
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float backFade = 1f;
 
     [SerializeField]
     private Color guideColor = new Color(0.75f, 0.9f, 1f, 1f);
@@ -151,7 +182,27 @@ public sealed class VolumePinchRotation : MonoBehaviour
     [Min(0f)]
     private float gripMarkerSize = 0.008f;
 
+    [Header("Preview")]
+    [Tooltip("Before pinching, show short arcs of the two axes a pinch would offer.")]
+    [SerializeField]
+    private bool showPreview = true;
+
+    [SerializeField]
+    [Range(5f, 180f)]
+    private float previewArcDegrees = 40f;
+
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float previewAlpha = 0.2f;
+
+    [Tooltip("Preview brightness multiplier near the center, where the front pair is only the default.")]
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float centerPreviewScale = 0.6f;
+
     private const int GuideSegments = 64;
+    private const int ArcSegments = 16;
+    private const float Hidden = -1f;
 
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
 
@@ -159,6 +210,13 @@ public sealed class VolumePinchRotation : MonoBehaviour
     {
         public IHand Hand;
         public bool Held;
+    }
+
+    private sealed class GuideVisual
+    {
+        public LineRenderer Line;
+        public MeshRenderer Tube;
+        public MeshFilter TubeFilter;
     }
 
     private readonly List<PinchHand> pinchHands = new List<PinchHand>();
@@ -175,8 +233,22 @@ public sealed class VolumePinchRotation : MonoBehaviour
     private int lockedAxis = -1;
     private Vector3 previousDirection;
 
-    private readonly LineRenderer[] guides = new LineRenderer[3];
-    private readonly Vector3[] guidePoints = new Vector3[GuideSegments];
+    private PinchHand previewHand;
+    private int previewDropped = -1;
+
+    // What each axis shows this frame (alpha, or Hidden); ApplyGuides draws it in the current style.
+    private readonly float[] ringAlpha = { Hidden, Hidden, Hidden };
+    private readonly float[] arcAlpha = { Hidden, Hidden, Hidden };
+    private readonly Vector3[] arcDirection = new Vector3[3];
+
+    private readonly GuideVisual[] rings = new GuideVisual[3];
+    private readonly GuideVisual[] arcs = new GuideVisual[3];
+    private readonly Mesh[] ringMeshes = new Mesh[3];
+    private Mesh arcMesh;
+    private string meshKey;
+
+    private readonly Vector3[] ringPoints = new Vector3[GuideSegments];
+    private readonly Vector3[] arcPoints = new Vector3[ArcSegments + 1];
     private Renderer gripMarker;
     private MaterialPropertyBlock guideProperties;
 
@@ -195,9 +267,16 @@ public sealed class VolumePinchRotation : MonoBehaviour
         Debug.Log($"VolumePinchRotation: {pinchHands.Count} hand(s) can pinch.", this);
 
         guideProperties = new MaterialPropertyBlock();
-        for (int i = 0; i < guides.Length; i++)
+        for (int i = 0; i < 3; i++)
         {
-            guides[i] = CreateGuide(i);
+            ringMeshes[i] = new Mesh { name = $"Rotation Ring {AxisName(i)}" };
+            rings[i] = CreateGuideVisual($"Rotation Guide {AxisName(i)}", true, GuideSegments, ringMeshes[i]);
+        }
+
+        arcMesh = new Mesh { name = "Rotation Preview Arc" };
+        for (int i = 0; i < 3; i++)
+        {
+            arcs[i] = CreateGuideVisual($"Rotation Preview {AxisName(i)}", false, ArcSegments + 1, arcMesh);
         }
 
         if (gripMarkerSize > 0f)
@@ -207,6 +286,16 @@ public sealed class VolumePinchRotation : MonoBehaviour
 
         HideGuides();
         lastPinchMode = pinchMode;
+    }
+
+    private void OnDestroy()
+    {
+        foreach (Mesh mesh in ringMeshes)
+        {
+            Destroy(mesh);
+        }
+
+        Destroy(arcMesh);
     }
 
     private void Update()
@@ -224,6 +313,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
             if (!pinchMode)
             {
                 EndPinch();
+                HidePreview();
 
                 // The solve hides the gimbal; don't bring it back over a solved puzzle.
                 if (gimbalRoot != null)
@@ -246,6 +336,15 @@ public sealed class VolumePinchRotation : MonoBehaviour
         {
             UpdatePinch();
         }
+
+        if (state == State.Idle)
+        {
+            UpdatePreview();
+        }
+        else
+        {
+            HidePreview();
+        }
     }
 
     private void LateUpdate()
@@ -257,6 +356,8 @@ public sealed class VolumePinchRotation : MonoBehaviour
         {
             gimbalRoot.SetActive(false);
         }
+
+        ApplyGuides();
     }
 
     private void TryBeginPinch()
@@ -311,19 +412,16 @@ public sealed class VolumePinchRotation : MonoBehaviour
         lockedAxis = -1;
         state = State.Pending;
 
-        int dropped = ClassifyDroppedAxis(point - center);
+        // Commit the pair the preview was showing, so what you saw is what you get.
+        int dropped = pinchHand == previewHand && previewDropped >= 0
+            ? previewDropped
+            : ClassifyDroppedAxis(point - center, -1);
         offeredAxes[0] = (dropped + 1) % 3;
         offeredAxes[1] = (dropped + 2) % 3;
 
-        for (int i = 0; i < guides.Length; i++)
+        for (int i = 0; i < 3; i++)
         {
-            bool offered = i != dropped;
-            guides[i].enabled = offered;
-            if (offered)
-            {
-                LayoutGuide(i, center);
-                SetGuideAlpha(guides[i], offeredAlpha);
-            }
+            ringAlpha[i] = i == dropped ? Hidden : offeredAlpha;
         }
 
         Debug.Log(
@@ -405,10 +503,8 @@ public sealed class VolumePinchRotation : MonoBehaviour
         // Only the chosen guide stays.
         foreach (int axisIndex in offeredAxes)
         {
-            guides[axisIndex].enabled = axisIndex == lockedAxis;
+            ringAlpha[axisIndex] = axisIndex == lockedAxis ? selectedAlpha : Hidden;
         }
-
-        SetGuideAlpha(guides[lockedAxis], selectedAlpha);
 
         if (gripMarker != null)
         {
@@ -465,6 +561,103 @@ public sealed class VolumePinchRotation : MonoBehaviour
         HideGuides();
     }
 
+    // Short arcs of the pair a pinch would offer right now, for the hand
+    // nearest the center that's inside the volume and not already pinching.
+    private void UpdatePreview()
+    {
+        if (!showPreview || IsSolved())
+        {
+            HidePreview();
+            return;
+        }
+
+        Vector3 center = skyConstellationPivot.position;
+        float entryRadius = volume.Radius * entryRadiusFactor;
+
+        PinchHand nearest = null;
+        Vector3 nearestPoint = default;
+        float nearestDistance = float.MaxValue;
+        foreach (PinchHand pinchHand in pinchHands)
+        {
+            IHand hand = pinchHand.Hand;
+            if (pinchHand.Held || !hand.IsTrackedDataValid || !hand.IsHighConfidence ||
+                !TryGetPinchPoint(pinchHand, out Vector3 point))
+            {
+                continue;
+            }
+
+            float distance = Vector3.Distance(point, center);
+            if (distance <= entryRadius && distance < nearestDistance)
+            {
+                nearest = pinchHand;
+                nearestPoint = point;
+                nearestDistance = distance;
+            }
+        }
+
+        if (nearest == null)
+        {
+            HidePreview();
+            return;
+        }
+
+        if (!frameCaptured)
+        {
+            CaptureWorkspaceFrame(center);
+        }
+
+        if (nearest != previewHand)
+        {
+            previewHand = nearest;
+            previewDropped = -1;
+        }
+
+        Vector3 offset = nearestPoint - center;
+        previewDropped = ClassifyDroppedAxis(offset, previewDropped);
+
+        float alpha = previewAlpha;
+        if (offset.magnitude < volume.Radius * centerFraction)
+        {
+            alpha *= centerPreviewScale;
+        }
+
+        Vector3 toViewer = -WorkspaceAxis(2);
+        for (int i = 0; i < 3; i++)
+        {
+            if (i == previewDropped)
+            {
+                arcAlpha[i] = Hidden;
+                continue;
+            }
+
+            // Centered on the hand's angle around this axis; near the axis, face the viewer.
+            Vector3 axis = WorkspaceAxis(i);
+            Vector3 planar = Vector3.ProjectOnPlane(offset, axis);
+            if (planar.sqrMagnitude < 0.0001f)
+            {
+                planar = Vector3.ProjectOnPlane(toViewer, axis);
+            }
+
+            if (planar.sqrMagnitude < 0.000001f)
+            {
+                planar = WorkspaceAxis((i + 1) % 3);
+            }
+
+            arcDirection[i] = planar.normalized;
+            arcAlpha[i] = alpha;
+        }
+    }
+
+    private void HidePreview()
+    {
+        previewHand = null;
+        previewDropped = -1;
+        for (int i = 0; i < 3; i++)
+        {
+            arcAlpha[i] = Hidden;
+        }
+    }
+
     private void CaptureWorkspaceFrame(Vector3 center)
     {
         Vector3 view = center - viewer.transform.position;
@@ -477,10 +670,12 @@ public sealed class VolumePinchRotation : MonoBehaviour
             ? Quaternion.LookRotation(view.normalized, Vector3.up)
             : Quaternion.identity;
         frameCaptured = true;
+        meshKey = null;
     }
 
-    // The axis the pinch sits closest to: its circle would have no radius there.
-    private int ClassifyDroppedAxis(Vector3 offset)
+    // The axis the hand sits closest to: its circle would have no radius there.
+    // Holds the current answer until another axis wins by the hysteresis margin.
+    private int ClassifyDroppedAxis(Vector3 offset, int current)
     {
         if (offset.magnitude < volume.Radius * centerFraction)
         {
@@ -492,12 +687,15 @@ public sealed class VolumePinchRotation : MonoBehaviour
         float y = Mathf.Abs(local.y);
         float z = Mathf.Abs(local.z) * frontWeight;
 
-        if (z >= x && z >= y)
+        int best = z >= x && z >= y ? 2 : x >= y ? 0 : 1;
+        if (current < 0 || best == current)
         {
-            return 2;
+            return best;
         }
 
-        return x >= y ? 0 : 1;
+        float bestScore = best == 0 ? x : best == 1 ? y : z;
+        float currentScore = current == 0 ? x : current == 1 ? y : z;
+        return bestScore > currentScore * (1f + regionHysteresis) ? best : current;
     }
 
     private Vector3 WorkspaceAxis(int index)
@@ -549,21 +747,211 @@ public sealed class VolumePinchRotation : MonoBehaviour
         return solveController != null && solveController.IsSolved;
     }
 
-    private LineRenderer CreateGuide(int axisIndex)
+    // Draws ringAlpha / arcAlpha in the current guide style. Runs every frame
+    // so the style and tube settings can be switched live from the Inspector.
+    private void ApplyGuides()
     {
-        var guideObject = new GameObject($"Rotation Guide {AxisName(axisIndex)}");
+        bool anyVisible = false;
+        for (int i = 0; i < 3; i++)
+        {
+            anyVisible |= ringAlpha[i] >= 0f || arcAlpha[i] >= 0f;
+        }
+
+        if (anyVisible && frameCaptured)
+        {
+            bool tube = guideStyle == GuideStyle.Tube && tubeMaterial != null;
+            if (tube)
+            {
+                EnsureTubeMeshes();
+            }
+
+            Vector3 center = skyConstellationPivot.position;
+            float radius = volume.Radius * guideRadiusFraction;
+
+            for (int i = 0; i < 3; i++)
+            {
+                ApplyGuide(rings[i], ringAlpha[i], tube, center, RingRotation(i), i, radius, true);
+
+                // Local X = the hand's direction, so the arc is centered on the hand's angle.
+                Vector3 axis = WorkspaceAxis(i);
+                Quaternion arcRotation = arcAlpha[i] >= 0f
+                    ? Quaternion.LookRotation(axis, Vector3.Cross(axis, arcDirection[i]))
+                    : Quaternion.identity;
+                ApplyGuide(arcs[i], arcAlpha[i], tube, center, arcRotation, i, radius, false);
+            }
+
+            return;
+        }
+
+        for (int i = 0; i < 3; i++)
+        {
+            SetVisible(rings[i], false, false);
+            SetVisible(arcs[i], false, false);
+        }
+    }
+
+    private void ApplyGuide(GuideVisual guide, float alpha, bool tube, Vector3 center, Quaternion rotation, int axisIndex, float radius, bool ring)
+    {
+        if (alpha < 0f)
+        {
+            SetVisible(guide, false, false);
+            return;
+        }
+
+        SetVisible(guide, !tube, tube);
+
+        if (tube)
+        {
+            guide.Tube.transform.SetPositionAndRotation(center, rotation);
+            guide.TubeFilter.sharedMesh = ring ? ringMeshes[axisIndex] : arcMesh;
+            SetGuideAlpha(guide.Tube, alpha);
+            return;
+        }
+
+        // Local circle in the XY plane, centered on local +X for arcs.
+        float sweep = ring ? 360f : previewArcDegrees;
+        int count = ring ? GuideSegments : ArcSegments + 1;
+        Vector3[] points = ring ? ringPoints : arcPoints;
+        for (int k = 0; k < count; k++)
+        {
+            float t = ring ? (float)k / GuideSegments : (float)k / ArcSegments;
+            float angle = (t - (ring ? 0f : 0.5f)) * sweep * Mathf.Deg2Rad;
+            points[k] = center + rotation * new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f) * radius;
+        }
+
+        guide.Line.widthMultiplier = guideWidth;
+        guide.Line.SetPositions(points);
+        SetGuideAlpha(guide.Line, alpha);
+    }
+
+    private static void SetVisible(GuideVisual guide, bool line, bool tube)
+    {
+        if (guide.Line.enabled != line)
+        {
+            guide.Line.enabled = line;
+        }
+
+        if (guide.Tube.enabled != tube)
+        {
+            guide.Tube.enabled = tube;
+        }
+    }
+
+    // Local Z = the axis; local X fixed per axis, so the baked back fade lines up.
+    private Quaternion RingRotation(int axisIndex)
+    {
+        return Quaternion.LookRotation(WorkspaceAxis(axisIndex), WorkspaceAxis((axisIndex + 2) % 3));
+    }
+
+    private void EnsureTubeMeshes()
+    {
+        float radius = volume.Radius * guideRadiusFraction;
+        string key = $"{radius:F4}|{guideWidth:F4}|{tubeSides}|{backFade:F2}|{previewArcDegrees:F1}";
+        if (key == meshKey)
+        {
+            return;
+        }
+
+        meshKey = key;
+        float tubeRadius = guideWidth * 0.5f;
+        Vector3 toViewer = -WorkspaceAxis(2);
+
+        for (int i = 0; i < 3; i++)
+        {
+            Vector3 localToViewer = Quaternion.Inverse(RingRotation(i)) * toViewer;
+            BuildTubeArc(ringMeshes[i], radius, 360f, GuideSegments, tubeSides, tubeRadius, (radial, t) =>
+            {
+                // Full brightness toward the viewer, fading to backFade on the far side.
+                float facing = Vector3.Dot(radial, localToViewer);
+                return Mathf.Lerp(backFade, 1f, Mathf.SmoothStep(0f, 1f, (facing + 0.3f) / 0.4f));
+            });
+        }
+
+        BuildTubeArc(arcMesh, radius, previewArcDegrees, ArcSegments, tubeSides, tubeRadius, (radial, t) => Mathf.Sin(Mathf.PI * t));
+    }
+
+    // A tube following an arc of the circle of the given radius in the local XY
+    // plane, centered on local +X. Vertex alpha comes from alphaAt(radial, t).
+    private static void BuildTubeArc(Mesh mesh, float radius, float sweepDegrees, int segments, int sides, float tubeRadius, System.Func<Vector3, float, float> alphaAt)
+    {
+        int rings = segments + 1;
+        var vertices = new Vector3[rings * sides];
+        var normals = new Vector3[vertices.Length];
+        var colors = new Color[vertices.Length];
+        var triangles = new int[segments * sides * 6];
+
+        for (int i = 0; i < rings; i++)
+        {
+            float t = (float)i / segments;
+            float angle = (t - 0.5f) * sweepDegrees * Mathf.Deg2Rad;
+            var radial = new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0f);
+            float alpha = Mathf.Clamp01(alphaAt(radial, t));
+
+            for (int j = 0; j < sides; j++)
+            {
+                float around = 2f * Mathf.PI * j / sides;
+                Vector3 normal = radial * Mathf.Cos(around) + Vector3.forward * Mathf.Sin(around);
+                int v = i * sides + j;
+                vertices[v] = radial * radius + normal * tubeRadius;
+                normals[v] = normal;
+                colors[v] = new Color(1f, 1f, 1f, alpha);
+            }
+        }
+
+        int tri = 0;
+        for (int i = 0; i < segments; i++)
+        {
+            for (int j = 0; j < sides; j++)
+            {
+                int a = i * sides + j;
+                int b = i * sides + (j + 1) % sides;
+                int c = a + sides;
+                int d = b + sides;
+                triangles[tri++] = a;
+                triangles[tri++] = c;
+                triangles[tri++] = b;
+                triangles[tri++] = b;
+                triangles[tri++] = c;
+                triangles[tri++] = d;
+            }
+        }
+
+        mesh.Clear();
+        mesh.vertices = vertices;
+        mesh.normals = normals;
+        mesh.colors = colors;
+        mesh.triangles = triangles;
+        mesh.RecalculateBounds();
+    }
+
+    private GuideVisual CreateGuideVisual(string name, bool loop, int positionCount, Mesh mesh)
+    {
+        var guideObject = new GameObject(name);
         guideObject.transform.SetParent(transform, false);
 
         LineRenderer line = guideObject.AddComponent<LineRenderer>();
         line.sharedMaterial = guideMaterial;
         line.useWorldSpace = true;
-        line.loop = true;
-        line.positionCount = GuideSegments;
+        line.loop = loop;
+        line.positionCount = positionCount;
         line.widthMultiplier = guideWidth;
         line.numCapVertices = 0;
-        line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        line.shadowCastingMode = ShadowCastingMode.Off;
         line.receiveShadows = false;
-        return line;
+        line.enabled = false;
+
+        // The tube lives on a child so it can be posed independently of the world-space line.
+        var tubeObject = new GameObject("Tube");
+        tubeObject.transform.SetParent(guideObject.transform, false);
+        MeshFilter filter = tubeObject.AddComponent<MeshFilter>();
+        filter.sharedMesh = mesh;
+        MeshRenderer tube = tubeObject.AddComponent<MeshRenderer>();
+        tube.sharedMaterial = tubeMaterial;
+        tube.shadowCastingMode = ShadowCastingMode.Off;
+        tube.receiveShadows = false;
+        tube.enabled = false;
+
+        return new GuideVisual { Line = line, Tube = tube, TubeFilter = filter };
     }
 
     private Renderer CreateGripMarker()
@@ -579,22 +967,9 @@ public sealed class VolumePinchRotation : MonoBehaviour
 
         Renderer markerRenderer = marker.GetComponent<Renderer>();
         markerRenderer.sharedMaterial = guideMaterial;
-        markerRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        markerRenderer.shadowCastingMode = ShadowCastingMode.Off;
         SetGuideAlpha(markerRenderer, selectedAlpha);
         return markerRenderer;
-    }
-
-    private void LayoutGuide(int axisIndex, Vector3 center)
-    {
-        Vector3 axis = WorkspaceAxis(axisIndex);
-        Vector3 start = WorkspaceAxis((axisIndex + 1) % 3) * (volume.Radius * guideRadiusFraction);
-
-        for (int i = 0; i < GuideSegments; i++)
-        {
-            guidePoints[i] = center + Quaternion.AngleAxis(360f * i / GuideSegments, axis) * start;
-        }
-
-        guides[axisIndex].SetPositions(guidePoints);
     }
 
     private void UpdateGripMarker(Vector3 center)
@@ -618,12 +993,9 @@ public sealed class VolumePinchRotation : MonoBehaviour
 
     private void HideGuides()
     {
-        foreach (LineRenderer guide in guides)
+        for (int i = 0; i < 3; i++)
         {
-            if (guide != null)
-            {
-                guide.enabled = false;
-            }
+            ringAlpha[i] = Hidden;
         }
 
         if (gripMarker != null)
