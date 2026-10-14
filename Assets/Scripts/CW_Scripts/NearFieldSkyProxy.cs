@@ -109,6 +109,9 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
     private Vector3 rigHomePosition;
     private bool gimbalMoved;
 
+    /// <summary>True once the volume and sky have been placed (and the gimbal moved, if enabled).</summary>
+    public bool IsPlaced { get; private set; }
+
     private void Awake()
     {
         authoredCenter = transform.position;
@@ -209,6 +212,8 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
         {
             MoveGimbalOntoVolume(center);
         }
+
+        IsPlaced = true;
     }
 
     // Poses the gimbal around the volume the way it sat around the mini

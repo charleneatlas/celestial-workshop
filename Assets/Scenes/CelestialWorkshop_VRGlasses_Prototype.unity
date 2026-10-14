@@ -182842,6 +182842,81 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43f86b14a27b52f4f9298c33015b5c26, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1633549547
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1633549549}
+  - component: {fileID: 1633549548}
+  m_Layer: 0
+  m_Name: Volume Pinch Rotation
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1633549548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633549547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccefabc61055fc64e84fa972ce648d06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VolumePinchRotation
+  nearFieldSkyProxy: {fileID: 1735069869}
+  volume: {fileID: 1735069867}
+  viewer: {fileID: 1712144914577857069}
+  skyConstellationPivot: {fileID: 242918474}
+  miniConstellationPivot: {fileID: 150452312}
+  miniEarthReference: {fileID: 1904326628}
+  skyRotationReference: {fileID: 1071834818}
+  solveController: {fileID: 242918475}
+  gimbalRoot: {fileID: 1681033680}
+  hands:
+  - {fileID: 2111471561}
+  - {fileID: 1672400902}
+  pinchMode: 1
+  toggleModeKey: 21
+  pinchOnStrength: 0.8
+  pinchOffStrength: 0.5
+  entryRadiusFactor: 1.1
+  trackingGrace: 0.2
+  centerFraction: 0.25
+  frontWeight: 1
+  tiltFrameWithView: 0
+  selectDeadZone: 0.015
+  gain: 1
+  minLeverFraction: 0.35
+  guideMaterial: {fileID: 2100000, guid: 80b5943a4f4c6044cb0436bbb3b0a62d, type: 2}
+  guideRadiusFraction: 0.85
+  guideWidth: 0.002
+  guideColor: {r: 0.75, g: 0.9, b: 1, a: 1}
+  offeredAlpha: 0.35
+  selectedAlpha: 0.8
+  gripMarkerSize: 0.008
+--- !u!4 &1633549549
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1633549547}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1633924735
 GameObject:
   m_ObjectHideFlags: 0
@@ -189217,6 +189292,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 93325865221733454, guid: cffc9ca9faf76514591a49dc7e494b28, type: 3}
   m_PrefabInstance: {fileID: 1545117161}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1672400902 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5508236214790807842, guid: 30bd24baaa7bbf04da2294539529d9c1, type: 3}
+  m_PrefabInstance: {fileID: 1712144914577857065}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b14164f8f23faae4293baeb84485b3d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &1672736914 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 93325865221733454, guid: cffc9ca9faf76514591a49dc7e494b28, type: 3}
@@ -240653,6 +240739,17 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2111278583}
   m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &2111471561 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8496386607378840398, guid: 30bd24baaa7bbf04da2294539529d9c1, type: 3}
+  m_PrefabInstance: {fileID: 1712144914577857065}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b14164f8f23faae4293baeb84485b3d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2114313602
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -265193,3 +265290,4 @@ SceneRoots:
   - {fileID: 654648133}
   - {fileID: 109669873}
   - {fileID: 1735069868}
+  - {fileID: 1633549549}
