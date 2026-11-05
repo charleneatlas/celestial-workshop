@@ -109,6 +109,11 @@ public sealed class ConstellationSetup : MonoBehaviour
 
     private bool isInitialized;
 
+    // Sky placement, read by EarthViewCamera to reproduce the generated view.
+    public float SkyElevationDegrees => skyElevationDegrees;
+    public float SkyAzimuthDegrees => skyAzimuthDegrees;
+    public float SkyAngularScale => skyAngularScale;
+
     private readonly Dictionary<string, List<GeneratedConstellationStar>>
     generatedStarsById =
         new Dictionary<string, List<GeneratedConstellationStar>>(
@@ -138,6 +143,15 @@ public sealed class ConstellationSetup : MonoBehaviour
             skyVisualContainer,
             skyConstellationPivot
         );
+
+        // The sky was just generated in its solved orientation, and its pivot
+        // (with the solve direction under it) is now centered. Aim the solve
+        // direction at the observer before anything rotates the sky, so it
+        // always matches the current sky placement settings.
+        if (solveController != null)
+        {
+            solveController.CalibrateSolveDirection();
+        }
 
         // Create constellation copy used for VFX at solve
         GenerateSkyStampConstellation();

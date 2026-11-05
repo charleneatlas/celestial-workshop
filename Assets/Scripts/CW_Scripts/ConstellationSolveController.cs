@@ -177,8 +177,13 @@ public class ConstellationSolveController : MonoBehaviour
         Debug.Log("Constellation reset.");
     }
 
+    /// <summary>
+    /// Points the solve direction at the observer. Only valid while the sky
+    /// constellation is in its solved orientation; ConstellationSetup calls
+    /// this at startup, right after generating the sky and before randomizing.
+    /// </summary>
     [ContextMenu("Calibrate Solve Direction")]
-    private void CalibrateSolveDirection()
+    public void CalibrateSolveDirection()
     {
         if (solveDirection == null || skyObserverReference == null)
             return;

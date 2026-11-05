@@ -135,8 +135,8 @@ public sealed class CircularWindow : MonoBehaviour
         }
 
         // OVRManager may start after this component, so keep it in sync
-        // rather than setting it once. Only at runtime, so the scene's saved
-        // setting stays off.
+        // rather than setting it once. Only at runtime; the scene saves it on,
+        // which the Meta project setup checks expect for a passthrough layer.
         bool passthrough = surround == Surround.Passthrough;
         if (OVRManager.instance != null && OVRManager.instance.isInsightPassthroughEnabled != passthrough)
         {
