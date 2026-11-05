@@ -9,8 +9,11 @@ using UnityEngine;
 /// viewer) and moves the sky's frame, observer and rotation references together
 /// as one rotated, uniformly scaled group so the constellation sits inside it.
 /// Moving them together keeps every relative direction intact, so rotation
-/// mirroring and solve keep roughly working; the solve direction now points
-/// back toward the viewer's head position at placement time.
+/// mirroring and solve keep roughly working. Where the Earth observer ends up
+/// around the volume is set under Observer: by default straight below it, or
+/// on the line back toward the viewer's head at placement time. The observer's
+/// distance from the center follows from the scale, and the Earth view image
+/// is the same wherever it sits.
 /// Optionally moves the gimbal onto the volume, so its rings turn the
 /// constellation inside about the ring's own axis.
 /// </summary>
@@ -60,6 +63,30 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
     [SerializeField]
     [Range(0.1f, 1f)]
     private float contentFill = 0.8f;
+
+    public enum ObserverPlacement
+    {
+        [Tooltip("Observer on the line from the volume's center back toward the viewer's head at placement time (the original behaviour).")]
+        TowardHead,
+
+        [Tooltip("Observer in a fixed direction from the volume's center, set by Observer Elevation and Observer Heading.")]
+        FixedDirection
+    }
+
+    [Header("Observer")]
+    [Tooltip("Where the Earth observer sits around the volume. The Earth view image doesn't change; only the observer's position and the constellation's orientation in the room do.")]
+    [SerializeField]
+    private ObserverPlacement observerPlacement = ObserverPlacement.FixedDirection;
+
+    [Tooltip("Fixed Direction: observer's angle above the volume's center, seen from the center. -90 = straight below, 0 = level, 90 = straight above.")]
+    [SerializeField]
+    [Range(-90f, 90f)]
+    private float observerElevation = -90f;
+
+    [Tooltip("Fixed Direction: turns the observer around the vertical axis, in degrees. 0 = on the viewer's side. At -90 or 90 elevation this only turns which way is up in the Earth view (0 = up points toward the viewer).")]
+    [SerializeField]
+    [Range(-180f, 180f)]
+    private float observerHeading;
 
     [Header("Gimbal On Volume")]
     [SerializeField]
@@ -174,11 +201,13 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
         }
 
         // Rotate the sky so its original view direction (observer -> pivot)
-        // becomes the new one (eye -> volume center), then shrink it around the pivot.
+        // becomes the new one (observer's new spot -> volume center), then
+        // shrink it around the pivot.
+        Vector3 eyeView = center - eyePosition;
+        ObserverView(eyeView, out Vector3 newView, out Vector3 newViewUp);
         Vector3 originalView = skyConstellationPivot.position - skyObserverReference.position;
-        Vector3 newView = center - eyePosition;
         Quaternion rotation =
-            Quaternion.LookRotation(newView, Vector3.up) *
+            Quaternion.LookRotation(newView, newViewUp) *
             Quaternion.Inverse(Quaternion.LookRotation(originalView, Vector3.up));
         float scale = volumeRadius * contentFill / contentRadius;
 
@@ -199,11 +228,13 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
         proxyGroup.SetPositionAndRotation(center, rotation * proxyGroup.rotation);
         proxyGroup.localScale *= scale;
 
-        volume.transform.SetPositionAndRotation(center, Quaternion.LookRotation(-newView, Vector3.up));
+        // The volume itself keeps facing the viewer, whatever the observer does.
+        volume.transform.SetPositionAndRotation(center, Quaternion.LookRotation(-eyeView, Vector3.up));
         volume.Radius = volumeRadius;
 
         Debug.Log(
-            $"NearFieldSkyProxy: volume at {center} (r {volumeRadius:F2} m, {newView.magnitude:F2} m from eyes, " +
+            $"NearFieldSkyProxy: volume at {center} (r {volumeRadius:F2} m, {eyeView.magnitude:F2} m from eyes, " +
+            $"observer {observerPlacement}{(observerPlacement == ObserverPlacement.FixedDirection ? $" elevation {observerElevation:F0} heading {observerHeading:F0}" : "")}, " +
             $"head {(tracked ? "tracked" : "NOT tracked, used fallback eye")}), sky scaled x{scale:G3}",
             this
         );
@@ -214,6 +245,30 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
         }
 
         IsPlaced = true;
+    }
+
+    // Direction the observer looks (toward the volume's center) and which way
+    // is up in its view. Toward Head keeps world up, as before. Fixed Direction
+    // tilts that frame about the horizontal: at elevation 0 it matches Toward
+    // Head on level ground, and as the observer drops below, the top of its
+    // view tips toward the heading side, like leaning back to look up.
+    private void ObserverView(Vector3 eyeView, out Vector3 view, out Vector3 viewUp)
+    {
+        if (observerPlacement == ObserverPlacement.TowardHead)
+        {
+            view = eyeView;
+            viewUp = Vector3.up;
+            return;
+        }
+
+        Vector3 towardViewer = Vector3.ProjectOnPlane(-eyeView, Vector3.up);
+        towardViewer = towardViewer.sqrMagnitude > 1e-6f ? towardViewer.normalized : Vector3.back;
+        Vector3 heading = Quaternion.AngleAxis(observerHeading, Vector3.up) * towardViewer;
+
+        float pitch = observerElevation * Mathf.Deg2Rad;
+        Vector3 toObserver = Mathf.Cos(pitch) * heading + Mathf.Sin(pitch) * Vector3.up;
+        view = -toObserver;
+        viewUp = -Mathf.Sin(pitch) * heading + Mathf.Cos(pitch) * Vector3.up;
     }
 
     // Poses the gimbal around the volume the way it sat around the mini
