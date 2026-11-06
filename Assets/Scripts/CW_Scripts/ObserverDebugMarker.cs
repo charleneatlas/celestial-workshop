@@ -35,6 +35,10 @@ public sealed class ObserverDebugMarker : MonoBehaviour
     [SerializeField]
     private CircularWindow volume;
 
+    [Tooltip("Also rotate the marker: up points from the observer toward the volume's center, forward is the Earth view's up direction (so children like the diorama turn with Observer Heading). Off: position only.")]
+    [SerializeField]
+    private bool orientToObserverRay;
+
     [Tooltip("Sphere renderer shown at the marker position.")]
     [SerializeField]
     private Renderer markerRenderer;
@@ -79,9 +83,44 @@ public sealed class ObserverDebugMarker : MonoBehaviour
             {
                 transform.position = target;
             }
+
+            if (orientToObserverRay && TryObserverRayRotation(viewpoint, out Quaternion rotation)
+                && Quaternion.Angle(transform.rotation, rotation) > 1e-3f)
+            {
+                transform.rotation = rotation;
+            }
         }
 
         ApplyAppearance();
+    }
+
+    private bool TryObserverRayRotation(Transform observer, out Quaternion rotation)
+    {
+        rotation = Quaternion.identity;
+        if (volume == null)
+        {
+            return false;
+        }
+
+        Vector3 up = volume.transform.position - observer.position;
+        if (up.sqrMagnitude < 1e-10f)
+        {
+            return false;
+        }
+
+        up.Normalize();
+        Vector3 forward = Vector3.ProjectOnPlane(observer.up, up);
+        if (forward.sqrMagnitude < 1e-8f)
+        {
+            forward = Vector3.ProjectOnPlane(observer.forward, up);
+            if (forward.sqrMagnitude < 1e-8f)
+            {
+                return false;
+            }
+        }
+
+        rotation = Quaternion.LookRotation(forward.normalized, up);
+        return true;
     }
 
     private Vector3 TargetPosition(Vector3 observer)
