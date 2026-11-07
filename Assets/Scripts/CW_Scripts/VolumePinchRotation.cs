@@ -44,9 +44,15 @@ public sealed class VolumePinchRotation : MonoBehaviour
     [SerializeField]
     private Camera viewer;
 
-    [Tooltip("Rotation center (Sky Constellation Pivot).")]
+    [Tooltip("Sky Constellation Pivot. Only a fallback for the controls' center when there's no volume; the constellation always turns about its own pivot.")]
     [SerializeField]
     private Transform skyConstellationPivot;
+
+    // Where the controls live: pinch region, hand angles, guide rings and grip
+    // marker all use the whole volume, even when the constellation sits off
+    // center (Sky Anchor = Observer). Only the axis and angle are applied, so
+    // the constellation still turns about its own pivot.
+    private Vector3 ControlCenter => volume != null ? volume.transform.position : skyConstellationPivot.position;
 
     [Tooltip("Rotated about the remapped axis; ConstellationSetup mirrors it to the sky.")]
     [SerializeField]
@@ -388,7 +394,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
                 continue;
             }
 
-            Vector3 center = skyConstellationPivot.position;
+            Vector3 center = ControlCenter;
             if (Vector3.Distance(point, center) > volume.Radius * entryRadiusFactor)
             {
                 continue;
@@ -466,7 +472,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
             return;
         }
 
-        Vector3 center = skyConstellationPivot.position;
+        Vector3 center = ControlCenter;
 
         if (state == State.Pending)
         {
@@ -571,7 +577,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
             return;
         }
 
-        Vector3 center = skyConstellationPivot.position;
+        Vector3 center = ControlCenter;
         float entryRadius = volume.Radius * entryRadiusFactor;
 
         PinchHand nearest = null;
@@ -765,7 +771,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
                 EnsureTubeMeshes();
             }
 
-            Vector3 center = skyConstellationPivot.position;
+            Vector3 center = ControlCenter;
             float radius = volume.Radius * guideRadiusFraction;
 
             for (int i = 0; i < 3; i++)

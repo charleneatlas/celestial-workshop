@@ -64,6 +64,30 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
     [Range(0.1f, 1f)]
     private float contentFill = 0.8f;
 
+    public enum SkyAnchor
+    {
+        [Tooltip("The constellation's pivot sits at the volume's center, scaled to Content Fill. The observer ends up outside the volume.")]
+        VolumeCenter,
+
+        [Tooltip("The observer sits inside the volume, Observer Inset above the shell (the diorama's eye height), and the sky is scaled around it until the constellation just fits the far side of the volume. Scaling around the observer keeps the Earth view identical.")]
+        Observer
+    }
+
+    [Header("Sky Scale")]
+    [Tooltip("What the sky is scaled around. Observer: the constellation becomes the sky above the diorama.")]
+    [SerializeField]
+    private SkyAnchor skyAnchor = SkyAnchor.Observer;
+
+    [Tooltip("Observer anchor: how far inside the shell the observer sits, along its view (m). Default = diorama ground thickness + margin + figure eye height.")]
+    [SerializeField]
+    [Min(0f)]
+    private float observerInset = 0.063f;
+
+    [Tooltip("Observer anchor: fraction of the volume's radius the constellation may reach, in any rotation.")]
+    [SerializeField]
+    [Range(0.1f, 1f)]
+    private float skyFill = 0.95f;
+
     public enum ObserverPlacement
     {
         [Tooltip("Observer on the line from the volume's center back toward the viewer's head at placement time (the original behaviour).")]
@@ -211,6 +235,17 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
             Quaternion.Inverse(Quaternion.LookRotation(originalView, Vector3.up));
         float scale = volumeRadius * contentFill / contentRadius;
 
+        // Observer anchor: the observer ends up observerDistance from the center
+        // and the pivot (observerToPivot * scale) beyond it along the view, so
+        // the constellation's far reach is (observerToPivot + contentRadius) *
+        // scale - observerDistance from the center; make that the fill radius.
+        float observerToPivot = Vector3.Distance(skyObserverReference.position, skyConstellationPivot.position);
+        float observerDistance = Mathf.Max(0f, volumeRadius - observerInset);
+        if (skyAnchor == SkyAnchor.Observer)
+        {
+            scale = (volumeRadius * skyFill + observerDistance) / (observerToPivot + contentRadius);
+        }
+
         if (proxyGroup == null)
         {
             proxyGroup = new GameObject("Near-Field Sky Proxy").transform;
@@ -228,6 +263,14 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
         proxyGroup.SetPositionAndRotation(center, rotation * proxyGroup.rotation);
         proxyGroup.localScale *= scale;
 
+        if (skyAnchor == SkyAnchor.Observer)
+        {
+            // Slide the whole group (scale stays about the observer's ray) so the
+            // observer lands inside the volume, just above the shell.
+            Vector3 observerTarget = center - newView.normalized * observerDistance;
+            proxyGroup.position += observerTarget - skyObserverReference.position;
+        }
+
         // The volume itself keeps facing the viewer, whatever the observer does.
         volume.transform.SetPositionAndRotation(center, Quaternion.LookRotation(-eyeView, Vector3.up));
         volume.Radius = volumeRadius;
@@ -235,7 +278,8 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
         Debug.Log(
             $"NearFieldSkyProxy: volume at {center} (r {volumeRadius:F2} m, {eyeView.magnitude:F2} m from eyes, " +
             $"observer {observerPlacement}{(observerPlacement == ObserverPlacement.FixedDirection ? $" elevation {observerElevation:F0} heading {observerHeading:F0}" : "")}, " +
-            $"head {(tracked ? "tracked" : "NOT tracked, used fallback eye")}), sky scaled x{scale:G3}",
+            $"head {(tracked ? "tracked" : "NOT tracked, used fallback eye")}), sky scaled x{scale:G3} around the {skyAnchor}, " +
+            $"pivot {Vector3.Distance(skyConstellationPivot.position, center):F3} m from center, reach {contentRadius * scale:F3} m",
             this
         );
 

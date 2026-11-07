@@ -169334,7 +169334,7 @@ MonoBehaviour:
   volume: {fileID: 0}
   orientToObserverRay: 0
   markerRenderer: {fileID: 1068751473}
-  showMarker: 1
+  showMarker: 0
   diameter: 0.02
   color: {r: 1, g: 0.5, b: 0.05, a: 1}
 --- !u!4 &1512454405
