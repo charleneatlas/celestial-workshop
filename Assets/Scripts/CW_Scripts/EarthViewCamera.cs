@@ -157,6 +157,27 @@ public sealed class EarthViewCamera : MonoBehaviour
     }
 
     /// <summary>
+    /// Where an artboard position lands on a round chart framed like the Earth
+    /// view's circle: (-1..1, -1..1) across the circle, x right, y up (toward
+    /// the image top). Disc screens map x to local +X and y to local +Z, so
+    /// anything laid out with this lines up with the Earth view disc.
+    /// </summary>
+    public static Vector2 ArtboardToDisc(Vector2 artboardPosition, Vector2 artboard, float circleRadiusPixels)
+    {
+        return new Vector2(
+            (artboardPosition.x - artboard.x * 0.5f) / circleRadiusPixels,
+            (artboard.y * 0.5f - artboardPosition.y) / circleRadiusPixels
+        );
+    }
+
+    /// <summary>ArtboardToDisc using this camera's circle framing.</summary>
+    public Vector2 ArtboardToDisc(Vector2 artboardPosition)
+    {
+        Vector2 artboard = constellationGenerator.artboardSize;
+        return ArtboardToDisc(artboardPosition, artboard, CircleRadius(artboard));
+    }
+
+    /// <summary>
     /// Projects every sky star through the camera and compares it with where
     /// the blueprint places it. Only meaningful at the solved orientation
     /// (ConstellationSetup > Snap To Canonical Solve).
