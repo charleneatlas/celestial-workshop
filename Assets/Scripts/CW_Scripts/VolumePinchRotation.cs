@@ -26,6 +26,15 @@ public sealed class VolumePinchRotation : MonoBehaviour
         Tube
     }
 
+    public enum ControlCenterMode
+    {
+        [Tooltip("Pinch region, hand angles, guide rings and grip marker center on the whole volume.")]
+        Volume,
+
+        [Tooltip("They center on the sky constellation's pivot (the original layout).")]
+        Constellation
+    }
+
     private enum State
     {
         Idle,
@@ -44,15 +53,25 @@ public sealed class VolumePinchRotation : MonoBehaviour
     [SerializeField]
     private Camera viewer;
 
-    [Tooltip("Sky Constellation Pivot. Only a fallback for the controls' center when there's no volume; the constellation always turns about its own pivot.")]
+    [Tooltip("Sky Constellation Pivot: the controls' center in Constellation mode (and the fallback when there's no volume). The constellation always turns about its own pivot.")]
     [SerializeField]
     private Transform skyConstellationPivot;
 
-    // Where the controls live: pinch region, hand angles, guide rings and grip
-    // marker all use the whole volume, even when the constellation sits off
-    // center (Sky Anchor = Observer). Only the axis and angle are applied, so
-    // the constellation still turns about its own pivot.
-    private Vector3 ControlCenter => volume != null ? volume.transform.position : skyConstellationPivot.position;
+    [Tooltip("Where the controls live (pinch region, hand angles, guide rings, grip marker). Volume: the whole sphere. Constellation: the sky constellation's pivot. Either way only the axis and angle are applied, so the constellation turns about its own pivot. Can be switched in Play mode.")]
+    [SerializeField]
+    private ControlCenterMode controlCenter = ControlCenterMode.Constellation;
+
+    // Ring radius: a fraction of the volume, or in Constellation mode a multiple
+    // of the constellation's reach (falls back to the volume until it's placed).
+    private float GuideRadius =>
+        controlCenter == ControlCenterMode.Constellation && nearFieldSkyProxy != null && nearFieldSkyProxy.ConstellationReach > 0f
+            ? nearFieldSkyProxy.ConstellationReach * constellationGuideFraction
+            : volume.Radius * guideRadiusFraction;
+
+    private Vector3 ControlCenter =>
+        controlCenter == ControlCenterMode.Constellation || volume == null
+            ? skyConstellationPivot.position
+            : volume.transform.position;
 
     [Tooltip("Rotated about the remapped axis; ConstellationSetup mirrors it to the sky.")]
     [SerializeField]
@@ -158,9 +177,15 @@ public sealed class VolumePinchRotation : MonoBehaviour
     [SerializeField]
     private Material tubeMaterial;
 
+    [Tooltip("Volume mode: guide ring radius as a fraction of the volume's radius.")]
     [SerializeField]
     [Range(0.1f, 1f)]
     private float guideRadiusFraction = 0.85f;
+
+    [Tooltip("Constellation mode: guide ring radius as a multiple of the constellation's reach (farthest star from its pivot). Above 1 keeps the rings outside the stars.")]
+    [SerializeField]
+    [Range(0.5f, 2f)]
+    private float constellationGuideFraction = 1.1f;
 
     [Tooltip("Line width, or tube diameter.")]
     [SerializeField]
@@ -264,6 +289,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
     private MaterialPropertyBlock guideProperties;
 
     private bool lastPinchMode;
+    private ControlCenterMode lastControlCenter;
 
     private void Start()
     {
@@ -297,6 +323,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
 
         HideGuides();
         lastPinchMode = pinchMode;
+        lastControlCenter = controlCenter;
     }
 
     private void OnDestroy()
@@ -316,6 +343,15 @@ public sealed class VolumePinchRotation : MonoBehaviour
         {
             pinchMode = !pinchMode;
             Debug.Log($"VolumePinchRotation: pinch mode {(pinchMode ? "on" : "off (gimbal)")}", this);
+        }
+
+        // Switching the center mid-pinch would jump the hand angle; start fresh.
+        if (controlCenter != lastControlCenter)
+        {
+            lastControlCenter = controlCenter;
+            EndPinch();
+            HidePreview();
+            Debug.Log($"VolumePinchRotation: controls centered on the {controlCenter}", this);
         }
 
         if (pinchMode != lastPinchMode)
@@ -813,7 +849,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
             }
 
             Vector3 center = ControlCenter;
-            float radius = volume.Radius * guideRadiusFraction;
+            float radius = GuideRadius;
 
             for (int i = 0; i < 3; i++)
             {
@@ -892,7 +928,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
 
     private void EnsureTubeMeshes()
     {
-        float radius = volume.Radius * guideRadiusFraction;
+        float radius = GuideRadius;
         string key = $"{radius:F4}|{guideWidth:F4}|{tubeSides}|{backFade:F2}|{previewArcDegrees:F1}";
         if (key == meshKey)
         {
@@ -1026,7 +1062,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
             return;
         }
 
-        gripMarker.transform.position = center + previousDirection * (volume.Radius * guideRadiusFraction);
+        gripMarker.transform.position = center + previousDirection * GuideRadius;
     }
 
     private void SetGuideAlpha(Renderer guideRenderer, float alpha)

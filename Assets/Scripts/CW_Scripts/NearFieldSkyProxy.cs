@@ -163,6 +163,9 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
     /// <summary>True once the volume and sky have been placed (and the gimbal moved, if enabled).</summary>
     public bool IsPlaced { get; private set; }
 
+    /// <summary>Farthest star from the sky pivot after placement (world metres), so the constellation fits a sphere this big around its pivot in any rotation. 0 before placement.</summary>
+    public float ConstellationReach { get; private set; }
+
     private void Awake()
     {
         authoredCenter = transform.position;
@@ -288,6 +291,7 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
             MoveGimbalOntoVolume(center);
         }
 
+        ConstellationReach = contentRadius * scale;
         IsPlaced = true;
     }
 
