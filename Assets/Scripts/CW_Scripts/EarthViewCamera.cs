@@ -37,6 +37,31 @@ public sealed class EarthViewCamera : MonoBehaviour
     [SerializeField]
     private Transform skyConstellationPivot;
 
+    public enum ViewShape
+    {
+        Artboard,
+        Circle
+    }
+
+    [Header("Framing")]
+    [Tooltip("Artboard: frame exactly the blueprint's rectangle. Circle: a square view centered on the artboard, for a round display; the circle's radius is Circle Radius (artboard pixels).")]
+    [SerializeField]
+    private ViewShape viewShape = ViewShape.Artboard;
+
+    [Tooltip("Circle framing: size the circle to the current constellation (farthest star from the artboard's center x Fit Margin), so no star is ever cut off. The zoom then differs per constellation; the display's size doesn't.")]
+    [SerializeField]
+    private bool autoFitCircle = true;
+
+    [Tooltip("Auto-fit: circle radius as a multiple of the farthest star's distance from the artboard's center.")]
+    [SerializeField]
+    [Range(1f, 2f)]
+    private float fitMargin = 1.15f;
+
+    [Tooltip("Circle framing without auto-fit: radius of the visible circle in artboard pixels, around the artboard's center. Must reach the farthest star.")]
+    [SerializeField]
+    [Min(1f)]
+    private float circleRadius = 880f;
+
     [Header("Clip Planes")]
     [Tooltip("Near plane as a fraction of the distance to the constellation's center.")]
     [SerializeField]
@@ -86,16 +111,17 @@ public sealed class EarthViewCamera : MonoBehaviour
         );
 
         // Blueprint coordinates are normalized by half the artboard's shorter
-        // side, so the artboard's half extents are (w, h) / min(w, h).
+        // side; the view spans ViewExtent artboard pixels around its center.
         Vector2 artboard = constellationGenerator.artboardSize;
+        Vector2 view = ViewExtent(artboard);
         float shortSide = Mathf.Min(artboard.x, artboard.y);
         float tanHalfHeight =
-            artboard.y / shortSide *
+            view.y / shortSide *
             constellationGenerator.angularSpread *
             constellationSetup.SkyAngularScale;
 
         earthCamera.fieldOfView = 2f * Mathf.Atan(tanHalfHeight) * Mathf.Rad2Deg;
-        earthCamera.aspect = artboard.x / artboard.y;
+        earthCamera.aspect = view.x / view.y;
 
         if (skyConstellationPivot != null)
         {
@@ -106,6 +132,28 @@ public sealed class EarthViewCamera : MonoBehaviour
                 earthCamera.farClipPlane = distance * farMultiple;
             }
         }
+    }
+
+    // Width and height of the rendered view in artboard pixels, centered on the artboard.
+    private Vector2 ViewExtent(Vector2 artboard) =>
+        viewShape == ViewShape.Circle ? Vector2.one * (2f * CircleRadius(artboard)) : artboard;
+
+    /// <summary>Radius of the circle framing, in artboard pixels.</summary>
+    public float CircleRadius(Vector2 artboard)
+    {
+        if (!autoFitCircle || constellationGenerator == null || constellationGenerator.stars == null)
+        {
+            return circleRadius;
+        }
+
+        Vector2 center = artboard * 0.5f;
+        float farthest = 0f;
+        foreach (ConstellationGenerator.StarData star in constellationGenerator.stars)
+        {
+            farthest = Mathf.Max(farthest, Vector2.Distance(star.affinityPosition, center));
+        }
+
+        return farthest > 0f ? farthest * fitMargin : circleRadius;
     }
 
     /// <summary>
@@ -127,13 +175,15 @@ public sealed class EarthViewCamera : MonoBehaviour
             ? new Vector2(target.width, target.height)
             : new Vector2(1024f, 576f);
         Vector2 artboard = constellationGenerator.artboardSize;
+        Vector2 view = ViewExtent(artboard);
 
         GeneratedConstellationStar[] skyStars =
             skyConstellationPivot.GetComponentsInChildren<GeneratedConstellationStar>(true);
 
         var report = new StringBuilder();
         report.AppendLine(
-            $"Earth view: fov {earthCamera.fieldOfView:F2} deg, aspect {earthCamera.aspect:F3}, " +
+            $"Earth view: {viewShape}{(viewShape == ViewShape.Circle ? $" (radius {CircleRadius(artboard):F0} px{(autoFitCircle ? ", auto-fit" : "")})" : "")}, " +
+            $"fov {earthCamera.fieldOfView:F2} deg, aspect {earthCamera.aspect:F3}, " +
             $"{Vector3.Distance(transform.position, skyConstellationPivot.position):F3} m to pivot, " +
             $"clip {earthCamera.nearClipPlane:F4}-{earthCamera.farClipPlane:F3} m");
 
@@ -166,8 +216,8 @@ public sealed class EarthViewCamera : MonoBehaviour
 
             Vector3 viewport = earthCamera.WorldToViewportPoint(match.transform.position);
             var expected = new Vector2(
-                star.affinityPosition.x / artboard.x,
-                1f - star.affinityPosition.y / artboard.y
+                0.5f + (star.affinityPosition.x - artboard.x * 0.5f) / view.x,
+                0.5f + (artboard.y * 0.5f - star.affinityPosition.y) / view.y
             );
             Vector2 errorPixels = Vector2.Scale((Vector2)viewport - expected, pixels);
             worstPixels = Mathf.Max(worstPixels, errorPixels.magnitude);
