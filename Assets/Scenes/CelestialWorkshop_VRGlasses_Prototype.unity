@@ -16878,9 +16878,9 @@ MonoBehaviour:
   useLogarithmicDistance: 0
   logarithmicMinimumRadius: 0.2
   starMaterial: {fileID: 2100000, guid: 61961a56c9803d54da89e6942382e482, type: 2}
-  lineMaterial: {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  lineMaterial: {fileID: 2100000, guid: 61961a56c9803d54da89e6942382e482, type: 2}
   starDiameter: 0.05
-  lineWidth: 0.008
+  lineWidth: 0.02
   showDebugLabels: 0
   starLabelPrefab: {fileID: 9024586629279105377, guid: 9bb5015c143aae54daf28d48d3f934aa, type: 3}
   labelOffset: 0
@@ -39111,8 +39111,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6636260e25c00444b13e3dca248906f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SkyConstellationHighlightController
-  normalColor: {r: 0.1882353, g: 0.34509805, b: 0.49803922, a: 0.14509805}
-  nearSolveColor: {r: 0.37254903, g: 0.5294118, b: 0.6862745, a: 0.5803922}
+  normalColor: {r: 0.36, g: 0.58, b: 0.82, a: 0.5}
+  nearSolveColor: {r: 0.62, g: 0.82, b: 1, a: 0.85}
   solvedColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!1 &245008139
 GameObject:
@@ -127374,7 +127374,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1068751472}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
@@ -136582,7 +136582,7 @@ Transform:
   m_GameObject: {fileID: 1237499181}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: 0.19119617, z: -0, w: 0.9815518}
-  m_LocalPosition: {x: 0.2641797, y: 0.109000206, z: 0.03338623}
+  m_LocalPosition: {x: 0.2211194, y: 0.109000206, z: -0.0678463}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -186165,9 +186165,10 @@ MonoBehaviour:
   - {fileID: 1672400902}
   pinchMode: 1
   toggleModeKey: 21
-  pinchOnStrength: 0.8
-  pinchOffStrength: 0.5
+  pinchOnStrength: 0.6
+  pinchOffStrength: 0.4
   entryRadiusFactor: 1.1
+  logPinchRejections: 1
   trackingGrace: 0.2
   centerFraction: 0.25
   frontWeight: 1
@@ -196755,6 +196756,9 @@ MonoBehaviour:
   heightBelowEyes: 0.3
   volumeRadius: 0.22
   contentFill: 0.8
+  skyAnchor: 1
+  observerInset: 0.063
+  skyFill: 0.8
   observerPlacement: 1
   observerElevation: -90
   observerHeading: 0

@@ -88,16 +88,20 @@ public sealed class VolumePinchRotation : MonoBehaviour
     [Header("Pinch")]
     [SerializeField]
     [Range(0f, 1f)]
-    private float pinchOnStrength = 0.8f;
+    private float pinchOnStrength = 0.6f;
 
     [SerializeField]
     [Range(0f, 1f)]
-    private float pinchOffStrength = 0.5f;
+    private float pinchOffStrength = 0.4f;
 
     [Tooltip("A pinch starts a rotation (and the preview shows) within this multiple of the volume's radius.")]
     [SerializeField]
     [Min(0.1f)]
     private float entryRadiusFactor = 1.1f;
+
+    [Tooltip("Log why a fresh pinch didn't start a rotation (debugging).")]
+    [SerializeField]
+    private bool logPinchRejections = true;
 
     [Tooltip("Hold the pinch through tracking loss this short.")]
     [SerializeField]
@@ -216,6 +220,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
     {
         public IHand Hand;
         public bool Held;
+        public float WeakPeak;
     }
 
     private sealed class GuideVisual
@@ -383,20 +388,51 @@ public sealed class VolumePinchRotation : MonoBehaviour
             bool wasHeld = pinchHand.Held;
             pinchHand.Held = wasHeld ? strength > pinchOffStrength : strength >= pinchOnStrength;
 
+            // Diagnostics: a pinch that never reached the on-strength while the preview showed.
+            if (!pinchHand.Held && previewHand == pinchHand)
+            {
+                pinchHand.WeakPeak = Mathf.Max(pinchHand.WeakPeak, strength);
+            }
+
+            if (pinchHand.Held || strength < 0.2f)
+            {
+                if (!pinchHand.Held && pinchHand.WeakPeak >= pinchOffStrength && logPinchRejections)
+                {
+                    Debug.Log($"VolumePinchRotation: weak pinch ignored, peak strength {pinchHand.WeakPeak:F2} (needs {pinchOnStrength:F2}), t {Time.time:F2}", this);
+                }
+
+                pinchHand.WeakPeak = 0f;
+            }
+
             // Only a pinch that starts inside counts, not one carried in from outside.
-            if (wasHeld || !pinchHand.Held || solved || !hand.IsHighConfidence)
+            if (wasHeld || !pinchHand.Held)
             {
                 continue;
             }
 
-            if (!TryGetPinchPoint(pinchHand, out Vector3 point))
-            {
-                continue;
-            }
-
+            // Diagnostics (first-pinch bug): say why a fresh pinch didn't start.
+            bool hasPoint = TryGetPinchPoint(pinchHand, out Vector3 point);
             Vector3 center = ControlCenter;
-            if (Vector3.Distance(point, center) > volume.Radius * entryRadiusFactor)
+            float distance = hasPoint ? Vector3.Distance(point, center) : -1f;
+            string rejected =
+                solved ? "solved" :
+                !hand.IsHighConfidence ? "low confidence" :
+                !hasPoint ? "no fingertip pose" :
+                distance > volume.Radius * entryRadiusFactor ? "outside volume" :
+                null;
+
+            if (rejected != null)
             {
+                if (logPinchRejections)
+                {
+                    Debug.Log(
+                        $"VolumePinchRotation: pinch ignored ({rejected}), strength {strength:F2}, " +
+                        $"{(distance >= 0f ? $"{distance:F3} m from center (entry {volume.Radius * entryRadiusFactor:F3})" : "no point")}, " +
+                        $"preview {(previewHand == pinchHand ? "on this hand" : previewHand == null ? "off" : "on other hand")}, t {Time.time:F2}",
+                        this
+                    );
+                }
+
                 continue;
             }
 
@@ -432,7 +468,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
 
         Debug.Log(
             $"VolumePinchRotation: pinch in {RegionName(dropped)} region, offering " +
-            $"{AxisName(offeredAxes[0])} and {AxisName(offeredAxes[1])}",
+            $"{AxisName(offeredAxes[0])} and {AxisName(offeredAxes[1])}, t {Time.time:F2}",
             this
         );
     }
@@ -443,7 +479,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
 
         if (IsSolved())
         {
-            EndPinch();
+            EndPinch("solved");
             return;
         }
 
@@ -453,7 +489,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
             untrackedTime += Time.deltaTime;
             if (untrackedTime > trackingGrace)
             {
-                EndPinch();
+                EndPinch("tracking lost");
             }
 
             return;
@@ -463,7 +499,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
 
         if (hand.GetFingerPinchStrength(HandFinger.Index) <= pinchOffStrength)
         {
-            EndPinch();
+            EndPinch("released");
             return;
         }
 
@@ -553,8 +589,13 @@ public sealed class VolumePinchRotation : MonoBehaviour
         miniConstellationPivot.Rotate(Quaternion.Inverse(skyFromEarth) * worldAxis, angle, Space.World);
     }
 
-    private void EndPinch()
+    private void EndPinch(string reason = null)
     {
+        if (activeHand != null && reason != null && logPinchRejections)
+        {
+            Debug.Log($"VolumePinchRotation: pinch ended ({reason}){(lockedAxis < 0 ? " before an axis locked" : "")}, t {Time.time:F2}", this);
+        }
+
         if (activeHand != null)
         {
             // Keep it held so the same pinch can't restart once it's back in range.

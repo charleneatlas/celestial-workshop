@@ -7,6 +7,10 @@ using UnityEngine.XR;
 /// Puts the player at the desk on startup and after every system recenter.
 /// With Floor Level on OpenXR the app can't trigger a recenter itself, so instead
 /// we move the rig so the headset lands on the rig's authored pose, facing its forward.
+/// Also re-aligns when the headset is put back on. Over Link the head can report
+/// "tracked" with a placeholder pose (the rig origin, facing forward) before the
+/// headset is really delivering poses; aligning to that leaves the scene wherever
+/// it happens to be, often behind the player, so each align waits for a real pose.
 /// </summary>
 public sealed class DeskAlign : MonoBehaviour
 {
@@ -41,8 +45,7 @@ public sealed class DeskAlign : MonoBehaviour
         if (OVRManager.display != null)
             OVRManager.display.RecenteredPose += RequestAlign;
 
-        while (!OVRManager.tracker.isPositionTracked)
-            yield return null;
+        OVRManager.HMDMounted += RequestAlign;
 
         RequestAlign();
     }
@@ -54,6 +57,8 @@ public sealed class DeskAlign : MonoBehaviour
 
         if (OVRManager.display != null)
             OVRManager.display.RecenteredPose -= RequestAlign;
+
+        OVRManager.HMDMounted -= RequestAlign;
     }
 
     private void OnTrackingOriginUpdated(XRInputSubsystem subsystem) => RequestAlign();
@@ -72,8 +77,24 @@ public sealed class DeskAlign : MonoBehaviour
         yield return null;
         yield return null;
 
+        while (!HasRealHeadPose())
+            yield return null;
+
         Align();
         pendingAlign = null;
+    }
+
+    // A placeholder pose sits exactly on the rig origin's vertical axis, facing
+    // straight ahead. A worn headset is never exactly there.
+    private bool HasRealHeadPose()
+    {
+        if (OVRManager.tracker == null || !OVRManager.tracker.isPositionTracked)
+            return false;
+
+        Transform head = rig.centerEyeAnchor;
+        Vector3 local = head.localPosition;
+        return Mathf.Abs(local.x) + Mathf.Abs(local.z) > 1e-4f
+            || Quaternion.Angle(head.localRotation, Quaternion.identity) > 0.01f;
     }
 
     private void Align()
