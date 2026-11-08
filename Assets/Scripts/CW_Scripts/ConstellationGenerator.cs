@@ -30,6 +30,10 @@ public class ConstellationGenerator : MonoBehaviour
         public float lineWidth = 0.01f;
     }
 
+    [Header("Constellation")]
+    [Tooltip("Shown as the title on the Star Chart's sketch style.")]
+    public string constellationName = "Cassiopeia";
+
     [Header("Affinity Designer")]
     public Vector2 artboardSize = new Vector2(1920f, 1080f);
 

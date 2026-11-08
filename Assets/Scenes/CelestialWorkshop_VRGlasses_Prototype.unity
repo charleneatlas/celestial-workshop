@@ -16856,6 +16856,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbe84bcf1f221347a6fd1afaf934b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  constellationName: Cassiopeia
   artboardSize: {x: 1920, y: 1080}
   stars:
   - starName: Segin
@@ -18422,6 +18423,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbe84bcf1f221347a6fd1afaf934b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  constellationName: Cassiopeia
   artboardSize: {x: 1920, y: 1080}
   stars:
   - starName: Segin
@@ -38390,6 +38392,11 @@ Transform:
   - {fileID: 1306834229}
   m_Father: {fileID: 1669123707}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &233909832 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2799936613537607374, guid: 30bd24baaa7bbf04da2294539529d9c1, type: 3}
+  m_PrefabInstance: {fileID: 1712144914577857065}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &234209107
 GameObject:
   m_ObjectHideFlags: 0
@@ -49473,6 +49480,11 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!4 &322084329 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7154701153067354662, guid: 30bd24baaa7bbf04da2294539529d9c1, type: 3}
+  m_PrefabInstance: {fileID: 1712144914577857065}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &322852828
 GameObject:
   m_ObjectHideFlags: 0
@@ -50173,6 +50185,16 @@ MonoBehaviour:
   earthViewCamera: {fileID: 1627030383}
   starTargets: {fileID: 810939165}
   marks: {fileID: 1644309034}
+  paper: {fileID: 2007870884}
+  chartStyle: 1
+  blueprintPaperMaterial: {fileID: 2100000, guid: e699c6a017f6c734ba8d589441357433, type: 2}
+  blueprintMarksMaterial: {fileID: 2100000, guid: a678e7fc60305374cae9d28fae1cfc9f, type: 2}
+  sketchPaperMaterial: {fileID: 2100000, guid: b290df7552f211c4b91b60baa6e6ea8b, type: 2}
+  sketchMarksMaterial: {fileID: 2100000, guid: 0a88db9adf669474782e48beee194089, type: 2}
+  paperOpacity: 0.5
+  paperLook: 0
+  tracingPaperColor: {r: 0.93, g: 0.94, b: 0.94, a: 1}
+  tracingDetail: 0.5
   chartRadius: 0.083
   markHeight: 0.0085
   starDotRadius: 0.003
@@ -50184,9 +50206,56 @@ MonoBehaviour:
   showCompass: 1
   compassColor: {r: 0.8, g: 0.92, b: 1, a: 0.55}
   showGrid: 1
+  gridStyle: 1
   gridColor: {r: 0.8, g: 0.92, b: 1, a: 0.18}
+  gridLineWidth: 0.0006
+  gridSquareSize: 0.01
+  gridMajorEvery: 0
+  gridMajorColor: {r: 0.8, g: 0.92, b: 1, a: 0.32}
   gridRings: 2
   gridSpokes: 4
+  pencilColor: {r: 0.14, g: 0.14, b: 0.16, a: 1}
+  sketchStarRadius: 0.004
+  sketchLineWidth: 0.0009
+  strokesPerLine: 3
+  strokeJitter: 0.00035
+  strokeWobble: 0.00012
+  strokeOvershoot: 0.0012
+  showStarOutline: 0
+  circleStrokes: 3
+  starFill: 0
+  scribbleLoopSize: 0.5
+  scribbleLoopsPerTurn: 10
+  scribbleTurns: 4
+  scribbleStrength: 0.75
+  scribbleMessiness: 1
+  hatchSpacing: 0.0006
+  hatchStrength: 0.85
+  strokeStrength: 1
+  sketchSeed: 7
+  showLabels: 1
+  labelFont: {fileID: 11400000, guid: 7a3e683d64ebc214aaf1e712fa292158, type: 2}
+  labelCapHeight: 0.0045
+  labelColor: {r: 0.2, g: 0.2, b: 0.22, a: 0.88}
+  labelWeight: 0.08
+  labelHalo: 0
+  labelHaloColor: {r: 0.97, g: 0.93, b: 0.84, a: 0.75}
+  labelHaloSize: 0.45
+  labelGap: 0.0018
+  labelTilt: 3
+  showTitle: 1
+  titleFont: {fileID: 11400000, guid: 943acece6cb2b5b4e9efda708b5082fb, type: 2}
+  titleText: 
+  titleCapHeight: 0.0125
+  titlePosition: {x: 0.12, y: 0.7}
+  underlineTitle: 1
+  showSketchGrid: 1
+  sketchGridSquareSize: 0.007
+  sketchGridLineWidth: 0.00025
+  sketchGridColor: {r: 0.6627451, g: 0.4627451, b: 0.28627452, a: 0.35}
+  sketchGridMajorEvery: 0
+  sketchGridMajorColor: {r: 0.33, g: 0.6, b: 0.62, a: 0.55}
+  highlightColor: {r: 0.14117648, g: 0.14117648, b: 0.16078432, a: 0.9}
 --- !u!1 &331854317
 GameObject:
   m_ObjectHideFlags: 0
@@ -51908,6 +51977,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbe84bcf1f221347a6fd1afaf934b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  constellationName: Cassiopeia
   artboardSize: {x: 1920, y: 1080}
   stars:
   - starName: Segin
@@ -60873,6 +60943,11 @@ MonoBehaviour:
   miniConstellationPivot: {fileID: 530830715}
   rotationAmount: 15
   fingertip: {fileID: 1712144914577857068}
+--- !u!4 &390137299 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4280051185960956901, guid: 30bd24baaa7bbf04da2294539529d9c1, type: 3}
+  m_PrefabInstance: {fileID: 1712144914577857065}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &394888665
 GameObject:
   m_ObjectHideFlags: 0
@@ -74894,6 +74969,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbe84bcf1f221347a6fd1afaf934b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  constellationName: Cassiopeia
   artboardSize: {x: 1920, y: 1080}
   stars:
   - starName: Segin
@@ -80814,6 +80890,11 @@ Transform:
   - {fileID: 1000225519}
   m_Father: {fileID: 233311980}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &566016813 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5805942527298385266, guid: 30bd24baaa7bbf04da2294539529d9c1, type: 3}
+  m_PrefabInstance: {fileID: 1712144914577857065}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &567952764
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -82914,6 +82995,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbe84bcf1f221347a6fd1afaf934b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  constellationName: Cassiopeia
   artboardSize: {x: 1920, y: 1080}
   stars:
   - starName: Segin
@@ -131140,7 +131222,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1107056287
 Transform:
   m_ObjectHideFlags: 0
@@ -132768,6 +132850,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbe84bcf1f221347a6fd1afaf934b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  constellationName: Cassiopeia
   artboardSize: {x: 1920, y: 1080}
   stars:
   - starName: Segin
@@ -132843,6 +132926,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbe84bcf1f221347a6fd1afaf934b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  constellationName: Cassiopeia
   artboardSize: {x: 1920, y: 1080}
   stars:
   - starName: Segin
@@ -135029,6 +135113,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: df874702e53acba489dbb55412bd7375, type: 3}
+--- !u!4 &1179656978 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9009381323688850576, guid: 30bd24baaa7bbf04da2294539529d9c1, type: 3}
+  m_PrefabInstance: {fileID: 1712144914577857065}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1179900816
 GameObject:
   m_ObjectHideFlags: 0
@@ -169145,6 +169234,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbe84bcf1f221347a6fd1afaf934b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  constellationName: Cassiopeia
   artboardSize: {x: 1920, y: 1080}
   stars:
   - starName: Segin
@@ -169353,6 +169443,11 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1469345881}
   m_Mesh: {fileID: 10207, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1471532494 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2341503081373863246, guid: 30bd24baaa7bbf04da2294539529d9c1, type: 3}
+  m_PrefabInstance: {fileID: 1712144914577857065}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1473623808
 GameObject:
   m_ObjectHideFlags: 0
@@ -171883,6 +171978,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbe84bcf1f221347a6fd1afaf934b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  constellationName: Cassiopeia
   artboardSize: {x: 1920, y: 1080}
   stars:
   - starName: Segin
@@ -177962,6 +178058,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbe84bcf1f221347a6fd1afaf934b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  constellationName: Cassiopeia
   artboardSize: {x: 1920, y: 1080}
   stars:
   - starName: Segin
@@ -186998,6 +187095,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbe84bcf1f221347a6fd1afaf934b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  constellationName: Cassiopeia
   artboardSize: {x: 1920, y: 1080}
   stars:
   - starName: Segin
@@ -188631,7 +188729,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a678e7fc60305374cae9d28fae1cfc9f, type: 2}
+  - {fileID: 2100000, guid: 0a88db9adf669474782e48beee194089, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -200533,6 +200631,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbe84bcf1f221347a6fd1afaf934b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  constellationName: Cassiopeia
   artboardSize: {x: 1920, y: 1080}
   stars:
   - starName: Segin
@@ -226091,6 +226190,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbe84bcf1f221347a6fd1afaf934b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  constellationName: Cassiopeia
   artboardSize: {x: 1920, y: 1080}
   stars:
   - starName: Segin
@@ -240623,7 +240723,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e699c6a017f6c734ba8d589441357433, type: 2}
+  - {fileID: 2100000, guid: b290df7552f211c4b91b60baa6e6ea8b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -246146,6 +246246,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbe84bcf1f221347a6fd1afaf934b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  constellationName: Cassiopeia
   artboardSize: {x: 1920, y: 1080}
   stars:
   - starName: Segin
@@ -246294,6 +246395,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbe84bcf1f221347a6fd1afaf934b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  constellationName: Cassiopeia
   artboardSize: {x: 1920, y: 1080}
   stars:
   - starName: Segin
@@ -247514,6 +247616,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fbe84bcf1f221347a6fd1afaf934b0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  constellationName: Cassiopeia
   artboardSize: {x: 1920, y: 1080}
   stars:
   - starName: Segin
