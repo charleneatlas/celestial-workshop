@@ -73,11 +73,82 @@ public sealed class EarthViewCamera : MonoBehaviour
     [Min(1.5f)]
     private float farMultiple = 5f;
 
+    public const string HandsLayerName = "PlayerHands";
+
+    [Header("Hands")]
+    [Tooltip("Show the player's hands in the Earth view when they reach into its line of sight.")]
+    [SerializeField]
+    private bool showHands = false;
+
+    [Tooltip("The rig's hand visuals. Moved to the PlayerHands layer on start; the headset camera still draws them, the Earth view only when Show Hands is on.")]
+    [SerializeField]
+    private Transform[] handVisuals = new Transform[0];
+
     private Camera earthCamera;
+    private int handsLayer = -1;
 
     private void Awake()
     {
         earthCamera = GetComponent<Camera>();
+        handsLayer = LayerMask.NameToLayer(HandsLayerName);
+        if (handsLayer < 0)
+        {
+            Debug.LogWarning($"EarthViewCamera: no '{HandsLayerName}' layer; Show Hands has no effect.", this);
+            return;
+        }
+
+        foreach (Transform hand in handVisuals)
+        {
+            if (hand != null)
+            {
+                SetLayerRecursively(hand, handsLayer);
+            }
+        }
+
+        ApplyHandsMask();
+    }
+
+    private void OnValidate()
+    {
+        if (Application.isPlaying)
+        {
+            ApplyHandsMask();
+        }
+    }
+
+    public bool ShowHands
+    {
+        get => showHands;
+        set
+        {
+            showHands = value;
+            ApplyHandsMask();
+        }
+    }
+
+    private void ApplyHandsMask()
+    {
+        if (handsLayer < 0)
+        {
+            return;
+        }
+
+        if (earthCamera == null)
+        {
+            earthCamera = GetComponent<Camera>();
+        }
+
+        int bit = 1 << handsLayer;
+        earthCamera.cullingMask = showHands ? earthCamera.cullingMask | bit : earthCamera.cullingMask & ~bit;
+    }
+
+    private static void SetLayerRecursively(Transform target, int layer)
+    {
+        target.gameObject.layer = layer;
+        for (int i = 0; i < target.childCount; i++)
+        {
+            SetLayerRecursively(target.GetChild(i), layer);
+        }
     }
 
     private void LateUpdate()

@@ -187507,6 +187507,14 @@ MonoBehaviour:
   circleRadius: 880
   nearFraction: 0.05
   farMultiple: 5
+  showHands: 1
+  handVisuals:
+  - {fileID: 322084329}
+  - {fileID: 390137299}
+  - {fileID: 1471532494}
+  - {fileID: 233909832}
+  - {fileID: 1179656978}
+  - {fileID: 566016813}
 --- !u!114 &1627030384
 MonoBehaviour:
   m_ObjectHideFlags: 0
