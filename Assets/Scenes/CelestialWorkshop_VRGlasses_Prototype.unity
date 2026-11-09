@@ -50198,7 +50198,11 @@ MonoBehaviour:
   tracingDetail: 0.5
   lensPaperOpacity: 0.12
   lensShowTitle: 1
-  lensLabelHalo: 0
+  lensLabelColor: {r: 0.96, g: 0.94, b: 0.88, a: 0.95}
+  useLensPencilColor: 0
+  lensPencilColor: {r: 0.9, g: 0.9, b: 0.88, a: 1}
+  lensHalo: 0
+  lensHaloColor: {r: 0.04, g: 0.05, b: 0.12, a: 0.6}
   chartRadius: 0.083
   markHeight: 0.0085
   starDotRadius: 0.003
