@@ -50062,6 +50062,7 @@ GameObject:
   - component: {fileID: 330823360}
   - component: {fileID: 330823357}
   - component: {fileID: 330823358}
+  - component: {fileID: 330823361}
   m_Layer: 0
   m_Name: Star Chart Blueprint
   m_TagString: Untagged
@@ -50195,6 +50196,9 @@ MonoBehaviour:
   paperLook: 0
   tracingPaperColor: {r: 0.93, g: 0.94, b: 0.94, a: 1}
   tracingDetail: 0.5
+  lensPaperOpacity: 0.12
+  lensShowTitle: 1
+  lensLabelHalo: 0
   chartRadius: 0.083
   markHeight: 0.0085
   starDotRadius: 0.003
@@ -50256,6 +50260,32 @@ MonoBehaviour:
   sketchGridMajorEvery: 0
   sketchGridMajorColor: {r: 0.33, g: 0.6, b: 0.62, a: 0.55}
   highlightColor: {r: 0.14117648, g: 0.14117648, b: 0.16078432, a: 0.9}
+--- !u!114 &330823361
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 330823355}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d6b0c58ae86bddb4b801e3e18710fa05, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LensDock
+  grabbable: {fileID: 330823358}
+  dockTarget: {fileID: 1237499182}
+  layout: {fileID: 330823360}
+  snapDistance: 0.05
+  snapMaxTilt: 40
+  dockLift: 0.0015
+  magnetPull: 0.3
+  breakawayDistance: 0.04
+  holdResistance: 0.15
+  snapDuration: 0.15
+  startDocked: 0
+  whenDockedChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &331854317
 GameObject:
   m_ObjectHideFlags: 0

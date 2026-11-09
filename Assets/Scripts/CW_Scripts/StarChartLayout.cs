@@ -95,6 +95,34 @@ public sealed class StarChartLayout : MonoBehaviour
     [Range(0f, 1f)]
     private float tracingDetail = 0.5f;
 
+    [Header("Lens Mode")]
+    [Tooltip("Paper opacity while the chart is docked on the Earth View Disc as a lens.")]
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float lensPaperOpacity = 0.12f;
+
+    [Tooltip("Keep the title while docked as a lens.")]
+    [SerializeField]
+    private bool lensShowTitle = true;
+
+    [Tooltip("Star names, title and title underline while docked (fades in as it docks).")]
+    [SerializeField]
+    private Color lensLabelColor = new Color(0.96f, 0.94f, 0.88f, 0.95f);
+
+    [Tooltip("Also recolor the pencil lines and star fills while docked.")]
+    [SerializeField]
+    private bool useLensPencilColor = false;
+
+    [SerializeField]
+    private Color lensPencilColor = new Color(0.9f, 0.9f, 0.88f, 1f);
+
+    [Tooltip("A glow behind names and title while docked (the normal paper-colored halo fades out as it docks).")]
+    [SerializeField]
+    private bool lensHalo = false;
+
+    [SerializeField]
+    private Color lensHaloColor = new Color(0.04f, 0.05f, 0.12f, 0.6f);
+
     [Header("Chart")]
     [Tooltip("Radius of the printed circle (local units). Match the Earth view disc's screen radius so a lens lines up.")]
     [SerializeField]
@@ -399,6 +427,36 @@ public sealed class StarChartLayout : MonoBehaviour
 
     public float ChartRadius => chartRadius;
 
+    private float lensBlend;
+    private bool IsLens => lensBlend >= 0.5f;
+
+    /// <summary>
+    /// 0 = on its own, 1 = docked on the Earth View Disc as a lens. Fades the
+    /// paper, label, underline, pencil and halo colors toward their lens values;
+    /// a hidden lens title switches at the halfway point.
+    /// </summary>
+    public float LensBlend
+    {
+        get => lensBlend;
+        set
+        {
+            value = Mathf.Clamp01(value);
+            if (Mathf.Approximately(value, lensBlend))
+            {
+                return;
+            }
+
+            bool wasLens = IsLens;
+            lensBlend = value;
+            ApplyPaperLook();
+            ApplyLensColors();
+            if (IsLens != wasLens && !lensShowTitle)
+            {
+                dirty = true;
+            }
+        }
+    }
+
     private bool IsSketch => chartStyle == ChartStyle.Sketch;
 
     private void OnEnable()
@@ -483,6 +541,7 @@ public sealed class StarChartLayout : MonoBehaviour
         PlaceStarTargets();
         BuildMarks();
         BuildLabels();
+        ApplyLensColors();
     }
 
     private void ApplyMaterials()
@@ -525,7 +584,7 @@ public sealed class StarChartLayout : MonoBehaviour
 
         paperBlock ??= new MaterialPropertyBlock();
         paper.GetPropertyBlock(paperBlock);
-        paperBlock.SetFloat(OpacityId, paperOpacity);
+        paperBlock.SetFloat(OpacityId, Mathf.Lerp(paperOpacity, lensPaperOpacity, lensBlend));
         paperBlock.SetFloat(TracingId, paperLook == PaperLook.Tracing ? 1f : 0f);
         paperBlock.SetColor(TracingColorId, tracingPaperColor);
         paperBlock.SetFloat(TracingDetailId, tracingDetail);
@@ -578,12 +637,14 @@ public sealed class StarChartLayout : MonoBehaviour
         colors.Clear();
         triangles.Clear();
         uvs.Clear();
+        pencilStart = pencilEnd = underlineStart = underlineEnd = 0;
 
         CollectStarsAndSegments();
 
         if (IsSketch)
         {
             BuildSketchMarks();
+            pencilEnd = vertices.Count;
         }
         else
         {
@@ -742,6 +803,8 @@ public sealed class StarChartLayout : MonoBehaviour
         {
             AddSketchGrid();
         }
+
+        pencilStart = vertices.Count;
 
         // Lines: a few rough passes, each stopping near (not exactly at) the circles.
         for (int i = 0; i < segmentA.Count; i++)
@@ -1056,7 +1119,7 @@ public sealed class StarChartLayout : MonoBehaviour
         }
 
         bool labels = showLabels && labelFont != null;
-        bool title = showTitle && titleFont != null;
+        bool title = showTitle && titleFont != null && (!IsLens || lensShowTitle);
         if (!labels && !title)
         {
             return;
@@ -1111,7 +1174,76 @@ public sealed class StarChartLayout : MonoBehaviour
             AddPencilStroke(a, b, sketchLineWidth * (k == 0 ? 1.4f : 0.8f), Fade(pencil, k == 0 ? 0.85f : 0.45f), random);
         }
 
+        underlineStart = first;
+        underlineEnd = vertices.Count;
         UploadMarks(first);
+    }
+
+    // Vertex ranges in the marks mesh, recolored by the lens fade.
+    private int pencilStart;
+    private int pencilEnd;
+    private int underlineStart;
+    private int underlineEnd;
+    private readonly List<TextMeshPro> labelTexts = new List<TextMeshPro>();
+
+    /// <summary>
+    /// Fades label text, the title underline, optionally the pencil marks, and
+    /// the halo between their normal and lens colors by LensBlend. Recolors in
+    /// place (no rebuild), so it can run every frame of the dock animation.
+    /// </summary>
+    private void ApplyLensColors()
+    {
+        if (!IsSketch)
+        {
+            return;
+        }
+
+        Color textColor = Color.Lerp(labelColor, lensLabelColor, lensBlend);
+        foreach (TextMeshPro text in labelTexts)
+        {
+            if (text != null)
+            {
+                text.color = textColor;
+            }
+        }
+
+        Color normalHalo = labelHalo ? labelHaloColor : WithAlpha(lensHaloColor, 0f);
+        Color lensHaloTarget = lensHalo ? lensHaloColor : WithAlpha(labelHaloColor, 0f);
+        Color halo = Color.Lerp(normalHalo, lensHaloTarget, lensBlend);
+        foreach (Material material in labelMaterials.Values)
+        {
+            if (material != null)
+            {
+                material.SetColor(ShaderUtilities.ID_UnderlayColor, halo);
+            }
+        }
+
+        if (marksMesh == null || colors.Count != marksMesh.vertexCount)
+        {
+            return;
+        }
+
+        Color pencilNow = Color.Lerp(pencilColor, useLensPencilColor ? lensPencilColor : pencilColor, lensBlend);
+        Color underlineNow = Color.Lerp(pencilColor, lensLabelColor, lensBlend);
+        Recolor(pencilStart, pencilEnd, MeshColor(pencilNow));
+        Recolor(underlineStart, underlineEnd, MeshColor(underlineNow));
+        marksMesh.SetColors(colors);
+    }
+
+    // Sets the RGB of a vertex range, keeping each vertex's alpha (stroke pressure and taper).
+    private void Recolor(int start, int end, Color rgb)
+    {
+        for (int i = start; i < end && i < colors.Count; i++)
+        {
+            Color c = colors[i];
+            colors[i] = new Color(rgb.r, rgb.g, rgb.b, c.a);
+        }
+    }
+
+    private static Color WithAlpha(Color color, float alpha)
+    {
+        color.a = alpha;
+        return color;
     }
 
     private TextMeshPro CreateText(string text, TMP_FontAsset font, float capHeight)
@@ -1125,6 +1257,7 @@ public sealed class StarChartLayout : MonoBehaviour
         tmp.text = text;
         tmp.fontSize = 10f;
         tmp.color = labelColor;
+        labelTexts.Add(tmp);
         tmp.alignment = TextAlignmentOptions.Center;
         tmp.textWrappingMode = TextWrappingModes.NoWrap;
         tmp.rectTransform.sizeDelta = new Vector2(100f, 20f);
@@ -1154,10 +1287,11 @@ public sealed class StarChartLayout : MonoBehaviour
         }
 
         material.SetFloat(ShaderUtilities.ID_FaceDilate, labelWeight);
-        if (labelHalo)
+        if (labelHalo || lensHalo)
         {
+            // Halo color is set (and faded for lens mode) by ApplyLensColors.
             material.EnableKeyword(ShaderUtilities.Keyword_Underlay);
-            material.SetColor(ShaderUtilities.ID_UnderlayColor, labelHaloColor);
+            material.SetColor(ShaderUtilities.ID_UnderlayColor, labelHalo ? labelHaloColor : WithAlpha(lensHaloColor, 0f));
             material.SetFloat(ShaderUtilities.ID_UnderlayOffsetX, 0f);
             material.SetFloat(ShaderUtilities.ID_UnderlayOffsetY, 0f);
             material.SetFloat(ShaderUtilities.ID_UnderlayDilate, labelHaloSize);
@@ -1289,6 +1423,7 @@ public sealed class StarChartLayout : MonoBehaviour
 
     private void DestroyLabels()
     {
+        labelTexts.Clear();
         if (labelRoot == null)
         {
             return;
