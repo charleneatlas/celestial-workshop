@@ -24,6 +24,8 @@ public sealed class SkyStamp3DVFX : MonoBehaviour
     private GameObject constellationRoot;
     private Coroutine playRoutine;
 
+    public bool IsPlaying => playRoutine != null;
+
     private readonly List<ScaleRecord> starSpheres =
         new List<ScaleRecord>();
 

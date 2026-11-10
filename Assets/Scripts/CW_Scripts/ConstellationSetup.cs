@@ -114,6 +114,26 @@ public sealed class ConstellationSetup : MonoBehaviour
     public float SkyAzimuthDegrees => skyAzimuthDegrees;
     public float SkyAngularScale => skyAngularScale;
 
+    /// <summary>Raised when the ease into the canonical solved orientation has finished.</summary>
+    public event Action SolveSettled;
+
+    public bool IsSettling => isSettling;
+
+    public Transform SkyConstellationPivot => skyConstellationPivot;
+    public Transform SkyVisualContainer => skyVisualContainer;
+    public SkyStamp3DVFX SkyStampVFX => skyStampVFX;
+
+    /// <summary>World rotation of the sky pivot in the canonical solved orientation.</summary>
+    public Quaternion CanonicalSkyRotation =>
+        skyRotationReference.rotation * canonicalMiniRelativeRotation;
+
+    /// <summary>Whether the sky follows the tabletop constellation's rotation each frame.</summary>
+    public bool MirrorRotation
+    {
+        get => mirrorRotation;
+        set => mirrorRotation = value;
+    }
+
     private readonly Dictionary<string, List<GeneratedConstellationStar>>
     generatedStarsById =
         new Dictionary<string, List<GeneratedConstellationStar>>(
@@ -596,6 +616,8 @@ public sealed class ConstellationSetup : MonoBehaviour
         handGrabInteractable.SetActive(true);
 
         isSettling = false;
+
+        SolveSettled?.Invoke();
     }
 
     public void HandleSolved()

@@ -46,9 +46,15 @@ public class ConstellationSolveController : MonoBehaviour
     public bool IsSolved => isSolved;
     public bool IsNearSolve => isNearSolve;
 
+    /// <summary>
+    /// Pauses solve detection, e.g. while a preview poses the sky in its
+    /// solved orientation without the puzzle actually being solved.
+    /// </summary>
+    public bool SuspendDetection { get; set; }
+
     private void Update()
     {
-        if (isSolved)
+        if (isSolved || SuspendDetection)
             return;
 
         if (solveDirection == null || skyObserverReference == null)
