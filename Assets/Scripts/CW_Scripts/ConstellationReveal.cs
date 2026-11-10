@@ -61,6 +61,16 @@ public sealed class ConstellationReveal : MonoBehaviour
     [SerializeField]
     private Transform playerHead;
 
+    [Tooltip("Earth view display objects (the disc with its screen and frame) to hide when the rotation starts; restored on reset. Not the Earth view camera, which the reveal still measures with.")]
+    [SerializeField]
+    private GameObject[] hideWhenRotating = new GameObject[0];
+
+    [Header("Start")]
+    [Tooltip("Extra wait after a real solve, once the settle, solve stamp and diorama hops have all finished, before compression begins (s). Preview Reveal skips it.")]
+    [SerializeField]
+    [Min(0f)]
+    private float startDelay = 0.75f;
+
     [Header("Compression")]
     [Tooltip("Distance of the flattening plane from the Earth observer, measured along the Earth view's forward axis, as a multiple of the distance to the constellation's pivot (its star centroid). 1 = plane through the centroid; less = nearer the observer, so the flat pattern is smaller. Relative, so it holds at any sky scale; the world distance is logged.")]
     [SerializeField]
@@ -198,6 +208,8 @@ public sealed class ConstellationReveal : MonoBehaviour
     private Vector3 planeUp;
     private Vector2 planeHalfSize;
 
+    private readonly List<GameObject> hiddenByReveal = new List<GameObject>();
+
     private GameObject guideRoot;
     private LineRenderer[] rayGuides = new LineRenderer[0];
     private LineRenderer planeOutline;
@@ -273,6 +285,7 @@ public sealed class ConstellationReveal : MonoBehaviour
         }
 
         DestroyGuides();
+        RestoreHidden();
         RestoreBaseline();
         EndPreviewOverride();
         revealedThisSolve = false;
@@ -341,6 +354,11 @@ public sealed class ConstellationReveal : MonoBehaviour
             yield return null;
         }
 
+        if (waitForOthers && startDelay > 0f)
+        {
+            yield return new WaitForSeconds(startDelay);
+        }
+
         if (!Capture())
         {
             CurrentPhase = Phase.Idle;
@@ -392,6 +410,7 @@ public sealed class ConstellationReveal : MonoBehaviour
 
         // 3. Tilt toward the player, rigidly about the flat bounds' center.
         DestroyGuides();
+        HideDisplays();
         CurrentPhase = Phase.Rotating;
         elapsed = 0f;
         while (true)
@@ -693,6 +712,35 @@ public sealed class ConstellationReveal : MonoBehaviour
         {
             solveController.SuspendDetection = false;
         }
+    }
+
+    // ---- Earth view display ----
+
+    // Only objects that were showing are hidden (and later restored), so
+    // reset brings back exactly the previous visibility.
+    private void HideDisplays()
+    {
+        foreach (GameObject display in hideWhenRotating)
+        {
+            if (display != null && display.activeSelf)
+            {
+                display.SetActive(false);
+                hiddenByReveal.Add(display);
+            }
+        }
+    }
+
+    private void RestoreHidden()
+    {
+        foreach (GameObject display in hiddenByReveal)
+        {
+            if (display != null)
+            {
+                display.SetActive(true);
+            }
+        }
+
+        hiddenByReveal.Clear();
     }
 
     // ---- Guides (visual only; built from the captured rays and plane) ----
