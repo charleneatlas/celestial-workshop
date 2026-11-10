@@ -109,6 +109,11 @@ public sealed class ConstellationSetup : MonoBehaviour
 
     private bool isInitialized;
 
+    // The tabletop constellation's post-solve grab: offered by the game after
+    // the settle, and optionally suppressed (e.g. while the post-puzzle menu is up).
+    private bool postSolveGrabAvailable;
+    private bool postSolveGrabSuppressed;
+
     // Sky placement, read by EarthViewCamera to reproduce the generated view.
     public float SkyElevationDegrees => skyElevationDegrees;
     public float SkyAzimuthDegrees => skyAzimuthDegrees;
@@ -617,11 +622,32 @@ public sealed class ConstellationSetup : MonoBehaviour
         miniConstellationRigidbody.isKinematic = false;
 
         // Turn on the tabletop constellation's HandGrabInteractable to allow it to be grabbed by player
-        handGrabInteractable.SetActive(true);
+        // (unless something has it suppressed right now).
+        postSolveGrabAvailable = true;
+        ApplyPostSolveGrab();
 
         isSettling = false;
 
         SolveSettled?.Invoke();
+    }
+
+    /// <summary>
+    /// Suppress (or stop suppressing) the post-solve grab without changing
+    /// whether the game currently offers it. Releasing suppression restores
+    /// the gameplay state: grabbable only if solved and settled.
+    /// </summary>
+    public void SetPostSolveGrabSuppressed(bool suppressed)
+    {
+        postSolveGrabSuppressed = suppressed;
+        ApplyPostSolveGrab();
+    }
+
+    private void ApplyPostSolveGrab()
+    {
+        if (handGrabInteractable != null)
+        {
+            handGrabInteractable.SetActive(postSolveGrabAvailable && !postSolveGrabSuppressed);
+        }
     }
 
     public void HandleSolved()
@@ -642,7 +668,8 @@ public sealed class ConstellationSetup : MonoBehaviour
         gimbalRoot.SetActive(true);
 
         // Turn back off the ability to grab mini constellation
-        handGrabInteractable.SetActive(false);
+        postSolveGrabAvailable = false;
+        ApplyPostSolveGrab();
 
         // reset Rigidbody state of mini constellation
         miniConstellationRigidbody.useGravity = false;
