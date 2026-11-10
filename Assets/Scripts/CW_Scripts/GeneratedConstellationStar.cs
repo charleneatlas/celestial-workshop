@@ -11,6 +11,11 @@ public class GeneratedConstellationStar : MonoBehaviour
 
     public string StarId => starId;
 
+    /// <summary>True while marked (showing the highlight material).</summary>
+    public bool IsHighlighted { get; private set; }
+
+    public Renderer StarRenderer => starRenderer;
+
     public void Initialize(
         string id,
         Renderer renderer,
@@ -31,6 +36,8 @@ public class GeneratedConstellationStar : MonoBehaviour
         {
             return;
         }
+
+        IsHighlighted = highlighted && highlightMaterial != null;
 
         if (highlighted && highlightMaterial != null)
         {

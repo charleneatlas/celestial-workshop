@@ -554,6 +554,13 @@ public sealed class ConstellationSetup : MonoBehaviour
         {
             star.SetHighlighted(highlighted);
         }
+
+        // The swap replaced the sky star's material; re-apply the current
+        // normal / near-solve / solved tint on top of it.
+        if (skyConstellationHighlightController != null)
+        {
+            skyConstellationHighlightController.Refresh();
+        }
     }
 
     private IEnumerator RandomizeAfterInitialization()

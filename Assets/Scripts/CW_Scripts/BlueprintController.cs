@@ -35,6 +35,43 @@ public class BlueprintController : MonoBehaviour
     private Vector3 distanceLabelOffset =
         new Vector3(0f, -0.025f, 0f);
 
+    [Header("Distance Label Style")]
+    [Tooltip("Optional: fades the label between its paper and lens colours as the chart docks.")]
+    [SerializeField]
+    private StarChartLayout chartLayout;
+
+    [Tooltip("Text colour on the paper.")]
+    [SerializeField]
+    private Color distanceTextColor = new Color(0.10f, 0.10f, 0.12f, 1f);
+
+    [Tooltip("Halo behind the text on the paper (alpha 0 = no halo).")]
+    [SerializeField]
+    private Color distanceHaloColor = new Color(0.98f, 0.95f, 0.86f, 0.95f);
+
+    [Tooltip("Text colour while docked as a lens over the Earth view.")]
+    [SerializeField]
+    private Color distanceLensTextColor = new Color(0.98f, 0.96f, 0.90f, 1f);
+
+    [Tooltip("Halo while docked as a lens.")]
+    [SerializeField]
+    private Color distanceLensHaloColor = new Color(0.03f, 0.04f, 0.10f, 0.9f);
+
+    [Tooltip("Halo spread around the letters.")]
+    [Range(0f, 1f)]
+    [SerializeField]
+    private float distanceHaloSize = 0.6f;
+
+    [Tooltip("Letter weight (TMP face dilate): above 0 is bolder.")]
+    [Range(-0.5f, 0.5f)]
+    [SerializeField]
+    private float distanceTextWeight = 0.15f;
+
+    [Tooltip("Keeps the label at least this far inside the chart's rim (needs Chart Layout).")]
+    [SerializeField]
+    private float distanceEdgeMargin = 0.008f;
+
+    private Material distanceMaterial;
+
     [Header("Tutorial")]
     [SerializeField]
     private GameObject tutorialHandVisual;
@@ -223,13 +260,92 @@ public class BlueprintController : MonoBehaviour
             out ConstellationGenerator.StarData starData))
         {
             distanceLabel.text =
-                $"{starData.distanceLightYears:0} light years away";
+                $"{starData.distanceLightYears:0}\nlight years";
 
             distanceLabel.transform.position =
                 star.transform.position +
                 blueprintVisual.TransformDirection(distanceLabelOffset);
 
+            StyleDistanceLabel();
             distanceLabel.gameObject.SetActive(true);
+            KeepDistanceLabelOnChart();
+        }
+    }
+
+    // Slides the label sideways (and, if needed, toward the centre) so the
+    // whole text block stays inside the round chart.
+    private void KeepDistanceLabelOnChart()
+    {
+        if (chartLayout == null || distanceLabel == null)
+        {
+            return;
+        }
+
+        Transform chart = chartLayout.transform;
+        float toChart = distanceLabel.transform.lossyScale.x / Mathf.Max(1e-6f, chart.lossyScale.x);
+        Vector2 size = distanceLabel.GetPreferredValues(distanceLabel.text);
+        float halfWidth = size.x * 0.5f * toChart;
+        float halfHeight = size.y * 0.5f * toChart;
+        float radius = Mathf.Max(0f, chartLayout.ChartRadius - distanceEdgeMargin);
+
+        Vector3 local = chart.InverseTransformPoint(distanceLabel.transform.position);
+        float maxZ = Mathf.Max(0f, radius - halfHeight);
+        local.z = Mathf.Clamp(local.z, -maxZ, maxZ);
+
+        float farZ = Mathf.Abs(local.z) + halfHeight;
+        float halfChord = Mathf.Sqrt(Mathf.Max(0f, radius * radius - farZ * farZ));
+        float maxX = Mathf.Max(0f, halfChord - halfWidth);
+        local.x = Mathf.Clamp(local.x, -maxX, maxX);
+
+        distanceLabel.transform.position = chart.TransformPoint(local);
+    }
+
+    private void LateUpdate()
+    {
+        // Keep the colours right while the chart docks or undocks mid-poke.
+        if (distanceLabel != null && distanceLabel.gameObject.activeSelf && chartLayout != null)
+        {
+            StyleDistanceLabel();
+        }
+    }
+
+    // Dark text with a light halo on the paper; light text with a dark halo
+    // when docked as a lens. Uses its own copy of the font material.
+    private void StyleDistanceLabel()
+    {
+        if (distanceLabel == null)
+        {
+            return;
+        }
+
+        if (distanceMaterial == null)
+        {
+            distanceMaterial = new Material(distanceLabel.fontSharedMaterial)
+            {
+                name = distanceLabel.fontSharedMaterial.name + " (distance label)",
+                hideFlags = HideFlags.DontSave
+            };
+            distanceMaterial.EnableKeyword(ShaderUtilities.Keyword_Underlay);
+            distanceMaterial.SetFloat(ShaderUtilities.ID_UnderlayOffsetX, 0f);
+            distanceMaterial.SetFloat(ShaderUtilities.ID_UnderlayOffsetY, 0f);
+            distanceLabel.fontSharedMaterial = distanceMaterial;
+        }
+
+        float lens = chartLayout != null ? chartLayout.LensBlend : 0f;
+        distanceMaterial.SetFloat(ShaderUtilities.ID_FaceDilate, distanceTextWeight);
+        distanceMaterial.SetFloat(ShaderUtilities.ID_UnderlayDilate, distanceHaloSize);
+        distanceMaterial.SetFloat(ShaderUtilities.ID_UnderlaySoftness, Mathf.Lerp(0.3f, 0.8f, distanceHaloSize));
+        distanceMaterial.SetColor(ShaderUtilities.ID_UnderlayColor, Color.Lerp(distanceHaloColor, distanceLensHaloColor, lens));
+        ShaderUtilities.GetShaderPropertyIDs();
+        ShaderUtilities.UpdateShaderRatios(distanceMaterial);
+        distanceLabel.color = Color.Lerp(distanceTextColor, distanceLensTextColor, lens);
+    }
+
+    private void OnDestroy()
+    {
+        if (distanceMaterial != null)
+        {
+            Destroy(distanceMaterial);
         }
     }
 
