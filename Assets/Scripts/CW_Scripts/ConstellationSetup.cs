@@ -123,6 +123,10 @@ public sealed class ConstellationSetup : MonoBehaviour
     public Transform SkyVisualContainer => skyVisualContainer;
     public SkyStamp3DVFX SkyStampVFX => skyStampVFX;
 
+    /// <summary>Display name of the current constellation (from the generator).</summary>
+    public string ConstellationName =>
+        constellationGenerator != null ? constellationGenerator.constellationName : "";
+
     /// <summary>World rotation of the sky pivot in the canonical solved orientation.</summary>
     public Quaternion CanonicalSkyRotation =>
         skyRotationReference.rotation * canonicalMiniRelativeRotation;

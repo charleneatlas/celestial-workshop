@@ -86,6 +86,10 @@ public sealed class VolumePinchRotation : MonoBehaviour
     [SerializeField]
     private ConstellationSolveController solveController;
 
+    [Tooltip("Optional: rotation also stands down while the solve reveal runs or holds (e.g. Preview Reveal, signing), even if the puzzle isn't marked solved.")]
+    [SerializeField]
+    private ConstellationReveal reveal;
+
     [Tooltip("Hidden while Pinch Mode is on.")]
     [SerializeField]
     private GameObject gimbalRoot;
@@ -409,7 +413,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
 
     private void TryBeginPinch()
     {
-        bool solved = IsSolved();
+        bool solved = IsLocked();
 
         foreach (PinchHand pinchHand in pinchHands)
         {
@@ -513,7 +517,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
     {
         IHand hand = activeHand.Hand;
 
-        if (IsSolved())
+        if (IsLocked())
         {
             EndPinch("solved");
             return;
@@ -648,7 +652,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
     // nearest the center that's inside the volume and not already pinching.
     private void UpdatePreview()
     {
-        if (!showPreview || IsSolved())
+        if (!showPreview || IsLocked())
         {
             HidePreview();
             return;
@@ -828,6 +832,12 @@ public sealed class VolumePinchRotation : MonoBehaviour
     private bool IsSolved()
     {
         return solveController != null && solveController.IsSolved;
+    }
+
+    // No rotating while solved, or while the reveal (and signing) owns the constellation.
+    private bool IsLocked()
+    {
+        return IsSolved() || (reveal != null && reveal.CurrentPhase != ConstellationReveal.Phase.Idle);
     }
 
     // Draws ringAlpha / arcAlpha in the current guide style. Runs every frame

@@ -110470,6 +110470,7 @@ GameObject:
   - component: {fileID: 832476890}
   - component: {fileID: 832476889}
   - component: {fileID: 832476891}
+  - component: {fileID: 832476892}
   m_Layer: 0
   m_Name: Constellation Setup
   m_TagString: Untagged
@@ -110634,6 +110635,59 @@ MonoBehaviour:
   planePadding: 0.012
   guideShader: {fileID: 4800000, guid: db6b86ace73f7c0478bbfb6dc97ff374, type: 3}
   logChecks: 1
+--- !u!114 &832476892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 832476888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b4f460639138ce949b2be6f050014b6c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ConstellationSigning
+  signingEnabled: 1
+  reveal: {fileID: 832476891}
+  setup: {fileID: 832476889}
+  hands:
+  - {fileID: 2111471561}
+  - {fileID: 1672400902}
+  nameOverride: 
+  placement: 0
+  gap: 0.03
+  placementOffset: {x: 0, y: 0, z: 0}
+  signingWidth: 0.22
+  font: {fileID: 11400000, guid: 8433b450e5a14dd4f89a9be44c8203b1, type: 2}
+  textColor: {r: 1, g: 0.92, b: 0.75, a: 1}
+  maxCapHeight: 0.03
+  textWidthFill: 0.9
+  textLift: 0.006
+  wipeSoftness: 0.006
+  lineColor: {r: 0.85, g: 0.9, b: 1, a: 0.6}
+  lineThickness: 0.0015
+  lineShader: {fileID: 4800000, guid: db6b86ace73f7c0478bbfb6dc97ff374, type: 3}
+  penLength: 0.14
+  penThickness: 0.008
+  penColor: {r: 0.75, g: 0.6, b: 0.35, a: 1}
+  penShader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
+  anchor: 0
+  penPositionOffset: {x: 0, y: -0.005, z: 0.012}
+  penRotationOffset: {x: -53, y: 0, z: 0}
+  alongTolerance: 0.04
+  verticalTolerance: 0.06
+  depthTowardPlayer: 0.08
+  depthBehind: 0.05
+  startResumeTolerance: 0.04
+  maxAdvanceSpeed: 1.5
+  requireHighConfidence: 1
+  handReleaseAfter: 2
+  completionThreshold: 0.9
+  onSigned:
+    m_PersistentCalls:
+      m_Calls: []
+  showInteractionArea: 0
+  logEvents: 1
 --- !u!1 &833607772
 GameObject:
   m_ObjectHideFlags: 0
@@ -188319,6 +188373,7 @@ MonoBehaviour:
   miniEarthReference: {fileID: 1904326628}
   skyRotationReference: {fileID: 1071834818}
   solveController: {fileID: 242918475}
+  reveal: {fileID: 832476891}
   gimbalRoot: {fileID: 1681033680}
   hands:
   - {fileID: 2111471561}

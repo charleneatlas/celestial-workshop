@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -225,6 +226,28 @@ public sealed class ConstellationReveal : MonoBehaviour
 
     public Phase CurrentPhase { get; private set; } = Phase.Idle;
 
+    /// <summary>Raised once the pattern has finished turning toward the player and is holding still.</summary>
+    public event Action Presented;
+
+    /// <summary>Raised at the end of every ResetReveal (reset, re-preview, disable).</summary>
+    public event Action Cleared;
+
+    /// <summary>
+    /// The held presentation, in world space: the pattern's center, its
+    /// right/up axes as the player reads it, the direction back toward the
+    /// player, and its half extents along right/up. Only valid while Holding.
+    /// </summary>
+    public bool TryGetPresentation(out Vector3 center, out Vector3 right, out Vector3 up, out Vector3 towardPlayer, out Vector2 halfSize)
+    {
+        bool valid = CurrentPhase == Phase.Holding && root != null;
+        center = valid ? root.TransformPoint(centerLocal) : Vector3.zero;
+        right = presentRight;
+        up = presentUp;
+        towardPlayer = -presentForward;
+        halfSize = planeHalfSize;
+        return valid;
+    }
+
     private void OnEnable()
     {
         if (setup != null)
@@ -299,6 +322,7 @@ public sealed class ConstellationReveal : MonoBehaviour
         EndPreviewOverride();
         revealedThisSolve = false;
         CurrentPhase = Phase.Idle;
+        Cleared?.Invoke();
     }
 
     [ContextMenu("Preview Reveal")]
@@ -454,6 +478,7 @@ public sealed class ConstellationReveal : MonoBehaviour
         // 4. Hold.
         CurrentPhase = Phase.Holding;
         routine = null;
+        Presented?.Invoke();
     }
 
     // ---- Capture ----
