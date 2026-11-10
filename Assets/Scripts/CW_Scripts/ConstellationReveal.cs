@@ -94,6 +94,60 @@ public sealed class ConstellationReveal : MonoBehaviour
     [SerializeField]
     private AnimationCurve rotationEasing = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
 
+    [Header("Guides: Ray Paths")]
+    [Tooltip("During compression (and the pause / hold), draw each star's path from its solved position to the plane. Visual only; hidden before the rotation. Not drawn in the Earth view.")]
+    [SerializeField]
+    private bool showRayGuides = true;
+
+    [SerializeField]
+    private bool dashedRayGuides = true;
+
+    [SerializeField]
+    private Color rayGuideColor = new Color(0.75f, 0.85f, 1f, 0.5f);
+
+    [Tooltip("Line width (world m).")]
+    [SerializeField]
+    [Min(0.0001f)]
+    private float rayGuideThickness = 0.0012f;
+
+    [Tooltip("Dash length (world m).")]
+    [SerializeField]
+    [Min(0.0005f)]
+    private float dashLength = 0.006f;
+
+    [Tooltip("Gap between dashes (world m).")]
+    [SerializeField]
+    [Min(0f)]
+    private float gapLength = 0.004f;
+
+    [Header("Guides: Destination Plane")]
+    [Tooltip("During compression (and the pause / hold), outline the part of the compression plane the pattern lands on.")]
+    [SerializeField]
+    private bool showPlaneOutline = true;
+
+    [SerializeField]
+    private Color planeOutlineColor = new Color(0.75f, 0.85f, 1f, 0.35f);
+
+    [Tooltip("Outline width (world m).")]
+    [SerializeField]
+    [Min(0.0001f)]
+    private float planeOutlineThickness = 0.001f;
+
+    [SerializeField]
+    private bool showPlaneFill = false;
+
+    [SerializeField]
+    private Color planeFillColor = new Color(0.75f, 0.85f, 1f, 0.06f);
+
+    [Tooltip("Margin around the flattened stars' bounds (world m).")]
+    [SerializeField]
+    [Min(0f)]
+    private float planePadding = 0.012f;
+
+    [Tooltip("CelestialWorkshop/GuideLine (referenced here so it ships in builds).")]
+    [SerializeField]
+    private Shader guideShader;
+
     [Header("Debug")]
     [Tooltip("Log the Earth-view drift check, the final straight-on check, and the volume containment.")]
     [SerializeField]
@@ -106,6 +160,8 @@ public sealed class ConstellationReveal : MonoBehaviour
         public Vector3 startLocal;
         public Vector3 flatLocal;
         public Vector2 startViewport;
+        public Vector3 startWorld;
+        public Vector3 flatWorld;
     }
 
     private struct ConnectionRecord
@@ -136,6 +192,21 @@ public sealed class ConstellationReveal : MonoBehaviour
     private Vector3 presentUp;
     private Vector3 presentForward;
 
+    // Compression plane, captured with the stars (world space).
+    private Vector3 planeCenter;
+    private Vector3 planeRight;
+    private Vector3 planeUp;
+    private Vector2 planeHalfSize;
+
+    private GameObject guideRoot;
+    private LineRenderer[] rayGuides = new LineRenderer[0];
+    private LineRenderer planeOutline;
+    private MeshRenderer planeFill;
+    private Mesh planeFillMesh;
+    private Material rayMaterial;
+    private Material outlineMaterial;
+    private Material fillMaterial;
+
     public Phase CurrentPhase { get; private set; } = Phase.Idle;
 
     private void OnEnable()
@@ -154,6 +225,26 @@ public sealed class ConstellationReveal : MonoBehaviour
         }
 
         ResetReveal();
+    }
+
+    private void OnDestroy()
+    {
+        DestroyGuides();
+        foreach (Material material in new[] { rayMaterial, outlineMaterial, fillMaterial })
+        {
+            if (material != null)
+            {
+                Destroy(material);
+            }
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (guideRoot != null)
+        {
+            UpdateGuides();
+        }
     }
 
     private void OnSolveSettled()
@@ -181,6 +272,7 @@ public sealed class ConstellationReveal : MonoBehaviour
             routine = null;
         }
 
+        DestroyGuides();
         RestoreBaseline();
         EndPreviewOverride();
         revealedThisSolve = false;
@@ -235,6 +327,7 @@ public sealed class ConstellationReveal : MonoBehaviour
             StopCoroutine(routine);
         }
 
+        DestroyGuides();
         routine = StartCoroutine(Sequence(waitForOthers));
     }
 
@@ -257,6 +350,7 @@ public sealed class ConstellationReveal : MonoBehaviour
 
         // 1. Compress along the sightlines.
         CurrentPhase = Phase.Compressing;
+        BuildGuides();
         float worstDriftPixels = 0f;
         float elapsed = 0f;
         while (true)
@@ -297,6 +391,7 @@ public sealed class ConstellationReveal : MonoBehaviour
         }
 
         // 3. Tilt toward the player, rigidly about the flat bounds' center.
+        DestroyGuides();
         CurrentPhase = Phase.Rotating;
         elapsed = 0f;
         while (true)
@@ -373,6 +468,8 @@ public sealed class ConstellationReveal : MonoBehaviour
             stars[i].startLocal = stars[i].baseLocal;
             stars[i].flatLocal = root.InverseTransformPoint(flat);
             stars[i].startViewport = cam.WorldToViewportPoint(solved);
+            stars[i].startWorld = solved;
+            stars[i].flatWorld = flat;
 
             Vector2 onPlane = new Vector2(Vector3.Dot(flat - origin, right), Vector3.Dot(flat - origin, up));
             min = Vector2.Min(min, onPlane);
@@ -382,6 +479,10 @@ public sealed class ConstellationReveal : MonoBehaviour
         Vector2 mid = (min + max) * 0.5f;
         Vector3 centerWorld = origin + forward * plane + right * mid.x + up * mid.y;
         centerLocal = root.InverseTransformPoint(centerWorld);
+        planeCenter = centerWorld;
+        planeRight = right;
+        planeUp = up;
+        planeHalfSize = (max - min) * 0.5f;
 
         Transform head = playerHead != null ? playerHead : (Camera.main != null ? Camera.main.transform : null);
         headWorld = head != null ? head.position : centerWorld - forward;
@@ -592,6 +693,152 @@ public sealed class ConstellationReveal : MonoBehaviour
         {
             solveController.SuspendDetection = false;
         }
+    }
+
+    // ---- Guides (visual only; built from the captured rays and plane) ----
+
+    private void BuildGuides()
+    {
+        DestroyGuides();
+        if (guideShader == null)
+        {
+            guideShader = Shader.Find("CelestialWorkshop/GuideLine");
+        }
+
+        if (guideShader == null)
+        {
+            Debug.LogWarning("ConstellationReveal: no guide shader; guides skipped.", this);
+            return;
+        }
+
+        if (rayMaterial == null)
+        {
+            rayMaterial = new Material(guideShader) { name = "Reveal Ray Guide" };
+            outlineMaterial = new Material(guideShader) { name = "Reveal Plane Outline" };
+            fillMaterial = new Material(guideShader) { name = "Reveal Plane Fill" };
+        }
+
+        // Default layer: drawn in the headset, never in the Earth view (which
+        // only renders the sky's WindowMasked layer).
+        guideRoot = new GameObject("Reveal Guides");
+        guideRoot.layer = 0;
+
+        rayGuides = new LineRenderer[stars.Length];
+        for (int i = 0; i < stars.Length; i++)
+        {
+            LineRenderer line = NewLine("Ray " + stars[i].transform.name, rayMaterial);
+            line.positionCount = 2;
+            line.textureMode = LineTextureMode.Tile;
+            rayGuides[i] = line;
+        }
+
+        planeOutline = NewLine("Plane Outline", outlineMaterial);
+        planeOutline.positionCount = 4;
+        planeOutline.loop = true;
+
+        var fillObject = new GameObject("Plane Fill");
+        fillObject.layer = 0;
+        fillObject.transform.SetParent(guideRoot.transform, false);
+        planeFillMesh = new Mesh { name = "Reveal Plane Fill" };
+        fillObject.AddComponent<MeshFilter>().sharedMesh = planeFillMesh;
+        planeFill = fillObject.AddComponent<MeshRenderer>();
+        planeFill.sharedMaterial = fillMaterial;
+        planeFill.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        planeFill.receiveShadows = false;
+
+        UpdateGuides();
+    }
+
+    private LineRenderer NewLine(string name, Material material)
+    {
+        var lineObject = new GameObject(name);
+        lineObject.layer = 0;
+        lineObject.transform.SetParent(guideRoot.transform, false);
+        LineRenderer line = lineObject.AddComponent<LineRenderer>();
+        line.useWorldSpace = true;
+        line.sharedMaterial = material;
+        line.alignment = LineAlignment.View;
+        line.numCapVertices = 0;
+        line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+        line.receiveShadows = false;
+        line.startColor = Color.white;
+        line.endColor = Color.white;
+        return line;
+    }
+
+    // Applies the Inspector settings each frame, so they can be compared live.
+    private void UpdateGuides()
+    {
+        float period = dashLength + gapLength;
+        rayMaterial.SetColor("_BaseColor", rayGuideColor);
+        rayMaterial.SetFloat("_DashFraction", dashedRayGuides && gapLength > 0f ? dashLength / period : 1f);
+        outlineMaterial.SetColor("_BaseColor", planeOutlineColor);
+        outlineMaterial.SetFloat("_DashFraction", 1f);
+        fillMaterial.SetColor("_BaseColor", planeFillColor);
+        fillMaterial.SetFloat("_DashFraction", 1f);
+
+        for (int i = 0; i < rayGuides.Length; i++)
+        {
+            LineRenderer line = rayGuides[i];
+            if (line == null)
+            {
+                continue;
+            }
+
+            // Only the stretch still ahead of the star: from its plane point
+            // back to where the star is now. The dash pattern starts at the
+            // plane end, so dashes stay put while the line shortens.
+            line.SetPosition(0, stars[i].flatWorld);
+            line.SetPosition(1, stars[i].transform.position);
+            line.enabled = showRayGuides;
+            line.widthMultiplier = rayGuideThickness;
+            line.textureScale = new Vector2(1f / Mathf.Max(1e-5f, period), 1f);
+        }
+
+        Vector2 half = planeHalfSize + Vector2.one * planePadding;
+        Vector3 x = planeRight * half.x;
+        Vector3 y = planeUp * half.y;
+        var corners = new[]
+        {
+            planeCenter - x - y,
+            planeCenter - x + y,
+            planeCenter + x + y,
+            planeCenter + x - y
+        };
+
+        if (planeOutline != null)
+        {
+            planeOutline.enabled = showPlaneOutline;
+            planeOutline.widthMultiplier = planeOutlineThickness;
+            planeOutline.SetPositions(corners);
+        }
+
+        if (planeFill != null)
+        {
+            planeFill.enabled = showPlaneFill;
+            planeFillMesh.vertices = corners;
+            planeFillMesh.triangles = new[] { 0, 1, 2, 0, 2, 3 };
+            planeFillMesh.RecalculateBounds();
+        }
+    }
+
+    private void DestroyGuides()
+    {
+        if (guideRoot != null)
+        {
+            Destroy(guideRoot);
+        }
+
+        if (planeFillMesh != null)
+        {
+            Destroy(planeFillMesh);
+        }
+
+        guideRoot = null;
+        planeFillMesh = null;
+        planeOutline = null;
+        planeFill = null;
+        rayGuides = new LineRenderer[0];
     }
 
     // ---- Checks ----

@@ -110565,7 +110565,7 @@ MonoBehaviour:
   volume: {fileID: 1735069867}
   playerHead: {fileID: 828061963}
   planeDistance: 1
-  compressionDuration: 1.2
+  compressionDuration: 2
   compressionEasing:
     serializedVersion: 2
     m_Curve:
@@ -110617,6 +110617,19 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  showRayGuides: 1
+  dashedRayGuides: 1
+  rayGuideColor: {r: 0.75, g: 0.85, b: 1, a: 0.5}
+  rayGuideThickness: 0.0012
+  dashLength: 0.006
+  gapLength: 0.004
+  showPlaneOutline: 1
+  planeOutlineColor: {r: 0.75, g: 0.85, b: 1, a: 0.35}
+  planeOutlineThickness: 0.001
+  showPlaneFill: 0
+  planeFillColor: {r: 0.75, g: 0.85, b: 1, a: 0.06}
+  planePadding: 0.012
+  guideShader: {fileID: 4800000, guid: db6b86ace73f7c0478bbfb6dc97ff374, type: 3}
   logChecks: 1
 --- !u!1 &833607772
 GameObject:
