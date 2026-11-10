@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Oculus.Interaction;
+using Oculus.Interaction.HandGrab;
 using Oculus.Interaction.Input;
 using TMPro;
 using UnityEngine;
@@ -126,7 +127,49 @@ public sealed class ConstellationSigning : MonoBehaviour
     [SerializeField]
     private Shader lineShader;
 
-    [Header("Pen (placeholder)")]
+    [Header("Pen")]
+    [Tooltip("Pen to spawn (tip at its origin, or at a child named \"Tip\"). Empty = a generated cylinder using the placeholder size and color below.")]
+    [SerializeField]
+    private GameObject penPrefab;
+
+    [Header("Pen Grip (recorded pose)")]
+    [Tooltip("Recorded pen-holding grip. When set, the pen sits in the hand where it was recorded and the visible fingers take the grip. Empty = the hand-frame offsets below.")]
+    [SerializeField]
+    private PenGripPose gripPose;
+
+    [Tooltip("The SyntheticHand the left hand visual reads (the last in its chain).")]
+    [SerializeField]
+    private SyntheticHand leftSyntheticHand;
+
+    [Tooltip("The SyntheticHand the right hand visual reads (the last in its chain).")]
+    [SerializeField]
+    private SyntheticHand rightSyntheticHand;
+
+    [Tooltip("How strongly the visible fingers take the grip (1 = fully).")]
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float gripWeight = 1f;
+
+    [Tooltip("Blend in/out time for the grip (s).")]
+    [SerializeField]
+    [Min(0f)]
+    private float gripBlendDuration = 0.15f;
+
+    [Tooltip("Fine-tune of the recorded pen placement, in the pen's own space (m).")]
+    [SerializeField]
+    private Vector3 gripNudgePosition = Vector3.zero;
+
+    [Tooltip("Fine-tune of the recorded pen placement, in the pen's own space (degrees).")]
+    [SerializeField]
+    private Vector3 gripNudgeRotation = Vector3.zero;
+
+#if UNITY_EDITOR
+    [Tooltip("Editor only: the scene pen the grip was recorded on (its HandGrabPoses are read by \"Capture Grip From Pen Pose Reference\").")]
+    [SerializeField]
+    private Transform penPoseReference;
+#endif
+
+    [Header("Pen (placeholder, no prefab)")]
     [SerializeField]
     [Min(0.01f)]
     private float penLength = 0.14f;
@@ -142,6 +185,7 @@ public sealed class ConstellationSigning : MonoBehaviour
     [SerializeField]
     private Shader penShader;
 
+    [Header("Pen Offsets (no recorded grip)")]
     [Tooltip("Where the pen tip is measured from on the hand.")]
     [SerializeField]
     private PenAnchor anchor = PenAnchor.PinchPoint;
@@ -259,6 +303,18 @@ public sealed class ConstellationSigning : MonoBehaviour
     private Material textMaterial;
     private Material penMaterial;
 
+    // Tip offset from the pen root, in the root's rotation frame (world scale).
+    private Vector3 tipOffset;
+
+    private sealed class GripState
+    {
+        public float Weight;
+        public bool Locked;
+    }
+
+    private readonly GripState leftGrip = new GripState();
+    private readonly GripState rightGrip = new GripState();
+
     /// <summary>The pen tip (null while no pen exists).</summary>
     public Transform PenTip => penTip;
 
@@ -348,6 +404,8 @@ public sealed class ConstellationSigning : MonoBehaviour
         penHand = null;
         pausedTime = 0f;
         firedThisAttempt = false;
+        ReleaseGripNow(leftSyntheticHand, leftGrip);
+        ReleaseGripNow(rightSyntheticHand, rightGrip);
     }
 
     [ContextMenu("Retry Signing")]
@@ -480,6 +538,8 @@ public sealed class ConstellationSigning : MonoBehaviour
         }
 
         ApplyWipe();
+        UpdateGrip(leftSyntheticHand, leftGrip, Handedness.Left);
+        UpdateGrip(rightSyntheticHand, rightGrip, Handedness.Right);
     }
 
     private void UpdateInteraction()
@@ -488,9 +548,9 @@ public sealed class ConstellationSigning : MonoBehaviour
 
         if (state == State.Signing)
         {
-            bool tracked = TryGetTipPose(activeHand, out Pose tip);
+            bool tracked = TryGetPenPose(activeHand, out Pose tip);
             PoseSigningPen(tracked ? activeHand : null, tip);
-            if (tracked && InsideArea(tip.position, out float along))
+            if (tracked && InsideArea(TipOf(tip), out float along))
             {
                 float target = Mathf.Clamp(along, 0f, signingWidth);
                 progress = Mathf.Max(progress, Mathf.Min(target, progress + maxAdvanceSpeed * dt));
@@ -530,12 +590,12 @@ public sealed class ConstellationSigning : MonoBehaviour
                 continue;
             }
 
-            if (!TryGetTipPose(hand, out Pose tip))
+            if (!TryGetPenPose(hand, out Pose tip))
             {
                 continue;
             }
 
-            if (InsideArea(tip.position, out float along) && along <= progress + startResumeTolerance)
+            if (InsideArea(TipOf(tip), out float along) && along <= progress + startResumeTolerance)
             {
                 bool resumed = state == State.Paused;
                 activeHand = hand;
@@ -549,7 +609,7 @@ public sealed class ConstellationSigning : MonoBehaviour
                 return;
             }
 
-            float distance = Vector3.Distance(tip.position, resumePoint);
+            float distance = Vector3.Distance(TipOf(tip), resumePoint);
             if (distance < closestDistance)
             {
                 closestDistance = distance;
@@ -633,15 +693,44 @@ public sealed class ConstellationSigning : MonoBehaviour
         return hand != null && hand.IsTrackedDataValid && (!requireHighConfidence || hand.IsHighConfidence);
     }
 
-    /// <summary>World pose of the pen tip on this hand (tip position, pen rotation).</summary>
-    private bool TryGetTipPose(IHand hand, out Pose tip)
+    private Vector3 TipOf(Pose pen)
     {
-        tip = default;
+        return pen.position + pen.rotation * tipOffset;
+    }
+
+    private bool HasGrip(Handedness handedness)
+    {
+        return gripPose != null && gripPose.For(handedness).valid;
+    }
+
+    /// <summary>
+    /// World pose of the pen root on this hand. With a recorded grip it comes
+    /// from the wrist alone (never the fingers, which the grip itself poses).
+    /// </summary>
+    private bool TryGetPenPose(IHand hand, out Pose pen)
+    {
+        pen = default;
         if (!HandUsable(hand) || !hand.GetRootPose(out Pose wrist))
         {
             return false;
         }
 
+        if (HasGrip(hand.Handedness))
+        {
+            pen = gripPose.For(hand.Handedness).PenFromWrist(wrist);
+            pen.position += pen.rotation * gripNudgePosition;
+            pen.rotation *= Quaternion.Euler(gripNudgeRotation);
+            return true;
+        }
+
+        return TryGetOffsetPenPose(hand, wrist, out pen);
+    }
+
+    // Fallback without a recorded grip: tip offset from the pinch point or
+    // wrist, in a hand frame shared (mirrored) by both hands.
+    private bool TryGetOffsetPenPose(IHand hand, Pose wrist, out Pose tip)
+    {
+        tip = default;
         Vector3 origin = wrist.position;
         if (anchor == PenAnchor.PinchPoint)
         {
@@ -747,7 +836,62 @@ public sealed class ConstellationSigning : MonoBehaviour
             textRenderer.receiveShadows = false;
         }
 
+        if (penPrefab != null)
+        {
+            BuildPrefabPen();
+        }
+        else
+        {
+            BuildPlaceholderPen();
+        }
+
+        Layout();
+        ApplyLook();
+        ApplyWipe();
+    }
+
+    private void BuildPrefabPen()
+    {
+        GameObject pen = Instantiate(penPrefab, signingRoot.transform, false);
+        pen.name = penPrefab.name;
+        penRoot = pen.transform;
+        penBody = null;
+
+        // Visual only: no physics or colliders near the hands.
+        foreach (Collider c in pen.GetComponentsInChildren<Collider>(true))
+        {
+            Destroy(c);
+        }
+
+        foreach (Rigidbody rb in pen.GetComponentsInChildren<Rigidbody>(true))
+        {
+            rb.isKinematic = true;
+            rb.detectCollisions = false;
+        }
+
+        Transform tip = FindChild(penRoot, "Tip");
+        penTip = tip != null ? tip : penRoot;
+        tipOffset = Quaternion.Inverse(penRoot.rotation) * (penTip.position - penRoot.position);
+        penRoot.gameObject.SetActive(false);
+    }
+
+    private static Transform FindChild(Transform parent, string name)
+    {
+        foreach (Transform child in parent.GetComponentsInChildren<Transform>(true))
+        {
+            if (child != parent && child.name == name)
+            {
+                return child;
+            }
+        }
+
+        return null;
+    }
+
+    private void BuildPlaceholderPen()
+    {
         // Placeholder pen: tip at the root's origin, body along +Y.
+        tipOffset = Vector3.zero;
         penRoot = new GameObject("Placeholder Pen") { layer = 0 }.transform;
         penRoot.SetParent(signingRoot.transform, false);
         penTip = new GameObject("Tip") { layer = 0 }.transform;
@@ -776,11 +920,127 @@ public sealed class ConstellationSigning : MonoBehaviour
 
         penRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
         penRoot.gameObject.SetActive(false);
-
-        Layout();
-        ApplyLook();
-        ApplyWipe();
     }
+
+    // ---- Recorded grip on the visible hand ----
+
+    // Blends the hand holding the pen into the recorded grip and every other
+    // hand back out. Fingers are locked only while the weight is above zero.
+    private void UpdateGrip(SyntheticHand synthetic, GripState grip, Handedness handedness)
+    {
+        if (synthetic == null)
+        {
+            return;
+        }
+
+        bool holding = HasGrip(handedness) &&
+                       penHand != null && penHand.Handedness == handedness &&
+                       penRoot != null && penRoot.gameObject.activeInHierarchy;
+        float target = holding ? gripWeight : 0f;
+        float step = gripBlendDuration > 0f ? Time.deltaTime / gripBlendDuration : 1f;
+        grip.Weight = Mathf.MoveTowards(grip.Weight, target, step);
+
+        if (grip.Weight > 0f && HasGrip(handedness))
+        {
+            // Re-asserted every frame: other ISDK visuals on the same hand
+            // may free the fingers (a no-op when already locked).
+            for (int i = 0; i < Constants.NUM_FINGERS; i++)
+            {
+                synthetic.SetFingerFreedom((HandFinger)i, JointFreedom.Locked, true);
+            }
+
+            grip.Locked = true;
+
+            synthetic.OverrideAllJoints(gripPose.For(handedness).handPose.JointRotations, grip.Weight);
+        }
+        else if (grip.Locked)
+        {
+            synthetic.FreeAllJoints();
+            grip.Locked = false;
+        }
+    }
+
+    private static void ReleaseGripNow(SyntheticHand synthetic, GripState grip)
+    {
+        grip.Weight = 0f;
+        if (grip.Locked && synthetic != null)
+        {
+            synthetic.FreeAllJoints();
+        }
+
+        grip.Locked = false;
+    }
+
+#if UNITY_EDITOR
+    // Reads the HandGrabPoses recorded on the reference pen (one per hand;
+    // the left can be ISDK's mirrored copy) into the Pen Grip Pose asset.
+    [ContextMenu("Capture Grip From Pen Pose Reference")]
+    private void CaptureGrip()
+    {
+        if (penPoseReference == null)
+        {
+            Debug.LogWarning("ConstellationSigning: assign Pen Pose Reference first.", this);
+            return;
+        }
+
+        if (gripPose == null)
+        {
+            const string folder = "Assets/CW_Art/HandPoses";
+            if (!UnityEditor.AssetDatabase.IsValidFolder(folder))
+            {
+                UnityEditor.AssetDatabase.CreateFolder("Assets/CW_Art", "HandPoses");
+            }
+
+            gripPose = ScriptableObject.CreateInstance<PenGripPose>();
+            UnityEditor.AssetDatabase.CreateAsset(gripPose, folder + "/PenGrip.asset");
+        }
+
+        var report = new System.Text.StringBuilder();
+        bool foundLeft = false;
+        bool foundRight = false;
+        foreach (HandGrabPose pose in penPoseReference.GetComponentsInChildren<HandGrabPose>(true))
+        {
+            if (pose.HandPose == null)
+            {
+                continue;
+            }
+
+            Handedness handedness = pose.HandPose.Handedness;
+            if ((handedness == Handedness.Left && foundLeft) || (handedness == Handedness.Right && foundRight))
+            {
+                report.AppendLine($"  skipped extra {handedness} pose on {pose.name} (keep one per hand)");
+                continue;
+            }
+
+            Transform relativeTo = pose.RelativeTo != null ? pose.RelativeTo : penPoseReference;
+            Pose wristInPen = pose.RelativeTo != null
+                ? pose.RelativePose
+                : new Pose(relativeTo.InverseTransformPoint(pose.transform.position), Quaternion.Inverse(relativeTo.rotation) * pose.transform.rotation);
+
+            PenGripPose.Side side = gripPose.For(handedness);
+            side.handPose = new HandPose(pose.HandPose);
+            side.wristPosition = wristInPen.position;
+            side.wristRotation = wristInPen.rotation;
+            side.valid = true;
+            if (handedness == Handedness.Left)
+            {
+                foundLeft = true;
+            }
+            else
+            {
+                foundRight = true;
+            }
+
+            report.AppendLine($"  {handedness} from {pose.name}: wrist {wristInPen.position.ToString("F4")} in pen space");
+        }
+
+        UnityEditor.EditorUtility.SetDirty(gripPose);
+        UnityEditor.EditorUtility.SetDirty(this);
+        UnityEditor.AssetDatabase.SaveAssets();
+        Debug.Log($"ConstellationSigning: captured grip into {UnityEditor.AssetDatabase.GetAssetPath(gripPose)} " +
+                  $"(right {(foundRight ? "yes" : "NO")}, left {(foundLeft ? "yes" : "NO")}).\n{report}", this);
+    }
+#endif
 
     private LineRenderer NewLine(string name, Material material, int count, bool loop)
     {
