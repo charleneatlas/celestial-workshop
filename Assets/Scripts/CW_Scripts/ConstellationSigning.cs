@@ -1171,19 +1171,27 @@ public sealed class ConstellationSigning : MonoBehaviour
 
         Transform t = nameText.transform;
         float scale = Mathf.Max(1e-6f, t.lossyScale.x);
-        const float Far = 100000f;
-        float edge;
-        if (state == State.Complete)
+        float softness = wipeSoftness / scale;
+
+        // Keep every clip value close to the text: TMP's mobile shader carries
+        // the clip maths in 16-bit halves on Quest (max 65504), so "infinitely
+        // far" edges saturate there and the clip silently stops working.
+        Bounds bounds = nameText.textBounds;
+        if (bounds.size.x <= 0f)
         {
-            edge = Far;
-        }
-        else
-        {
-            edge = t.InverseTransformPoint(lineLeft + frameRight * progress).x;
+            nameText.ForceMeshUpdate();
+            bounds = nameText.textBounds;
         }
 
-        textMaterial.SetVector(ClipRectId, new Vector4(-Far, -Far, edge, Far));
-        textMaterial.SetFloat(MaskSoftnessXId, wipeSoftness / scale);
+        float pad = Mathf.Max(bounds.size.y, 1f) + softness;
+        float left = bounds.min.x - pad;
+        float right = bounds.max.x + pad;
+        float edge = state == State.Complete
+            ? right
+            : Mathf.Clamp(t.InverseTransformPoint(lineLeft + frameRight * progress).x, left, right);
+
+        textMaterial.SetVector(ClipRectId, new Vector4(left, bounds.min.y - pad, edge, bounds.max.y + pad));
+        textMaterial.SetFloat(MaskSoftnessXId, softness);
         textMaterial.SetFloat(MaskSoftnessYId, 0f);
     }
 

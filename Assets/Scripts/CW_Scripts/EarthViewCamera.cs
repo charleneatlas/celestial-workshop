@@ -84,6 +84,31 @@ public sealed class EarthViewCamera : MonoBehaviour
     [SerializeField]
     private Transform[] handVisuals = new Transform[0];
 
+    public const string BackdropLayerName = "EarthViewOnly";
+
+    [Header("Backdrop")]
+    [Tooltip("Starfield quad behind the constellation, a child of this camera on the EarthViewOnly layer (only this camera draws it). Stands in for the skybox, which doesn't draw into the Earth view on Quest.")]
+    [SerializeField]
+    private Renderer backdrop;
+
+    [Tooltip("Degrees of sky the backdrop texture spans (a skybox face spans 90). Sets how much of the texture shows at the current field of view, so the stars keep a sky-like scale.")]
+    [SerializeField]
+    [Min(1f)]
+    private float backdropTextureSpan = 90f;
+
+    [Tooltip("Where the backdrop sits between the constellation (0) and the far clip plane (1).")]
+    [SerializeField]
+    [Range(0.05f, 0.98f)]
+    private float backdropDepth = 0.85f;
+
+    [Tooltip("Backdrop tint; lower it to keep the constellation dominant.")]
+    [SerializeField]
+    private Color backdropTint = new Color(0.6f, 0.6f, 0.6f, 1f);
+
+    private static readonly int BaseMapStId = Shader.PropertyToID("_BaseMap_ST");
+    private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+    private MaterialPropertyBlock backdropBlock;
+
     private Camera earthCamera;
     private int handsLayer = -1;
 
@@ -201,8 +226,34 @@ public sealed class EarthViewCamera : MonoBehaviour
             {
                 earthCamera.nearClipPlane = distance * nearFraction;
                 earthCamera.farClipPlane = distance * farMultiple;
+                UpdateBackdrop(distance);
             }
         }
+    }
+
+    // Keeps the backdrop quad filling the view behind the constellation, and
+    // crops its texture to the field of view.
+    private void UpdateBackdrop(float distanceToConstellation)
+    {
+        if (backdrop == null)
+        {
+            return;
+        }
+
+        float depth = Mathf.Lerp(distanceToConstellation, earthCamera.farClipPlane, backdropDepth);
+        float height = 2f * depth * Mathf.Tan(earthCamera.fieldOfView * 0.5f * Mathf.Deg2Rad) * 1.02f;
+        Transform quad = backdrop.transform;
+        quad.localPosition = new Vector3(0f, 0f, depth);
+        quad.localRotation = Quaternion.identity;
+        quad.localScale = new Vector3(height * earthCamera.aspect, height, 1f);
+
+        float tileY = Mathf.Clamp(earthCamera.fieldOfView / backdropTextureSpan, 0.01f, 1f);
+        float tileX = Mathf.Clamp(tileY * earthCamera.aspect, 0.01f, 1f);
+        backdropBlock ??= new MaterialPropertyBlock();
+        backdrop.GetPropertyBlock(backdropBlock);
+        backdropBlock.SetVector(BaseMapStId, new Vector4(tileX, tileY, 0.5f - tileX * 0.5f, 0.5f - tileY * 0.5f));
+        backdropBlock.SetColor(BaseColorId, backdropTint);
+        backdrop.SetPropertyBlock(backdropBlock);
     }
 
     // Width and height of the rendered view in artboard pixels, centered on the artboard.
