@@ -61,7 +61,11 @@ public sealed class ConstellationReveal : MonoBehaviour
     [SerializeField]
     private Transform playerHead;
 
-    [Tooltip("Earth view display objects (the disc with its screen and frame) to hide when the rotation starts; restored on reset. Not the Earth view camera, which the reveal still measures with.")]
+    [Tooltip("The Earth View Disc's screen: powers off (CRT style) when the rotation starts and back on at reset. The disc itself stays on the table.")]
+    [SerializeField]
+    private ScreenPower earthViewScreen;
+
+    [Tooltip("Optional: objects to hide outright when the rotation starts; restored on reset.")]
     [SerializeField]
     private GameObject[] hideWhenRotating = new GameObject[0];
 
@@ -286,6 +290,11 @@ public sealed class ConstellationReveal : MonoBehaviour
 
         DestroyGuides();
         RestoreHidden();
+        if (earthViewScreen != null)
+        {
+            earthViewScreen.PowerOn();
+        }
+
         RestoreBaseline();
         EndPreviewOverride();
         revealedThisSolve = false;
@@ -411,6 +420,11 @@ public sealed class ConstellationReveal : MonoBehaviour
         // 3. Tilt toward the player, rigidly about the flat bounds' center.
         DestroyGuides();
         HideDisplays();
+        if (earthViewScreen != null)
+        {
+            earthViewScreen.PowerOff();
+        }
+
         CurrentPhase = Phase.Rotating;
         elapsed = 0f;
         while (true)
