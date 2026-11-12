@@ -22,6 +22,11 @@ using UnityEngine;
 /// put back exactly on reset; the constellation data is never touched.
 /// Starts after ConstellationSetup's canonical settle, once the solve stamp
 /// and the diorama celebration (if any) have finished.
+///
+/// Display Hold mode (the swapped layout, where the compression plays as the
+/// puzzle-start intro instead, see ConstellationIntro): no compression or
+/// tilt; after the same waits it holds at once, presenting the pattern where
+/// it shows on the Earth view display.
 /// </summary>
 public sealed class ConstellationReveal : MonoBehaviour
 {
@@ -35,9 +40,26 @@ public sealed class ConstellationReveal : MonoBehaviour
         Holding
     }
 
+    public enum PostSolveMode
+    {
+        [Tooltip("Hold on the Earth view display: no compression or tilt (the compression plays at puzzle start instead).")]
+        DisplayHold,
+
+        [Tooltip("The original reward: compress the solved sky along the sightlines, then tilt it toward the player.")]
+        CompressAndTilt
+    }
+
     [Tooltip("Play this reveal after each solve.")]
     [SerializeField]
     private bool revealEnabled = true;
+
+    [Tooltip("What happens after the solve. Existing scenes keep Compress And Tilt.")]
+    [SerializeField]
+    private PostSolveMode mode = PostSolveMode.CompressAndTilt;
+
+    [Tooltip("Display Hold: the Earth view display the pattern is presented on (normal = local +Y, picture up = local +Z, like the Earth View screens).")]
+    [SerializeField]
+    private Renderer presentationDisplay;
 
     [Header("References")]
     [SerializeField]
@@ -179,18 +201,8 @@ public sealed class ConstellationReveal : MonoBehaviour
         public Vector3 flatWorld;
     }
 
-    private struct ConnectionRecord
-    {
-        public Transform transform;
-        public int a;
-        public int b;
-        public Vector3 baseLocalPosition;
-        public Quaternion baseLocalRotation;
-        public Vector3 baseLocalScale;
-    }
-
     private StarRecord[] stars = new StarRecord[0];
-    private ConnectionRecord[] connections = new ConnectionRecord[0];
+    private ConstellationGeometry geometry;
     private Transform root;
     private bool modified;
     private bool revealedThisSolve;
@@ -215,14 +227,8 @@ public sealed class ConstellationReveal : MonoBehaviour
 
     private readonly List<GameObject> hiddenByReveal = new List<GameObject>();
 
-    private GameObject guideRoot;
-    private LineRenderer[] rayGuides = new LineRenderer[0];
-    private LineRenderer planeOutline;
-    private MeshRenderer planeFill;
-    private Mesh planeFillMesh;
-    private Material rayMaterial;
-    private Material outlineMaterial;
-    private Material fillMaterial;
+    private readonly SightlineGuides guides = new SightlineGuides();
+    private SightlineGuideSettings guideSettings;
 
     public Phase CurrentPhase { get; private set; } = Phase.Idle;
 
@@ -239,6 +245,11 @@ public sealed class ConstellationReveal : MonoBehaviour
     /// </summary>
     public bool TryGetPresentation(out Vector3 center, out Vector3 right, out Vector3 up, out Vector3 towardPlayer, out Vector2 halfSize)
     {
+        if (mode == PostSolveMode.DisplayHold)
+        {
+            return TryGetDisplayPresentation(out center, out right, out up, out towardPlayer, out halfSize);
+        }
+
         bool valid = CurrentPhase == Phase.Holding && root != null;
         center = valid ? root.TransformPoint(centerLocal) : Vector3.zero;
         right = presentRight;
@@ -268,19 +279,12 @@ public sealed class ConstellationReveal : MonoBehaviour
 
     private void OnDestroy()
     {
-        DestroyGuides();
-        foreach (Material material in new[] { rayMaterial, outlineMaterial, fillMaterial })
-        {
-            if (material != null)
-            {
-                Destroy(material);
-            }
-        }
+        guides.DestroyAll();
     }
 
     private void LateUpdate()
     {
-        if (guideRoot != null)
+        if (guides.IsBuilt)
         {
             UpdateGuides();
         }
@@ -390,6 +394,21 @@ public sealed class ConstellationReveal : MonoBehaviour
         if (waitForOthers && startDelay > 0f)
         {
             yield return new WaitForSeconds(startDelay);
+        }
+
+        if (mode == PostSolveMode.DisplayHold)
+        {
+            // The pattern already faces the player on the display; the Earth
+            // view camera stays live.
+            CurrentPhase = Phase.Holding;
+            routine = null;
+            if (logChecks && TryGetDisplayPresentation(out Vector3 c, out _, out _, out _, out Vector2 h))
+            {
+                Debug.Log($"ConstellationReveal: holding on the display (pattern center {c}, half size {h.x:F3} x {h.y:F3} m).", this);
+            }
+
+            Presented?.Invoke();
+            yield break;
         }
 
         if (!Capture())
@@ -567,17 +586,8 @@ public sealed class ConstellationReveal : MonoBehaviour
     }
 
     /// <summary>Where the ray from origin through point meets the plane at distance along forward.</summary>
-    public static Vector3 FlattenAlongSightline(Vector3 point, Vector3 origin, Vector3 forward, float distance)
-    {
-        Vector3 ray = point - origin;
-        float depth = Vector3.Dot(ray, forward);
-        if (depth <= 1e-6f)
-        {
-            return point; // behind the observer: not in the Earth view
-        }
-
-        return origin + ray * (distance / depth);
-    }
+    public static Vector3 FlattenAlongSightline(Vector3 point, Vector3 origin, Vector3 forward, float distance) =>
+        SightlineCompression.FlattenAlongSightline(point, origin, forward, distance);
 
     /// <summary>
     /// Turns the Earth view's frame (forward, up) to face along toPresentation
@@ -612,97 +622,34 @@ public sealed class ConstellationReveal : MonoBehaviour
             return true;
         }
 
-        var found = new List<GeneratedConstellationStar>();
+        var found = new List<Transform>();
         foreach (GeneratedConstellationStar star in setup.SkyVisualContainer.GetComponentsInChildren<GeneratedConstellationStar>(true))
         {
             if (star.GetComponentInParent<SkyStamp3DVFX>(true) == null)
             {
-                found.Add(star);
+                found.Add(star.transform);
             }
         }
 
-        if (found.Count == 0)
+        geometry = ConstellationGeometry.Collect(found);
+        if (geometry == null)
         {
             return false;
         }
 
-        root = found[0].transform.parent;
-        stars = new StarRecord[found.Count];
-        for (int i = 0; i < found.Count; i++)
+        root = geometry.Root;
+        stars = new StarRecord[geometry.Stars.Length];
+        for (int i = 0; i < stars.Length; i++)
         {
-            stars[i] = new StarRecord { transform = found[i].transform, baseLocal = found[i].transform.localPosition };
+            stars[i] = new StarRecord { transform = geometry.Stars[i].transform, baseLocal = geometry.Stars[i].baseLocal };
         }
 
-        // Pair each connection rod with the two stars it was built between.
-        var links = new List<ConnectionRecord>();
-        foreach (Transform child in root)
-        {
-            if (child.name != "Connection")
-            {
-                continue;
-            }
-
-            int bestA = -1;
-            int bestB = -1;
-            float bestError = float.MaxValue;
-            for (int a = 0; a < stars.Length; a++)
-            {
-                for (int b = a + 1; b < stars.Length; b++)
-                {
-                    Vector3 pa = stars[a].baseLocal;
-                    Vector3 pb = stars[b].baseLocal;
-                    float error = ((pa + pb) * 0.5f - child.localPosition).magnitude +
-                                  Mathf.Abs((pb - pa).magnitude - child.localScale.y * 2f);
-                    if (error < bestError)
-                    {
-                        bestError = error;
-                        bestA = a;
-                        bestB = b;
-                    }
-                }
-            }
-
-            if (bestA >= 0)
-            {
-                links.Add(new ConnectionRecord
-                {
-                    transform = child,
-                    a = bestA,
-                    b = bestB,
-                    baseLocalPosition = child.localPosition,
-                    baseLocalRotation = child.localRotation,
-                    baseLocalScale = child.localScale
-                });
-            }
-        }
-
-        connections = links.ToArray();
         return true;
     }
 
     private void UpdateConnections()
     {
-        foreach (ConnectionRecord link in connections)
-        {
-            if (link.transform == null)
-            {
-                continue;
-            }
-
-            Vector3 pa = stars[link.a].transform.localPosition;
-            Vector3 pb = stars[link.b].transform.localPosition;
-            Vector3 span = pb - pa;
-            float length = span.magnitude;
-            link.transform.localPosition = (pa + pb) * 0.5f;
-            if (length > 1e-7f)
-            {
-                link.transform.localRotation = Quaternion.FromToRotation(Vector3.up, span / length);
-            }
-
-            Vector3 scale = link.transform.localScale;
-            scale.y = length * 0.5f;
-            link.transform.localScale = scale;
-        }
+        geometry?.UpdateConnections();
     }
 
     private void RestoreBaseline()
@@ -712,24 +659,7 @@ public sealed class ConstellationReveal : MonoBehaviour
             return;
         }
 
-        foreach (StarRecord star in stars)
-        {
-            if (star.transform != null)
-            {
-                star.transform.localPosition = star.baseLocal;
-            }
-        }
-
-        foreach (ConnectionRecord link in connections)
-        {
-            if (link.transform != null)
-            {
-                link.transform.localPosition = link.baseLocalPosition;
-                link.transform.localRotation = link.baseLocalRotation;
-                link.transform.localScale = new Vector3(link.transform.localScale.x, link.baseLocalScale.y, link.transform.localScale.z);
-            }
-        }
-
+        geometry?.Restore();
         modified = false;
     }
 
@@ -786,146 +716,92 @@ public sealed class ConstellationReveal : MonoBehaviour
 
     private void BuildGuides()
     {
-        DestroyGuides();
-        if (guideShader == null)
-        {
-            guideShader = Shader.Find("CelestialWorkshop/GuideLine");
-        }
-
-        if (guideShader == null)
-        {
-            Debug.LogWarning("ConstellationReveal: no guide shader; guides skipped.", this);
-            return;
-        }
-
-        if (rayMaterial == null)
-        {
-            rayMaterial = new Material(guideShader) { name = "Reveal Ray Guide" };
-            outlineMaterial = new Material(guideShader) { name = "Reveal Plane Outline" };
-            fillMaterial = new Material(guideShader) { name = "Reveal Plane Fill" };
-        }
-
-        // Default layer: drawn in the headset, never in the Earth view (which
-        // only renders the sky's WindowMasked layer).
-        guideRoot = new GameObject("Reveal Guides");
-        guideRoot.layer = 0;
-
-        rayGuides = new LineRenderer[stars.Length];
-        for (int i = 0; i < stars.Length; i++)
-        {
-            LineRenderer line = NewLine("Ray " + stars[i].transform.name, rayMaterial);
-            line.positionCount = 2;
-            line.textureMode = LineTextureMode.Tile;
-            rayGuides[i] = line;
-        }
-
-        planeOutline = NewLine("Plane Outline", outlineMaterial);
-        planeOutline.positionCount = 4;
-        planeOutline.loop = true;
-
-        var fillObject = new GameObject("Plane Fill");
-        fillObject.layer = 0;
-        fillObject.transform.SetParent(guideRoot.transform, false);
-        planeFillMesh = new Mesh { name = "Reveal Plane Fill" };
-        fillObject.AddComponent<MeshFilter>().sharedMesh = planeFillMesh;
-        planeFill = fillObject.AddComponent<MeshRenderer>();
-        planeFill.sharedMaterial = fillMaterial;
-        planeFill.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        planeFill.receiveShadows = false;
-
+        guides.Build("Reveal", stars.Length, guideShader, "ConstellationReveal");
         UpdateGuides();
-    }
-
-    private LineRenderer NewLine(string name, Material material)
-    {
-        var lineObject = new GameObject(name);
-        lineObject.layer = 0;
-        lineObject.transform.SetParent(guideRoot.transform, false);
-        LineRenderer line = lineObject.AddComponent<LineRenderer>();
-        line.useWorldSpace = true;
-        line.sharedMaterial = material;
-        line.alignment = LineAlignment.View;
-        line.numCapVertices = 0;
-        line.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-        line.receiveShadows = false;
-        line.startColor = Color.white;
-        line.endColor = Color.white;
-        return line;
     }
 
     // Applies the Inspector settings each frame, so they can be compared live.
     private void UpdateGuides()
     {
-        float period = dashLength + gapLength;
-        rayMaterial.SetColor("_BaseColor", rayGuideColor);
-        rayMaterial.SetFloat("_DashFraction", dashedRayGuides && gapLength > 0f ? dashLength / period : 1f);
-        outlineMaterial.SetColor("_BaseColor", planeOutlineColor);
-        outlineMaterial.SetFloat("_DashFraction", 1f);
-        fillMaterial.SetColor("_BaseColor", planeFillColor);
-        fillMaterial.SetFloat("_DashFraction", 1f);
+        guideSettings ??= new SightlineGuideSettings();
+        guideSettings.showRays = showRayGuides;
+        guideSettings.dashed = dashedRayGuides;
+        guideSettings.rayColor = rayGuideColor;
+        guideSettings.rayThickness = rayGuideThickness;
+        guideSettings.dashLength = dashLength;
+        guideSettings.gapLength = gapLength;
+        guideSettings.showPlaneOutline = showPlaneOutline;
+        guideSettings.planeOutlineColor = planeOutlineColor;
+        guideSettings.planeOutlineThickness = planeOutlineThickness;
+        guideSettings.showPlaneFill = showPlaneFill;
+        guideSettings.planeFillColor = planeFillColor;
+        guideSettings.planePadding = planePadding;
 
-        for (int i = 0; i < rayGuides.Length; i++)
+        var landing = new Vector3[stars.Length];
+        var current = new Vector3[stars.Length];
+        for (int i = 0; i < stars.Length; i++)
         {
-            LineRenderer line = rayGuides[i];
-            if (line == null)
-            {
-                continue;
-            }
-
-            // Only the stretch still ahead of the star: from its plane point
-            // back to where the star is now. The dash pattern starts at the
-            // plane end, so dashes stay put while the line shortens.
-            line.SetPosition(0, stars[i].flatWorld);
-            line.SetPosition(1, stars[i].transform.position);
-            line.enabled = showRayGuides;
-            line.widthMultiplier = rayGuideThickness;
-            line.textureScale = new Vector2(1f / Mathf.Max(1e-5f, period), 1f);
+            landing[i] = stars[i].flatWorld;
+            current[i] = stars[i].transform != null ? stars[i].transform.position : stars[i].flatWorld;
         }
 
-        Vector2 half = planeHalfSize + Vector2.one * planePadding;
-        Vector3 x = planeRight * half.x;
-        Vector3 y = planeUp * half.y;
-        var corners = new[]
-        {
-            planeCenter - x - y,
-            planeCenter - x + y,
-            planeCenter + x + y,
-            planeCenter + x - y
-        };
-
-        if (planeOutline != null)
-        {
-            planeOutline.enabled = showPlaneOutline;
-            planeOutline.widthMultiplier = planeOutlineThickness;
-            planeOutline.SetPositions(corners);
-        }
-
-        if (planeFill != null)
-        {
-            planeFill.enabled = showPlaneFill;
-            planeFillMesh.vertices = corners;
-            planeFillMesh.triangles = new[] { 0, 1, 2, 0, 2, 3 };
-            planeFillMesh.RecalculateBounds();
-        }
+        guides.Update(guideSettings, landing, current, planeCenter, planeRight, planeUp, planeHalfSize);
     }
 
     private void DestroyGuides()
     {
-        if (guideRoot != null)
+        guides.Destroy();
+    }
+
+    // ---- Display Hold presentation ----
+
+    // The pattern as it shows on the display: the bounds of the stars' Earth
+    // view positions, mapped through the display's UVs (viewport (u, v) lands
+    // at local ((u - 0.5) * width, surface, (v - 0.5) * width)).
+    private bool TryGetDisplayPresentation(out Vector3 center, out Vector3 right, out Vector3 up, out Vector3 towardPlayer, out Vector2 halfSize)
+    {
+        center = right = up = towardPlayer = Vector3.zero;
+        halfSize = Vector2.zero;
+        if (CurrentPhase != Phase.Holding || presentationDisplay == null || earthView == null || setup == null ||
+            setup.SkyVisualContainer == null || !CollectGeometry())
         {
-            Destroy(guideRoot);
+            return false;
         }
 
-        if (planeFillMesh != null)
+        Camera cam = earthView.GetComponent<Camera>();
+        Vector2 min = new Vector2(float.MaxValue, float.MaxValue);
+        Vector2 max = new Vector2(float.MinValue, float.MinValue);
+        foreach (StarRecord star in stars)
         {
-            Destroy(planeFillMesh);
+            if (star.transform == null)
+            {
+                continue;
+            }
+
+            Vector2 viewport = cam.WorldToViewportPoint(star.transform.position);
+            min = Vector2.Min(min, viewport);
+            max = Vector2.Max(max, viewport);
         }
 
-        guideRoot = null;
-        planeFillMesh = null;
-        planeOutline = null;
-        planeFill = null;
-        rayGuides = new LineRenderer[0];
+        if (min.x > max.x)
+        {
+            return false;
+        }
+
+        Transform display = presentationDisplay.transform;
+        Bounds local = presentationDisplay.localBounds;
+        Vector2 mid = (min + max) * 0.5f;
+        center = display.TransformPoint(new Vector3(
+            local.center.x + (mid.x - 0.5f) * local.size.x,
+            local.center.y,
+            local.center.z + (mid.y - 0.5f) * local.size.z));
+        right = display.right;
+        up = display.forward;
+        towardPlayer = display.up;
+        halfSize = new Vector2(
+            (max.x - min.x) * 0.5f * local.size.x * display.lossyScale.x,
+            (max.y - min.y) * 0.5f * local.size.z * display.lossyScale.z);
+        return true;
     }
 
     // ---- Checks ----

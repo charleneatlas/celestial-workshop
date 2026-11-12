@@ -14895,6 +14895,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ConstellationArcballTransformer
   rotationPivot: {fileID: 150452312}
   arcballVisual: {fileID: 372308632}
+  randomizeTarget: {fileID: 0}
   tutorialHandVisual: {fileID: 1042305273}
 --- !u!4 &34321734
 Transform:
@@ -111279,6 +111280,7 @@ GameObject:
   - component: {fileID: 832476889}
   - component: {fileID: 832476891}
   - component: {fileID: 832476892}
+  - component: {fileID: 832476893}
   m_Layer: 0
   m_Name: Constellation Setup
   m_TagString: Untagged
@@ -111367,6 +111369,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ConstellationReveal
   revealEnabled: 1
+  mode: 0
+  presentationDisplay: {fileID: 278888493}
   setup: {fileID: 832476889}
   solveController: {fileID: 242918475}
   earthView: {fileID: 1627030383}
@@ -111506,6 +111510,95 @@ MonoBehaviour:
       m_Calls: []
   showInteractionArea: 0
   logEvents: 1
+--- !u!114 &832476893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 832476888}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 277865f41907bfa45b10bf7b0c86f7f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ConstellationIntro
+  setup: {fileID: 832476889}
+  solveController: {fileID: 242918475}
+  earthView: {fileID: 1627030383}
+  display: {fileID: 278888493}
+  nearFieldSkyProxy: {fileID: 1735069869}
+  playOnPuzzleStart: 1
+  startDelay: 0.75
+  showDuration: 0.6
+  planeDistance: 1
+  compressionDuration: 1.2
+  compressionEasing:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  pauseDuration: 0.4
+  mapDuration: 1
+  mapEasing:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  surfaceOffset: 0.002
+  handoffFade: 0
+  guides:
+    showRays: 1
+    dashed: 1
+    rayColor: {r: 0.75, g: 0.85, b: 1, a: 0.5}
+    rayThickness: 0.0012
+    dashLength: 0.006
+    gapLength: 0.004
+    showPlaneOutline: 1
+    planeOutlineColor: {r: 0.75, g: 0.85, b: 1, a: 0.35}
+    planeOutlineThickness: 0.001
+    showPlaneFill: 0
+    planeFillColor: {r: 0.75, g: 0.85, b: 1, a: 0.06}
+    planePadding: 0.012
+  guideShader: {fileID: 4800000, guid: db6b86ace73f7c0478bbfb6dc97ff374, type: 3}
+  logChecks: 1
 --- !u!1001 &832890249
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -190318,6 +190411,7 @@ MonoBehaviour:
   skyRotationReference: {fileID: 1071834818}
   solveController: {fileID: 242918475}
   reveal: {fileID: 832476891}
+  intro: {fileID: 832476893}
   gimbalRoot: {fileID: 1681033680}
   hands:
   - {fileID: 2111471561}
@@ -225277,6 +225371,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ConstellationArcballTransformer
   rotationPivot: {fileID: 345672504}
   arcballVisual: {fileID: 0}
+  randomizeTarget: {fileID: 0}
   tutorialHandVisual: {fileID: 0}
 --- !u!4 &1911511047
 Transform:

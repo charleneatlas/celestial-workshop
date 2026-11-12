@@ -46,6 +46,9 @@ public class ConstellationSolveController : MonoBehaviour
     public bool IsSolved => isSolved;
     public bool IsNearSolve => isNearSolve;
 
+    /// <summary>Raised at the end of ResetSolve, once the new puzzle's rotation is randomized (startup, Choose Another, Reset).</summary>
+    public event System.Action PuzzleReset;
+
     /// <summary>
     /// Pauses solve detection, e.g. while a preview poses the sky in its
     /// solved orientation without the puzzle actually being solved.
@@ -181,6 +184,7 @@ public class ConstellationSolveController : MonoBehaviour
         }
 
         Debug.Log("Constellation reset.");
+        PuzzleReset?.Invoke();
     }
 
     /// <summary>
