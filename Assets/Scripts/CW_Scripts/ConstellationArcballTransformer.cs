@@ -9,6 +9,10 @@ public class ConstellationArcballTransformer : MonoBehaviour, ITransformer
     [SerializeField]
     private ArcballVisualController arcballVisual;
 
+    [Tooltip("Turned by Randomize Rotation when no grabbable has initialized this transformer (e.g. the Grabbable uses another transformer). Empty = this object's parent, the constellation pivot it sits under.")]
+    [SerializeField]
+    private Transform randomizeTarget;
+
     [Header("Tutorial")]
     [SerializeField]
     private GameObject tutorialHandVisual;
@@ -96,15 +100,20 @@ public class ConstellationArcballTransformer : MonoBehaviour, ITransformer
 
     public void RandomizeRotation()
     {
-        if (grabbable == null)
+        Transform target = grabbable != null
+            ? grabbable.Transform
+            : randomizeTarget != null ? randomizeTarget : transform.parent;
+
+        if (target == null)
         {
             Debug.LogWarning(
-                "Cannot randomize rotation: grabbable has not been initialized."
+                "Cannot randomize rotation: no grabbable and no randomize target.",
+                this
             );
             return;
         }
 
-        grabbable.Transform.rotation = Random.rotationUniform;
+        target.rotation = Random.rotationUniform;
 
         hasPreviousGrabPoint = false;
     }
