@@ -83,6 +83,10 @@ public sealed class ConstellationSigning : MonoBehaviour
     [SerializeField]
     private Vector3 placementOffset = Vector3.zero;
 
+    [Tooltip("Optional flat disc display (normal = its local +Y, like the Earth View screens). With Placement Below, the signature block is lowered when needed so its top stays Gap below the display's lowest edge. Empty = place from the constellation only.")]
+    [SerializeField]
+    private Renderer keepBelowDisplay;
+
     [Tooltip("Length of the signing line (m). The same for every name; the name is fitted inside it.")]
     [SerializeField]
     [Min(0.02f)]
@@ -1088,6 +1092,23 @@ public sealed class ConstellationSigning : MonoBehaviour
         float lineHeight = placement == Placement.Below
             ? -(frameHalf.y + gap + textLift + fittedCapHeight)
             : frameHalf.y + gap;
+
+        if (placement == Placement.Below && keepBelowDisplay != null)
+        {
+            // Lowest point of the disc along frameUp, relative to frameCenter.
+            Transform display = keepBelowDisplay.transform;
+            Bounds local = keepBelowDisplay.localBounds;
+            float radius = Mathf.Max(local.extents.x * display.lossyScale.x, local.extents.z * display.lossyScale.z);
+            float tilt = Vector3.Dot(display.up, frameUp);
+            float displayBottom = Vector3.Dot(display.position - frameCenter, frameUp)
+                                  - radius * Mathf.Sqrt(Mathf.Max(0f, 1f - tilt * tilt));
+            float blockTop = lineHeight + placementOffset.y + textLift + fittedCapHeight;
+            float limit = displayBottom - gap;
+            if (blockTop > limit)
+            {
+                lineHeight -= blockTop - limit;
+            }
+        }
         Vector3 lineCenter = frameCenter +
                              frameUp * (lineHeight + placementOffset.y) +
                              frameRight * placementOffset.x +

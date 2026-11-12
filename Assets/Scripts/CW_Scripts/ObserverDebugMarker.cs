@@ -18,7 +18,10 @@ public sealed class ObserverDebugMarker : MonoBehaviour
     {
         Viewpoint,
         VolumeEntry,
-        VolumeExit
+        VolumeExit,
+
+        [Tooltip("Bottom of the volume, upright, wherever the observer is. Forward = horizontal direction from the center toward the viewpoint.")]
+        VolumeBottom
     }
 
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
@@ -102,6 +105,24 @@ public sealed class ObserverDebugMarker : MonoBehaviour
             return false;
         }
 
+        if (placement == Placement.VolumeBottom)
+        {
+            // Upright on the floor of the volume. Matches the observer-ray
+            // orientation from straight below: forward toward the viewpoint's side.
+            Vector3 toward = Vector3.ProjectOnPlane(observer.position - volume.transform.position, Vector3.up);
+            if (toward.sqrMagnitude < 1e-8f)
+            {
+                toward = Vector3.ProjectOnPlane(observer.up, Vector3.up);
+                if (toward.sqrMagnitude < 1e-8f)
+                {
+                    return false;
+                }
+            }
+
+            rotation = Quaternion.LookRotation(toward.normalized, Vector3.up);
+            return true;
+        }
+
         Vector3 up = volume.transform.position - observer.position;
         if (up.sqrMagnitude < 1e-10f)
         {
@@ -131,6 +152,11 @@ public sealed class ObserverDebugMarker : MonoBehaviour
         }
 
         Vector3 center = volume.transform.position;
+        if (placement == Placement.VolumeBottom)
+        {
+            return center + Vector3.down * volume.Radius;
+        }
+
         Vector3 direction = center - observer;
         if (direction.sqrMagnitude < 1e-10f)
         {

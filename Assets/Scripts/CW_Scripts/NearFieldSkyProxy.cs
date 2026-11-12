@@ -112,6 +112,20 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
     [Range(-180f, 180f)]
     private float observerHeading;
 
+    [Tooltip("When the rig moves after placement (DeskAlign, recenter), swing the sky around the volume's center so the observer is placed relative to the new head again. Same Earth view, same puzzle rotation.")]
+    [SerializeField]
+    private bool reaimOnRigMove = true;
+
+    [Tooltip("The rig must move at least this far (m) since the last aim to re-aim. DeskAlign re-runs nudge the rig by the head's drift; those are ignored, so the aim is set once and stays.")]
+    [SerializeField]
+    [Min(0f)]
+    private float reaimMoveThreshold = 0.15f;
+
+    [Tooltip("...or turn at least this much (degrees).")]
+    [SerializeField]
+    [Min(0f)]
+    private float reaimTurnThreshold = 15f;
+
     [Header("Gimbal On Volume")]
     [SerializeField]
     private bool gimbalOnVolume = true;
@@ -160,6 +174,12 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
     private Vector3 rigHomePosition;
     private bool gimbalMoved;
 
+    // Observer frame the sky was last aimed with, and the rig pose at that time.
+    private Transform rigTransform;
+    private Vector3 aimedView, aimedViewUp;
+    private Vector3 aimedRigPosition;
+    private Quaternion aimedRigRotation;
+
     /// <summary>True once the volume and sky have been placed (and the gimbal moved, if enabled).</summary>
     public bool IsPlaced { get; private set; }
 
@@ -172,6 +192,69 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
 
         OVRCameraRig rig = viewer != null ? viewer.GetComponentInParent<OVRCameraRig>() : null;
         rigHomePosition = rig != null ? rig.transform.position : authoredCenter;
+        rigTransform = rig != null ? rig.transform : null;
+    }
+
+    private void LateUpdate()
+    {
+        if (!IsPlaced || !reaimOnRigMove || rigTransform == null || !IsHeadTracked())
+        {
+            return;
+        }
+
+        if (Vector3.Distance(rigTransform.position, aimedRigPosition) < reaimMoveThreshold
+            && Quaternion.Angle(rigTransform.rotation, aimedRigRotation) < reaimTurnThreshold)
+        {
+            return;
+        }
+
+        ReaimObserver();
+    }
+
+    // Swings the whole sky group (observer, Earth camera, constellation) about
+    // the volume's center into the observer frame for the current head. The
+    // group turns as one, so the Earth view and the puzzle state don't change.
+    private void ReaimObserver()
+    {
+        RememberRig();
+
+        if (gimbalMoved)
+        {
+            // The gimbal's axis remap was baked for the old frame; leave it all as is.
+            return;
+        }
+
+        Vector3 center = volume.transform.position;
+        Vector3 eyeView = center - viewer.transform.position;
+        if (eyeView.sqrMagnitude < 1e-6f)
+        {
+            return;
+        }
+
+        ObserverView(eyeView, out Vector3 newView, out Vector3 newViewUp);
+        Quaternion turn =
+            Quaternion.LookRotation(newView, newViewUp) *
+            Quaternion.Inverse(Quaternion.LookRotation(aimedView, aimedViewUp));
+
+        proxyGroup.SetPositionAndRotation(center + turn * (proxyGroup.position - center), turn * proxyGroup.rotation);
+        volume.transform.rotation = Quaternion.LookRotation(-eyeView, Vector3.up);
+        aimedView = newView;
+        aimedViewUp = newViewUp;
+
+        float turnDegrees = Quaternion.Angle(Quaternion.identity, turn);
+        if (turnDegrees >= 0.1f)
+        {
+            Debug.Log($"NearFieldSkyProxy: rig moved, re-aimed the observer ({turnDegrees:F1} deg turn)", this);
+        }
+    }
+
+    private void RememberRig()
+    {
+        if (rigTransform != null)
+        {
+            aimedRigPosition = rigTransform.position;
+            aimedRigRotation = rigTransform.rotation;
+        }
     }
 
     private IEnumerator Start()
@@ -292,6 +375,9 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
         }
 
         ConstellationReach = contentRadius * scale;
+        aimedView = newView;
+        aimedViewUp = newViewUp;
+        RememberRig();
         IsPlaced = true;
     }
 
