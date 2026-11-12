@@ -39601,7 +39601,7 @@ MonoBehaviour:
   _exitHoverNormal: 0.05
   _exitHoverTangent: 0
   _cancelSelectNormal: 0.3
-  _cancelSelectTangent: 0.03
+  _cancelSelectTangent: 0.06
   _minThresholds:
     Enabled: 0
     MinNormal: 0.01
@@ -115207,6 +115207,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 891793752}
+  - component: {fileID: 891793753}
   m_Layer: 0
   m_Name: Post-Puzzle Menu
   m_TagString: Untagged
@@ -115230,6 +115231,24 @@ Transform:
   - {fileID: 646117452}
   m_Father: {fileID: 1589548317}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &891793753
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 891793751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9ebfddaeefd8b542b4e57ca0807c561, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PokePressOnSelect
+  canvas: {fileID: 244487835}
+  buttons:
+  - {fileID: 1532924653}
+  - {fileID: 789912738}
+  - {fileID: 1037031106}
+  logPresses: 1
 --- !u!1 &892240917
 GameObject:
   m_ObjectHideFlags: 0

@@ -34,6 +34,12 @@ public sealed class MomentaryToggleButton : MonoBehaviour
 
     private float lastPressTime = float.NegativeInfinity;
 
+    // Set when a poke release fired this button (PokeReleaseAnywhere). The
+    // canvas reports the release before UGUI delivers its click, so a click
+    // arriving within a short grace after it is the same press: ignored.
+    private float pokeReleaseFiredTime = float.NegativeInfinity;
+    private const float ReleaseGrace = 0.25f;
+
     private void Reset()
     {
         toggle = GetComponent<Toggle>();
@@ -80,6 +86,27 @@ public sealed class MomentaryToggleButton : MonoBehaviour
             return;
         }
 
+        if (Time.unscaledTime - pokeReleaseFiredTime < ReleaseGrace)
+        {
+            return; // this press already fired on the poke's release
+        }
+
+        Fire();
+    }
+
+    /// <summary>
+    /// Fires when a poke that started on this button is released, wherever the
+    /// finger is by then (a UGUI click would also need the release over the
+    /// button). The Toggle click that may follow is ignored.
+    /// </summary>
+    public void FireFromPokeRelease()
+    {
+        pokeReleaseFiredTime = Time.unscaledTime;
+        Fire();
+    }
+
+    private void Fire()
+    {
         float now = Time.unscaledTime;
         if (now - lastPressTime < repeatGuard)
         {
