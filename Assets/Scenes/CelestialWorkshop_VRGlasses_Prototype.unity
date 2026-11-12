@@ -47189,7 +47189,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0.7071068, w: 0}
   m_LocalPosition: {x: 0, y: 0.03, z: -0.0753}
-  m_LocalScale: {x: 1.5662651, y: 1.5662651, z: 1.5662651}
+  m_LocalScale: {x: 2.05, y: 2.05, z: 2.05}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1735069868}
@@ -189679,7 +189679,9 @@ MonoBehaviour:
   skyConstellationPivot: {fileID: 242918474}
   viewShape: 1
   autoFitCircle: 1
+  fitMode: 1
   fitMargin: 1.15
+  anyRotationPadding: 1
   circleRadius: 880
   nearFraction: 0.05
   farMultiple: 5

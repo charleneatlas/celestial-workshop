@@ -52,10 +52,34 @@ public sealed class EarthViewCamera : MonoBehaviour
     [SerializeField]
     private bool autoFitCircle = true;
 
-    [Tooltip("Auto-fit: circle radius as a multiple of the farthest star's distance from the artboard's center.")]
+    public enum FitMode
+    {
+        [Tooltip("Fit the solved layout: farthest blueprint star x Fit Margin. Stars can leave the view while the puzzle is rotated.")]
+        SolvedLayout,
+
+        [Tooltip("Fit every star at any puzzle rotation: the view reaches the edge of the sphere the stars sweep around the pivot. Never cuts a star off; the constellation shows smaller.")]
+        AnyRotation
+    }
+
+    [Tooltip("Auto-fit: what the circle is sized to.")]
+    [SerializeField]
+    private FitMode fitMode = FitMode.SolvedLayout;
+
+    [Tooltip("Auto-fit: circle radius as a multiple of the farthest star's distance from the artboard's center (Solved Layout).")]
     [SerializeField]
     [Range(1f, 2f)]
     private float fitMargin = 1.15f;
+
+    [Tooltip("Any Rotation: extra view angle beyond the farthest star's sweep (degrees), for the star's own size and glow.")]
+    [SerializeField]
+    [Range(0f, 10f)]
+    private float anyRotationPadding = 1f;
+
+    // Farthest star center from the pivot in the pivot's local space (rotation
+    // and scale invariant), refreshed when the star set changes.
+    private float localStarReach;
+    private int localStarReachCount = -1;
+    private object localStarReachSource;
 
     [Tooltip("Circle framing without auto-fit: radius of the visible circle in artboard pixels, around the artboard's center. Must reach the farthest star.")]
     [SerializeField]
@@ -275,7 +299,87 @@ public sealed class EarthViewCamera : MonoBehaviour
             farthest = Mathf.Max(farthest, Vector2.Distance(star.affinityPosition, center));
         }
 
-        return farthest > 0f ? farthest * fitMargin : circleRadius;
+        if (farthest <= 0f)
+        {
+            return circleRadius;
+        }
+
+        if (fitMode == FitMode.AnyRotation && TryAnyRotationRadius(artboard, out float anyRotation))
+        {
+            // Never tighter than the solved layout itself.
+            return Mathf.Max(anyRotation, farthest);
+        }
+
+        return farthest * fitMargin;
+    }
+
+    // The puzzle turns the stars about the pivot, so they stay on a sphere of
+    // the farthest star's radius around it. Seen from the observer that sphere
+    // spans asin(reach / distance) around the pivot's direction; add the pivot's
+    // offset from the view axis and the padding, then convert the angle to
+    // artboard pixels with the inverse of UpdateView's field of view formula.
+    // Depends only on the pivot's distance, scale and the star set, none of
+    // which the puzzle rotation changes, so the zoom holds steady while solving.
+    private bool TryAnyRotationRadius(Vector2 artboard, out float radiusPixels)
+    {
+        radiusPixels = 0f;
+        if (skyConstellationPivot == null || constellationSetup == null)
+        {
+            return false;
+        }
+
+        float spreadScale = constellationGenerator.angularSpread * constellationSetup.SkyAngularScale;
+        float shortSide = Mathf.Min(artboard.x, artboard.y);
+        if (spreadScale <= 0f || shortSide <= 0f)
+        {
+            return false;
+        }
+
+        RefreshLocalStarReach();
+        Vector3 toPivot = skyConstellationPivot.position - transform.position;
+        float distance = toPivot.magnitude;
+        float reach = localStarReach * skyConstellationPivot.lossyScale.x;
+        if (reach <= 0f || distance <= reach)
+        {
+            return false;
+        }
+
+        float halfAngle =
+            Vector3.Angle(transform.forward, toPivot) +
+            Mathf.Asin(reach / distance) * Mathf.Rad2Deg +
+            anyRotationPadding;
+        if (halfAngle >= 89f)
+        {
+            return false;
+        }
+
+        radiusPixels = Mathf.Tan(halfAngle * Mathf.Deg2Rad) * shortSide / (2f * spreadScale);
+        return true;
+    }
+
+    private void RefreshLocalStarReach()
+    {
+        GeneratedConstellationStar[] stars =
+            skyConstellationPivot.GetComponentsInChildren<GeneratedConstellationStar>(true);
+        // A new constellation swaps the generator's star list (or its length).
+        if (stars.Length == localStarReachCount && ReferenceEquals(constellationGenerator.stars, localStarReachSource))
+        {
+            return;
+        }
+
+        localStarReachCount = stars.Length;
+        localStarReachSource = constellationGenerator.stars;
+        localStarReach = 0f;
+        foreach (GeneratedConstellationStar star in stars)
+        {
+            // Skip the solve-stamp copy, which animates on its own.
+            if (star.GetComponentInParent<SkyStamp3DVFX>(true) != null)
+            {
+                continue;
+            }
+
+            localStarReach = Mathf.Max(localStarReach, skyConstellationPivot.InverseTransformPoint(star.transform.position).magnitude);
+        }
     }
 
     /// <summary>
