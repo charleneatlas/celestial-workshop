@@ -1,0 +1,19 @@
+{
+    "name": "CW.Guidance.Editor",
+    "rootNamespace": "CW.Guidance.Editor",
+    "references": [
+        "CW.Guidance",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
