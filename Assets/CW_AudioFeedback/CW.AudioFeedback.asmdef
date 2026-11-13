@@ -1,0 +1,14 @@
+{
+    "name": "CW.AudioFeedback",
+    "rootNamespace": "CW.AudioFeedback",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

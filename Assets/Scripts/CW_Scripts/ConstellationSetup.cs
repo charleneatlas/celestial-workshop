@@ -109,6 +109,18 @@ public sealed class ConstellationSetup : MonoBehaviour
 
     private bool isInitialized;
 
+    // Generation-time poses, so a runtime constellation swap can regenerate in
+    // the same frame Start did: the sky pivot relative to the observer (the sky
+    // group may have been placed, re-aimed and scaled since), the mini pivot's
+    // local rotation, and each sky container's world scale at generation.
+    private Quaternion skyPivotGenerationRotation;
+    private Quaternion miniPivotGenerationLocalRotation;
+    private float skyContainerGenerationScale = 1f;
+    private float stampContainerGenerationScale = 1f;
+
+    /// <summary>Raised after LoadConstellation has rebuilt the puzzle around a new star set.</summary>
+    public event Action ConstellationLoaded;
+
     // The tabletop constellation's post-solve grab: offered by the game after
     // the settle, and optionally suppressed (e.g. while the post-puzzle menu is up).
     private bool postSolveGrabAvailable;
@@ -123,6 +135,8 @@ public sealed class ConstellationSetup : MonoBehaviour
     public event Action SolveSettled;
 
     public bool IsSettling => isSettling;
+
+    public ConstellationGenerator Generator => constellationGenerator;
 
     public Transform SkyConstellationPivot => skyConstellationPivot;
     public Transform SkyVisualContainer => skyVisualContainer;
@@ -156,6 +170,8 @@ public sealed class ConstellationSetup : MonoBehaviour
             enabled = false;
             return;
         }
+
+        RecordGenerationPoses();
 
         if (generateOnStart)
         {
@@ -222,7 +238,121 @@ public sealed class ConstellationSetup : MonoBehaviour
         CopyRotationToSky();
     }
 
+    private void RecordGenerationPoses()
+    {
+        skyPivotGenerationRotation =
+            Quaternion.Inverse(skyObserverReference.rotation) * skyConstellationPivot.rotation;
+        miniPivotGenerationLocalRotation = miniConstellationPivot.localRotation;
+        skyContainerGenerationScale = skyVisualContainer.lossyScale.x;
+        stampContainerGenerationScale =
+            skyStampVisualContainer != null ? skyStampVisualContainer.lossyScale.x : 1f;
+    }
+
+    /// <summary>
+    /// Replaces the puzzle's constellation at runtime: copies the star set into
+    /// the scene's generator (so the Earth view, chart and blueprint read the new
+    /// data), regenerates the mini, sky and stamp exactly as Start did, recalibrates
+    /// the solve, then resets the puzzle (randomize + intro via PuzzleReset).
+    /// </summary>
+    public void LoadConstellation(
+        string displayName,
+        Vector2 artboardSize,
+        List<ConstellationGenerator.StarData> stars)
+    {
+        if (!isInitialized || stars == null || stars.Count == 0)
+        {
+            Debug.LogWarning("ConstellationSetup: can't load a constellation before setup or with no stars.", this);
+            return;
+        }
+
+        StopAllCoroutines();
+        isSettling = false;
+
+        // Back to the unsolved rest state (mini kinematic at home, mirroring on).
+        HandleReset();
+
+        // A fresh list instance: consumers (EarthViewCamera) cache by reference.
+        constellationGenerator.constellationName = displayName;
+        constellationGenerator.artboardSize = artboardSize;
+        constellationGenerator.stars = new List<ConstellationGenerator.StarData>(stars);
+
+        // Old roots go now: Destroy is deferred and the generator finds roots by name.
+        DetachGeneratedRoot(miniVisualContainer);
+        DetachGeneratedRoot(skyVisualContainer);
+        DetachGeneratedRoot(skyStampVisualContainer);
+
+        // Generation frame: the poses Start generated in.
+        miniConstellationPivot.localRotation = miniPivotGenerationLocalRotation;
+        skyConstellationPivot.rotation = skyObserverReference.rotation * skyPivotGenerationRotation;
+
+        GenerateConstellations(SkyGroupScale(skyVisualContainer, skyContainerGenerationScale));
+        CenterRotationPivot(miniVisualContainer, miniConstellationPivot);
+        CenterRotationPivot(skyVisualContainer, skyConstellationPivot);
+
+        if (solveController != null)
+        {
+            solveController.CalibrateSolveDirection();
+        }
+
+        GenerateSkyStampConstellation(SkyGroupScale(skyStampVisualContainer, stampContainerGenerationScale));
+        miniConstellationStartLocalPosition = miniConstellationPivot.localPosition;
+
+        Quaternion generatedSolvedSkyRotation = skyConstellationPivot.rotation;
+        AlignSkyRotationReferenceToView();
+        canonicalMiniRelativeRotation =
+            Quaternion.Inverse(skyRotationReference.rotation) * generatedSolvedSkyRotation;
+        CopyRotationToSky();
+
+        foreach (StarChartLayout chart in FindObjectsByType<StarChartLayout>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+        {
+            chart.Rebuild();
+        }
+
+        Debug.Log($"ConstellationSetup: loaded '{displayName}' ({stars.Count} stars).", this);
+        ConstellationLoaded?.Invoke();
+
+        if (solveController != null)
+        {
+            solveController.ResetSolve();
+        }
+
+        CopyRotationToSky();
+    }
+
+    // How much the sky group has been scaled since generation (NearFieldSkyProxy
+    // shrinks it into the volume). The generator places sky stars at world
+    // distances from the observer, so those distances must shrink by this too.
+    private static float SkyGroupScale(Transform container, float generationScale)
+    {
+        return container != null && generationScale > 0f
+            ? container.lossyScale.x / generationScale
+            : 1f;
+    }
+
+    private static void DetachGeneratedRoot(Transform container)
+    {
+        if (container == null)
+        {
+            return;
+        }
+
+        Transform root = container.Find("Generated Constellation");
+        if (root == null)
+        {
+            return;
+        }
+
+        root.gameObject.SetActive(false);
+        root.SetParent(null, false);
+        Destroy(root.gameObject);
+    }
+
     private void GenerateConstellations()
+    {
+        GenerateConstellations(1f);
+    }
+
+    private void GenerateConstellations(float skyGroupScale)
     {
         GameObject miniGeneratedRoot =
             constellationGenerator.GenerateConstellation(
@@ -235,7 +365,7 @@ public sealed class ConstellationSetup : MonoBehaviour
                 skyVisualContainer,
                 skyConstellationAppearance,
                 skyObserverReference,
-                skyDistanceScale,
+                skyDistanceScale * skyGroupScale,
                 new Vector3(
                     -skyElevationDegrees,
                     skyAzimuthDegrees,
@@ -262,12 +392,17 @@ public sealed class ConstellationSetup : MonoBehaviour
 
     private void GenerateSkyStampConstellation()
     {
+        GenerateSkyStampConstellation(1f);
+    }
+
+    private void GenerateSkyStampConstellation(float skyGroupScale)
+    {
         skyStampGeneratedRoot =
             constellationGenerator.GenerateConstellation(
                 skyStampVisualContainer,
                 skyStampAppearance,
                 skyObserverReference,
-                skyDistanceScale,
+                skyDistanceScale * skyGroupScale,
                 new Vector3(
                     -skyElevationDegrees,
                     skyAzimuthDegrees,

@@ -1,0 +1,19 @@
+{
+    "name": "CW.AudioFeedback.Editor",
+    "rootNamespace": "CW.AudioFeedback.Editor",
+    "references": [
+        "CW.AudioFeedback",
+        "CW.AudioFeedback.Preview"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

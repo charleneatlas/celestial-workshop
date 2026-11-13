@@ -39410,18 +39410,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 427335957}
-        m_TargetAssemblyTypeName: UnityEngine.AudioSource, UnityEngine
-        m_MethodName: PlayOneShot
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: 7161fda156191d5498bdc701eb8b1b29, type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
       - m_Target: {fileID: 2069338593}
         m_TargetAssemblyTypeName: DioramaCelebration, Assembly-CSharp
         m_MethodName: Celebrate
@@ -52415,6 +52403,74 @@ Transform:
   - {fileID: 249533524}
   m_Father: {fileID: 1179900817}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &346929324
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1663608340429253667, guid: f9e03f6c1c606d14589e614c9d14dc42, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663608340429253667, guid: f9e03f6c1c606d14589e614c9d14dc42, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663608340429253667, guid: f9e03f6c1c606d14589e614c9d14dc42, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663608340429253667, guid: f9e03f6c1c606d14589e614c9d14dc42, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663608340429253667, guid: f9e03f6c1c606d14589e614c9d14dc42, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663608340429253667, guid: f9e03f6c1c606d14589e614c9d14dc42, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663608340429253667, guid: f9e03f6c1c606d14589e614c9d14dc42, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663608340429253667, guid: f9e03f6c1c606d14589e614c9d14dc42, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663608340429253667, guid: f9e03f6c1c606d14589e614c9d14dc42, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1663608340429253667, guid: f9e03f6c1c606d14589e614c9d14dc42, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8252300108794841471, guid: f9e03f6c1c606d14589e614c9d14dc42, type: 3}
+      propertyPath: m_Name
+      value: AudioFeedback
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: f9e03f6c1c606d14589e614c9d14dc42, type: 3}
+--- !u!114 &346929325 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8220339015700431940, guid: f9e03f6c1c606d14589e614c9d14dc42, type: 3}
+  m_PrefabInstance: {fileID: 346929324}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 015ced7870157d34fa84a68ba9ccb6c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: CW.AudioFeedback::CW.AudioFeedback.AudioFeedback
 --- !u!1 &348139860
 GameObject:
   m_ObjectHideFlags: 0
@@ -107362,6 +107418,80 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 148599240634049450, guid: d977a91ede3020d48acc887216c8122e, type: 3}
   m_PrefabInstance: {fileID: 774539709}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &775812558
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 775812561}
+  - component: {fileID: 775812560}
+  - component: {fileID: 775812559}
+  m_Layer: 0
+  m_Name: Game Flow
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &775812559
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775812558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1044189b8e31f034fb086c3a5a9956b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::AudioFeedbackHooks
+  audioFeedback: {fileID: 346929325}
+  pinchRotation: {fileID: 1633549548}
+  pinchSoundOrigin: {fileID: 1735069868}
+  intro: {fileID: 832476893}
+  solveController: {fileID: 242918475}
+  stamp: {fileID: 1711656387}
+  signing: {fileID: 832476892}
+  gameFlow: {fileID: 775812560}
+  buttons:
+  - {fileID: 789912738}
+  - {fileID: 1532924653}
+  - {fileID: 1037031106}
+--- !u!114 &775812560
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775812558}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 859e1efd5a4c94f47adf6aa35f97d21f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameFlow
+  setup: {fileID: 832476889}
+  intro: {fileID: 832476893}
+  solveController: {fileID: 242918475}
+  titleRoot: {fileID: 0}
+  startAtTitle: 0
+--- !u!4 &775812561
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 775812558}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &778327428
 GameObject:
   m_ObjectHideFlags: 0
@@ -187531,6 +187661,7 @@ MonoBehaviour:
   reveal: {fileID: 832476891}
   solveController: {fileID: 242918475}
   setup: {fileID: 832476889}
+  gameFlow: {fileID: 775812560}
   puzzleDisplays:
   - {fileID: 1237499181}
   - {fileID: 330823355}
@@ -274673,3 +274804,5 @@ SceneRoots:
   - {fileID: 1627030386}
   - {fileID: 1512454405}
   - {fileID: 698829295}
+  - {fileID: 346929324}
+  - {fileID: 775812561}

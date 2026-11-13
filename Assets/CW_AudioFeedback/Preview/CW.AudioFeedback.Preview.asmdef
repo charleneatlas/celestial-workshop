@@ -1,0 +1,17 @@
+{
+    "name": "CW.AudioFeedback.Preview",
+    "rootNamespace": "CW.AudioFeedback",
+    "references": [
+        "CW.AudioFeedback",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -272,6 +272,17 @@ public sealed class VolumePinchRotation : MonoBehaviour
     [Range(0f, 1f)]
     private float centerPreviewScale = 0.6f;
 
+    /// <summary>A pinch inside the sphere started a rotation (axis not chosen yet).</summary>
+    public event System.Action PinchStarted;
+
+    /// <summary>The first deliberate movement chose an axis; the constellation now turns.</summary>
+    public event System.Action AxisLocked;
+
+    /// <summary>The rotation pinch ended (released, tracking lost or locked by the puzzle).</summary>
+    public event System.Action PinchEnded;
+
+    public bool IsPinching => activeHand != null;
+
     private const int GuideSegments = 64;
     private const int ArcSegments = 16;
     private const float Hidden = -1f;
@@ -544,6 +555,8 @@ public sealed class VolumePinchRotation : MonoBehaviour
             $"{AxisName(offeredAxes[0])} and {AxisName(offeredAxes[1])}, t {Time.time:F2}",
             this
         );
+
+        PinchStarted?.Invoke();
     }
 
     private void UpdatePinch()
@@ -629,6 +642,8 @@ public sealed class VolumePinchRotation : MonoBehaviour
         UpdateGripMarker(center);
 
         Debug.Log($"VolumePinchRotation: locked {AxisName(lockedAxis)}", this);
+
+        AxisLocked?.Invoke();
     }
 
     private void RotateWithHand(Vector3 point, Vector3 center)
@@ -675,10 +690,16 @@ public sealed class VolumePinchRotation : MonoBehaviour
             activeHand.Held = true;
         }
 
+        bool wasPinching = activeHand != null;
         activeHand = null;
         lockedAxis = -1;
         state = State.Idle;
         HideGuides();
+
+        if (wasPinching)
+        {
+            PinchEnded?.Invoke();
+        }
     }
 
     // Short arcs of the pair a pinch would offer right now, for the hand
@@ -872,7 +893,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
     {
         return IsSolved() ||
                (reveal != null && reveal.CurrentPhase != ConstellationReveal.Phase.Idle) ||
-               (intro != null && intro.IsPlaying);
+               (intro != null && intro.IsBlocking);
     }
 
     // Draws ringAlpha / arcAlpha in the current guide style. Runs every frame

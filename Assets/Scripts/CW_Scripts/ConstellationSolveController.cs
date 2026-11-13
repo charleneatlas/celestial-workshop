@@ -44,6 +44,10 @@ public class ConstellationSolveController : MonoBehaviour
     private bool isNearSolve = false;
 
     public bool IsSolved => isSolved;
+
+    // Code access to the Inspector events (audio, guidance), alongside their scene listeners.
+    public UnityEvent NearSolveEntered => onNearSolveEntered;
+    public UnityEvent Solved => onSolved;
     public bool IsNearSolve => isNearSolve;
 
     /// <summary>Raised at the end of ResetSolve, once the new puzzle's rotation is randomized (startup, Choose Another, Reset).</summary>

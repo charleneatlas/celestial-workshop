@@ -600,9 +600,16 @@ public sealed class StarChartLayout : MonoBehaviour
 
         foreach (BlueprintStar target in starTargets.GetComponentsInChildren<BlueprintStar>(true))
         {
-            if (!TryGetLocalStarPosition(target.StarId, out Vector3 local))
+            // Targets are authored per constellation; hide the ones the
+            // current star set doesn't have (e.g. after a runtime swap).
+            bool hasStar = TryGetLocalStarPosition(target.StarId, out Vector3 local);
+            if (target.gameObject.activeSelf != hasStar)
             {
-                Debug.LogWarning($"StarChartLayout: no star data named '{target.StarId}'.", target);
+                target.gameObject.SetActive(hasStar);
+            }
+
+            if (!hasStar)
+            {
                 continue;
             }
 

@@ -110,7 +110,12 @@ public sealed class SkyStamp3DVFX : MonoBehaviour
         }
 
         playRoutine = StartCoroutine(PlayRoutine());
+        Debug.Log($"SkyStamp3DVFX: playing ({starSpheres.Count} stars, {connections.Count} connections).", this);
+        Played?.Invoke();
     }
+
+    /// <summary>Raised when the solve stamp starts playing.</summary>
+    public event System.Action Played;
 
     public void ResetVFX()
     {

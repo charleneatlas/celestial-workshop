@@ -26,6 +26,10 @@ public sealed class PostPuzzleMenu : MonoBehaviour
     [SerializeField]
     private ConstellationSetup setup;
 
+    [Tooltip("Optional: title / practice flow. A practice puzzle's Choose Another goes to the main puzzle; Choose Another Box goes back to the title.")]
+    [SerializeField]
+    private GameFlow gameFlow;
+
     [Header("Displays")]
     [Tooltip("Hidden while the menu is shown (Earth View Disc, Star Chart Blueprint).")]
     [SerializeField]
@@ -176,7 +180,12 @@ public sealed class PostPuzzleMenu : MonoBehaviour
 
         // Show the displays before the reset so the screen's CRT power-on plays.
         HideMenu(false);
-        if (solveController != null)
+        if (gameFlow != null && gameFlow.IsPractice)
+        {
+            Log("Choose Another Constellation: practice done, starting the main puzzle.");
+            gameFlow.StartMain();
+        }
+        else if (solveController != null)
         {
             solveController.ResetSolve();
         }
@@ -192,7 +201,28 @@ public sealed class PostPuzzleMenu : MonoBehaviour
 
     public void ChooseAnotherBox()
     {
-        Log("Choose Another Box pressed (not implemented yet: would open box selection).");
+        if (gameFlow == null)
+        {
+            Log("Choose Another Box pressed (not implemented yet: would open box selection).");
+            return;
+        }
+
+        if (!IsMenuShown || resetting)
+        {
+            return;
+        }
+
+        // Until there are boxes, the title (letters + Start) is the way back.
+        resetting = true;
+        Log("Choose Another Box: back to the title.");
+        HideMenu(false);
+        gameFlow.ReturnToTitle();
+        if (setup != null)
+        {
+            setup.SetPostSolveGrabSuppressed(false);
+        }
+
+        resetting = false;
     }
 
     public void ViewConstellations()

@@ -137,6 +137,51 @@ public sealed class ConstellationIntro : MonoBehaviour
     /// <summary>Raised after the handoff, once rotation and solving are back on.</summary>
     public event System.Action Finished;
 
+    /// <summary>Raised when the intro's copy appears (after placement and the start delay).</summary>
+    public event System.Action Started;
+
+    private bool holding;
+    private bool holdSuspendedDetection;
+
+    /// <summary>
+    /// Title hold: the display stays dark, solving is suspended, rotation stands
+    /// down and puzzle resets don't start the intro. Releasing it doesn't play the
+    /// intro by itself; the next puzzle reset (or PlayIntro) does.
+    /// </summary>
+    public bool IsHolding => holding;
+
+    /// <summary>True while the intro plays or the puzzle is held for the title.</summary>
+    public bool IsBlocking => IsPlaying || holding;
+
+    public void SetHold(bool hold)
+    {
+        if (hold == holding)
+        {
+            return;
+        }
+
+        holding = hold;
+        if (hold)
+        {
+            StopIntro();
+            SetDisplayFade(0f);
+            if (solveController != null && !solveController.SuspendDetection)
+            {
+                solveController.SuspendDetection = true;
+                holdSuspendedDetection = true;
+            }
+        }
+        else if (holdSuspendedDetection)
+        {
+            if (solveController != null)
+            {
+                solveController.SuspendDetection = false;
+            }
+
+            holdSuspendedDetection = false;
+        }
+    }
+
     private void OnEnable()
     {
         if (solveController != null)
@@ -168,7 +213,7 @@ public sealed class ConstellationIntro : MonoBehaviour
 
     private void OnPuzzleReset()
     {
-        if (playOnPuzzleStart)
+        if (playOnPuzzleStart && !holding)
         {
             PlayIntro();
         }
@@ -178,7 +223,7 @@ public sealed class ConstellationIntro : MonoBehaviour
     [ContextMenu("Play Intro")]
     public void PlayIntro()
     {
-        if (!Application.isPlaying)
+        if (!Application.isPlaying || holding)
         {
             return;
         }
@@ -250,6 +295,8 @@ public sealed class ConstellationIntro : MonoBehaviour
             StopIntro();
             yield break;
         }
+
+        Started?.Invoke();
 
         // Hold the puzzle orientation: source, mini and copy all stay put.
         if (setup.MirrorRotation)
