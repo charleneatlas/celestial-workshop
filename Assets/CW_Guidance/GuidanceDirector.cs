@@ -19,7 +19,9 @@ namespace CW.Guidance
         public Vector3 labelOffset = new Vector3(0f, 0.05f, 0f);
         [Tooltip("Breathing halo around the target.")]
         public bool pulseTarget = true;
-        [Tooltip("Halo radius in metres; 0 = from the target's renderer bounds.")]
+        [Tooltip("Optional: the halo surrounds this instead of the target (the label still follows the target). E.g. label by the globe, halo around the constellation inside it.")]
+        public Transform pulseAround;
+        [Tooltip("Halo radius in metres; 0 = from the renderer bounds of what it surrounds.")]
         public float pulseRadius;
         [Tooltip("0 = stays until completed. Otherwise the cue fades after this many seconds; the step stays logically active so Complete still records it.")]
         public float autoHideSeconds;
@@ -311,9 +313,10 @@ namespace CW.Guidance
 
             if (pulse != null)
             {
-                if (step.pulseTarget && step.target != null)
+                Transform around = step.pulseAround != null ? step.pulseAround : step.target;
+                if (step.pulseTarget && around != null)
                 {
-                    pulse.Show(step.target, step.pulseRadius, eye);
+                    pulse.Show(around, step.pulseRadius, eye);
                 }
                 else
                 {

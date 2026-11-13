@@ -100,6 +100,7 @@ public sealed class ConstellationSetup : MonoBehaviour
     private StellarForgeTrigger stellarForgeTrigger;
 
     private bool isSettling;
+    private Coroutine settleRoutine;
 
     private Quaternion canonicalMiniRelativeRotation;
 
@@ -800,12 +801,22 @@ public sealed class ConstellationSetup : MonoBehaviour
             gimbalRoot.SetActive(false);
             //Debug.Log($"Gimbal activeSelf after hide: {gimbalRoot.activeSelf}", this);
 
-            StartCoroutine(SettleToCanonicalSolve());
+            settleRoutine = StartCoroutine(SettleToCanonicalSolve());
         }
     }
 
     public void HandleReset()
     {
+        // A reset mid-settle (e.g. back to the title right after solving)
+        // must not finish the solve later: no stamp, no drop, no reveal.
+        if (settleRoutine != null)
+        {
+            StopCoroutine(settleRoutine);
+            settleRoutine = null;
+        }
+
+        isSettling = false;
+
         // Turn the gimbal back on
         gimbalRoot.SetActive(true);
 
@@ -854,6 +865,6 @@ public sealed class ConstellationSetup : MonoBehaviour
             return;
         }
 
-        StartCoroutine(SettleToCanonicalSolve());
+        settleRoutine = StartCoroutine(SettleToCanonicalSolve());
     }
 }

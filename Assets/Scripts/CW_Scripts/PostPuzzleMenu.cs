@@ -26,9 +26,36 @@ public sealed class PostPuzzleMenu : MonoBehaviour
     [SerializeField]
     private ConstellationSetup setup;
 
-    [Tooltip("Optional: title / practice flow. A practice puzzle's Choose Another goes to the main puzzle; Choose Another Box goes back to the title.")]
+    [Tooltip("Optional: title / practice flow. After a practice letter the first button reads 'Practice another letter' and returns to the title; after the main puzzle the second button returns to the title.")]
     [SerializeField]
     private GameFlow gameFlow;
+
+    [Header("Labels (title / practice flow)")]
+    [Tooltip("Label of the Choose Another Constellation button.")]
+    [SerializeField]
+    private TMPro.TMP_Text chooseAnotherLabel;
+
+    [SerializeField]
+    private string practiceAnotherText = "Practice another letter";
+
+    [Tooltip("The Choose Another Box button: hidden after practice (the first button already returns to the title).")]
+    [SerializeField]
+    private GameObject chooseAnotherBoxButton;
+
+    [Tooltip("Label of the Choose Another Box button; reads Back To Title Text until there are boxes.")]
+    [SerializeField]
+    private TMPro.TMP_Text chooseAnotherBoxLabel;
+
+    [SerializeField]
+    private string backToTitleText = "Back to title";
+
+    [Header("Back to title during a puzzle")]
+    [Tooltip("Small poke button shown during a puzzle (hidden at the title and while this menu is up). Leaves the puzzle without solving it.")]
+    [SerializeField]
+    private GameObject puzzleBackButtonRoot;
+
+    [SerializeField]
+    private MomentaryToggleButton puzzleBackButton;
 
     [Header("Displays")]
     [Tooltip("Hidden while the menu is shown (Earth View Disc, Star Chart Blueprint).")]
@@ -65,6 +92,7 @@ public sealed class PostPuzzleMenu : MonoBehaviour
     public bool IsMenuShown { get; private set; }
 
     private bool resetting;
+    private string mainChooseAnotherText;
 
     private void Awake()
     {
@@ -73,10 +101,32 @@ public sealed class PostPuzzleMenu : MonoBehaviour
         {
             menuRoot.SetActive(false);
         }
+
+        if (chooseAnotherLabel != null)
+        {
+            mainChooseAnotherText = chooseAnotherLabel.text;
+        }
+
+        if (chooseAnotherBoxLabel != null && gameFlow != null)
+        {
+            chooseAnotherBoxLabel.text = backToTitleText;
+        }
+
+        UpdatePuzzleBackButton();
     }
 
     private void OnEnable()
     {
+        if (gameFlow != null)
+        {
+            gameFlow.StageChanged += HandleStageChanged;
+        }
+
+        if (puzzleBackButton != null)
+        {
+            puzzleBackButton.Pressed += BackToTitle;
+        }
+
         if (signing != null)
         {
             signing.Signed += HandleSigned;
@@ -90,6 +140,16 @@ public sealed class PostPuzzleMenu : MonoBehaviour
 
     private void OnDisable()
     {
+        if (gameFlow != null)
+        {
+            gameFlow.StageChanged -= HandleStageChanged;
+        }
+
+        if (puzzleBackButton != null)
+        {
+            puzzleBackButton.Pressed -= BackToTitle;
+        }
+
         if (signing != null)
         {
             signing.Signed -= HandleSigned;
@@ -122,10 +182,16 @@ public sealed class PostPuzzleMenu : MonoBehaviour
         }
     }
 
+    private void HandleStageChanged(GameFlow.Stage stage)
+    {
+        UpdatePuzzleBackButton();
+    }
+
     [ContextMenu("Show Menu")]
     public void ShowMenu()
     {
         ApplyLayout();
+        ApplyFlowLabels();
         SetDisplaysVisible(false);
         if (menuRoot != null)
         {
@@ -138,6 +204,7 @@ public sealed class PostPuzzleMenu : MonoBehaviour
         }
 
         IsMenuShown = true;
+        UpdatePuzzleBackButton();
         Log("menu shown.");
     }
 
@@ -162,16 +229,24 @@ public sealed class PostPuzzleMenu : MonoBehaviour
         }
 
         IsMenuShown = false;
+        UpdatePuzzleBackButton();
         Log("menu hidden.");
     }
 
     // ---- Button callbacks (wired on each button's On Pressed; replace freely) ----
 
-    /// <summary>Temporary: reset this constellation and play again.</summary>
+    /// <summary>Temporary: reset this constellation and play again. After a practice letter: back to the title to pick another.</summary>
     public void ChooseAnotherConstellation()
     {
         if (!IsMenuShown || resetting)
         {
+            return;
+        }
+
+        if (gameFlow != null && gameFlow.IsPractice)
+        {
+            Log("Practice another letter: back to the title.");
+            ReturnToTitleFromMenu();
             return;
         }
 
@@ -180,12 +255,7 @@ public sealed class PostPuzzleMenu : MonoBehaviour
 
         // Show the displays before the reset so the screen's CRT power-on plays.
         HideMenu(false);
-        if (gameFlow != null && gameFlow.IsPractice)
-        {
-            Log("Choose Another Constellation: practice done, starting the main puzzle.");
-            gameFlow.StartMain();
-        }
-        else if (solveController != null)
+        if (solveController != null)
         {
             solveController.ResetSolve();
         }
@@ -213,8 +283,36 @@ public sealed class PostPuzzleMenu : MonoBehaviour
         }
 
         // Until there are boxes, the title (letters + Start) is the way back.
+        Log("Back to title (Choose Another Box).");
+        ReturnToTitleFromMenu();
+    }
+
+    /// <summary>
+    /// The in-puzzle Back to title button: leaves the puzzle at any point
+    /// (intro, rotating, solving, signing) without solving it.
+    /// </summary>
+    public void BackToTitle()
+    {
+        if (gameFlow == null || resetting || gameFlow.Current != GameFlow.Stage.Puzzle)
+        {
+            return;
+        }
+
+        if (IsMenuShown)
+        {
+            ReturnToTitleFromMenu();
+            return;
+        }
+
         resetting = true;
-        Log("Choose Another Box: back to the title.");
+        Log("Back to title during the puzzle.");
+        gameFlow.ReturnToTitle();
+        resetting = false;
+    }
+
+    private void ReturnToTitleFromMenu()
+    {
+        resetting = true;
         HideMenu(false);
         gameFlow.ReturnToTitle();
         if (setup != null)
@@ -223,6 +321,44 @@ public sealed class PostPuzzleMenu : MonoBehaviour
         }
 
         resetting = false;
+    }
+
+    private void ApplyFlowLabels()
+    {
+        if (gameFlow == null)
+        {
+            return;
+        }
+
+        bool practice = gameFlow.IsPractice;
+        if (chooseAnotherLabel != null)
+        {
+            chooseAnotherLabel.text = practice ? practiceAnotherText : mainChooseAnotherText;
+        }
+
+        if (chooseAnotherBoxButton != null)
+        {
+            chooseAnotherBoxButton.SetActive(!practice);
+        }
+
+        if (chooseAnotherBoxLabel != null)
+        {
+            chooseAnotherBoxLabel.text = backToTitleText;
+        }
+    }
+
+    private void UpdatePuzzleBackButton()
+    {
+        if (puzzleBackButtonRoot == null)
+        {
+            return;
+        }
+
+        bool show = !IsMenuShown && (gameFlow == null || gameFlow.Current == GameFlow.Stage.Puzzle);
+        if (puzzleBackButtonRoot.activeSelf != show)
+        {
+            puzzleBackButtonRoot.SetActive(show);
+        }
     }
 
     public void ViewConstellations()

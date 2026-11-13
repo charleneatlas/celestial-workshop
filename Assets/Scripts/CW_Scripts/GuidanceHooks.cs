@@ -5,8 +5,10 @@ using UnityEngine;
 /// <summary>
 /// Drives the one-at-a-time guidance cues from game events. Step ids match the
 /// GuidanceDirector's step list (see Assets/CW_Guidance/GuidanceCopy.md):
-/// title-letter, title-start, rotate, match, sign, menu. Steps are onlyOnce in
-/// the director, so after the first puzzle they stay quiet.
+/// title-letter, title-start, rotate, match, sign, menu.
+/// The two title steps alternate for as long as the title is up (every
+/// return to the title restarts them); the puzzle steps are onlyOnce in the
+/// director, so after the first puzzle they stay quiet.
 /// </summary>
 public sealed class GuidanceHooks : MonoBehaviour
 {
@@ -34,11 +36,16 @@ public sealed class GuidanceHooks : MonoBehaviour
     [SerializeField]
     private ConstellationSigning signing;
 
-    [Tooltip("Seconds the letter hint shows before the Start hint replaces it.")]
+    [Tooltip("Seconds each title hint (letter, Start) shows before the other replaces it.")]
     [SerializeField]
-    private float letterHintSeconds = 8f;
+    private float titleHintSeconds = 6f;
+
+    [Tooltip("Menu hint text after a practice letter (the main puzzle keeps the step's own text).")]
+    [SerializeField]
+    private string practiceMenuText = "Practice another letter";
 
     private Coroutine titleRoutine;
+    private string mainMenuText;
 
     private void OnEnable()
     {
@@ -99,6 +106,12 @@ public sealed class GuidanceHooks : MonoBehaviour
 
         if (stage == GameFlow.Stage.Title)
         {
+            // Nothing from the puzzle points at what is now hidden.
+            if (director.ActiveId != null && !director.IsActive("title-letter") && !director.IsActive("title-start"))
+            {
+                director.Clear();
+            }
+
             titleRoutine = StartCoroutine(TitleHints());
             return;
         }
@@ -116,21 +129,50 @@ public sealed class GuidanceHooks : MonoBehaviour
         }
     }
 
+    // Alternates the letter and Start hints until the player leaves the title
+    // (OnStageChanged stops this). While a letter is held the letter hint stays.
     private IEnumerator TitleHints()
     {
         // Wait for the title to be shown and placed.
         yield return new WaitForSeconds(1f);
-        if (director.Show("title-letter"))
+        bool letterTurn = true;
+        while (gameFlow == null || gameFlow.Current == GameFlow.Stage.Title)
         {
-            yield return new WaitForSeconds(letterHintSeconds);
-        }
+            director.Show(letterTurn ? "title-letter" : "title-start");
+            float until = Time.time + Mathf.Max(1f, titleHintSeconds);
+            while (Time.time < until || IsLetterHeld())
+            {
+                if (IsLetterHeld() && !director.IsActive("title-letter"))
+                {
+                    director.Show("title-letter");
+                    letterTurn = true;
+                }
 
-        if (gameFlow == null || gameFlow.Current == GameFlow.Stage.Title)
-        {
-            director.Show("title-start");
+                yield return null;
+            }
+
+            letterTurn = !letterTurn;
         }
 
         titleRoutine = null;
+    }
+
+    private bool IsLetterHeld()
+    {
+        if (titleShelf == null || titleShelf.Letters == null)
+        {
+            return false;
+        }
+
+        foreach (TitleLetterMini letter in titleShelf.Letters)
+        {
+            if (letter != null && letter.IsGrabbed)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void OnStartPressed()
@@ -189,7 +231,21 @@ public sealed class GuidanceHooks : MonoBehaviour
         {
             // Completing first plays the acknowledgement; the menu hint follows it.
             director.Complete("sign");
+            SetMenuText(gameFlow != null && gameFlow.IsPractice);
             director.Show("menu");
+        }
+    }
+
+    private void SetMenuText(bool practice)
+    {
+        foreach (GuidanceStep step in director.steps)
+        {
+            if (step != null && step.id == "menu")
+            {
+                mainMenuText ??= step.text;
+                step.text = practice ? practiceMenuText : mainMenuText;
+                return;
+            }
         }
     }
 

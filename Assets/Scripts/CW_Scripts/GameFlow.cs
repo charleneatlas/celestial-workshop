@@ -34,6 +34,19 @@ public sealed class GameFlow : MonoBehaviour
     [SerializeField]
     private bool startAtTitle = true;
 
+    [Header("Visibility by stage")]
+    [Tooltip("Deactivated at the title, active during any puzzle (e.g. the Star Chart Blueprint).")]
+    [SerializeField]
+    private GameObject[] puzzleObjects = new GameObject[0];
+
+    [Tooltip("Renderers under these are hidden at the title. For puzzle parts that must stay active for the puzzle logic (mini and sky constellations).")]
+    [SerializeField]
+    private Transform[] puzzleRendererRoots = new Transform[0];
+
+    [Tooltip("Shown only for the main constellation: deactivated at the title and during letter practice (the observer diorama).")]
+    [SerializeField]
+    private GameObject[] mainOnlyObjects = new GameObject[0];
+
     public Stage Current { get; private set; } = Stage.Puzzle;
 
     /// <summary>True while the loaded puzzle is a practice letter rather than the main constellation.</summary>
@@ -45,6 +58,11 @@ public sealed class GameFlow : MonoBehaviour
     private string mainName;
     private Vector2 mainArtboard;
     private List<ConstellationGenerator.StarData> mainStars;
+
+    // Renderers this hid at the title (only these are re-enabled).
+    private readonly List<Renderer> hiddenRenderers = new List<Renderer>();
+    private readonly List<Renderer> rendererScratch = new List<Renderer>();
+    private bool visibilityReady;
 
     private void Awake()
     {
@@ -59,6 +77,32 @@ public sealed class GameFlow : MonoBehaviour
         else
         {
             ShowTitle(false);
+        }
+    }
+
+    private System.Collections.IEnumerator Start()
+    {
+        // The constellations are generated in ConstellationSetup.Start, and the
+        // displays initialise in their own Awake/Start: apply the title's
+        // visibility once everything exists.
+        yield return null;
+        visibilityReady = true;
+        ApplyVisibility();
+    }
+
+    private void OnEnable()
+    {
+        if (setup != null)
+        {
+            setup.ConstellationLoaded += ApplyVisibility;
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (setup != null)
+        {
+            setup.ConstellationLoaded -= ApplyVisibility;
         }
     }
 
@@ -107,7 +151,11 @@ public sealed class GameFlow : MonoBehaviour
         setup.LoadConstellation(displayName, artboardSize, stars);
     }
 
-    /// <summary>Back to the title: the puzzle is reset and held hidden.</summary>
+    /// <summary>
+    /// Back to the title, from the post-puzzle menu or mid-puzzle: stops the
+    /// intro, resets the solve (which cancels the settle, reveal, stamp,
+    /// signing, celebration and menu) and hides the puzzle until the next one.
+    /// </summary>
     [ContextMenu("Return To Title")]
     public void ReturnToTitle()
     {
@@ -139,8 +187,80 @@ public sealed class GameFlow : MonoBehaviour
     {
         Current = stage;
         ShowTitle(stage == Stage.Title);
+        ApplyVisibility();
         Debug.Log($"GameFlow: {stage}{(stage == Stage.Puzzle ? (IsPractice ? " (practice)" : " (main)") : "")}", this);
         StageChanged?.Invoke(stage);
+    }
+
+    private void ApplyVisibility()
+    {
+        if (!visibilityReady)
+        {
+            return;
+        }
+
+        bool puzzle = Current == Stage.Puzzle;
+        SetActive(puzzleObjects, puzzle);
+        SetActive(mainOnlyObjects, puzzle && !IsPractice);
+        SetPuzzleRenderersVisible(puzzle);
+    }
+
+    private static void SetActive(GameObject[] objects, bool active)
+    {
+        if (objects == null)
+        {
+            return;
+        }
+
+        foreach (GameObject go in objects)
+        {
+            if (go != null && go.activeSelf != active)
+            {
+                go.SetActive(active);
+            }
+        }
+    }
+
+    private void SetPuzzleRenderersVisible(bool visible)
+    {
+        if (visible)
+        {
+            foreach (Renderer r in hiddenRenderers)
+            {
+                if (r != null)
+                {
+                    r.enabled = true;
+                }
+            }
+
+            hiddenRenderers.Clear();
+            return;
+        }
+
+        if (puzzleRendererRoots == null)
+        {
+            return;
+        }
+
+        foreach (Transform root in puzzleRendererRoots)
+        {
+            if (root == null)
+            {
+                continue;
+            }
+
+            root.GetComponentsInChildren(true, rendererScratch);
+            foreach (Renderer r in rendererScratch)
+            {
+                if (r.enabled)
+                {
+                    r.enabled = false;
+                    hiddenRenderers.Add(r);
+                }
+            }
+        }
+
+        rendererScratch.Clear();
     }
 
     private void ShowTitle(bool show)

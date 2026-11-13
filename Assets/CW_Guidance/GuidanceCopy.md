@@ -1,16 +1,16 @@
-# Guidance copy: proposed steps
+# Guidance copy: steps (as wired in the prototype scene)
 
 One cue at a time. Each line is 8 words or fewer. "1st only" = `onlyOnce`
 (skipped after the first puzzle / first time it is completed in the session).
 
 | id | Text | Target | Shown when | Completed when | 1st only |
 |---|---|---|---|---|---|
-| `title-letter` | Pinch a letter, drop it in the globe | the nearest letter mini | Title screen appears | A letter is released inside the glass sphere (title practice drop; event still to be written) | yes |
-| `title-start` | Or poke Start to begin | Start button | After `title-letter` completes, or 8 s after it was shown with no drop (use `autoHideSeconds = 8` on `title-letter`, then Show) | Start poked | yes |
-| `rotate` | Pinch inside the globe and turn | glass sphere | `ConstellationIntro.Finished` (rotation unlocked) | `VolumePinchRotation.AxisLocked` (first axis lock) | yes |
+| `title-letter` | Drop a letter into the globe to practice. | letter C | Title screen appears; alternates with `title-start` every 6 s (`GuidanceHooks.titleHintSeconds`) and stays while a letter is held | A letter is placed (practice starts) | no (restarts on every return to the title) |
+| `title-start` | Press Start to explore constellations. | Start button | Alternates with `title-letter` | Start pressed | no (restarts on every return to the title) |
+| `rotate` | Pinch inside the sky sphere to rotate the constellation. | label: glass sphere; halo: the sky constellation (`pulseAround`) | `ConstellationIntro.Finished` (rotation unlocked) | `VolumePinchRotation.AxisLocked` (first axis lock) | yes |
 | `match` | Match the stars to your chart | star chart / Earth-view display | `rotate` completed, i.e. right after the first axis lock (deferred automatically until the rotate acknowledgement ends) | Near-solve entered (`ConstellationSolveController` onNearSolveEntered); fall back to onSolved | yes (later puzzles: optionally show again with `autoHideSeconds` = 4) |
 | `sign` | Draw along the line to sign | left end of the signing line | `ConstellationSigning.CurrentState` becomes `Ready` | `ConstellationSigning.Signed` | yes |
-| `menu` | Choose another sky | Choose Another button | `PostPuzzleMenu.ShowMenu()` (today it runs on Signed) | `PostPuzzleMenu.ChooseAnotherConstellation()` | yes |
+| `menu` | Choose another sky (after practice: Practice another letter) | Choose Another button | `ConstellationSigning.Signed` | Next puzzle reset | yes |
 
 Not shown on purpose:
 
