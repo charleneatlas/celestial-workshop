@@ -598,10 +598,15 @@ public sealed class StarChartLayout : MonoBehaviour
             return;
         }
 
+        if (Application.isPlaying)
+        {
+            EnsureGeneratedTargets();
+        }
+
         foreach (BlueprintStar target in starTargets.GetComponentsInChildren<BlueprintStar>(true))
         {
-            // Targets are authored per constellation; hide the ones the
-            // current star set doesn't have (e.g. after a runtime swap).
+            // Authored targets (Cassiopeia) and generated ones; hide the ones
+            // the current star set doesn't have (e.g. after a runtime swap).
             bool hasStar = TryGetLocalStarPosition(target.StarId, out Vector3 local);
             if (target.gameObject.activeSelf != hasStar)
             {
@@ -627,6 +632,95 @@ public sealed class StarChartLayout : MonoBehaviour
                 highlightBlock.SetColor(BaseColorId, highlightColor);
                 highlight.SetPropertyBlock(highlightBlock);
             }
+        }
+    }
+
+    // Targets created at runtime for stars without an authored one (practice
+    // letters, future constellations). Not saved with the scene.
+    private readonly List<BlueprintStar> generatedTargets = new List<BlueprintStar>();
+    private readonly List<BlueprintStar> activeTargets = new List<BlueprintStar>();
+
+    /// <summary>The poke targets for the current constellation (authored and generated, active only).</summary>
+    public IReadOnlyList<BlueprintStar> ActiveTargets
+    {
+        get
+        {
+            activeTargets.Clear();
+            if (starTargets != null)
+            {
+                starTargets.GetComponentsInChildren(false, activeTargets);
+            }
+
+            return activeTargets;
+        }
+    }
+
+    // One target per star position: retraced letter strokes repeat a point
+    // under another name, and the first name there stands for it. Generated
+    // targets the current star set no longer needs are destroyed.
+    private void EnsureGeneratedTargets()
+    {
+        var existing = new HashSet<string>();
+        BlueprintStar template = null;
+        foreach (BlueprintStar target in starTargets.GetComponentsInChildren<BlueprintStar>(true))
+        {
+            if (!generatedTargets.Contains(target))
+            {
+                existing.Add(target.StarId);
+                template ??= target;
+            }
+        }
+
+        var wanted = new HashSet<string>();
+        var positions = new HashSet<Vector2Int>();
+        if (constellationGenerator.stars != null)
+        {
+            foreach (ConstellationGenerator.StarData star in constellationGenerator.stars)
+            {
+                if (string.IsNullOrEmpty(star.starName))
+                {
+                    continue;
+                }
+
+                Vector2Int key = new Vector2Int(
+                    Mathf.RoundToInt(star.affinityPosition.x),
+                    Mathf.RoundToInt(star.affinityPosition.y));
+                if (!positions.Add(key) || existing.Contains(star.starName))
+                {
+                    continue;
+                }
+
+                wanted.Add(star.starName);
+            }
+        }
+
+        for (int i = generatedTargets.Count - 1; i >= 0; i--)
+        {
+            BlueprintStar target = generatedTargets[i];
+            if (target == null || !wanted.Remove(target.StarId))
+            {
+                if (target != null)
+                {
+                    Destroy(target.gameObject);
+                }
+
+                generatedTargets.RemoveAt(i);
+            }
+        }
+
+        if (template == null)
+        {
+            return;
+        }
+
+        foreach (string starId in wanted)
+        {
+            BlueprintStar copy = Instantiate(template, starTargets);
+            copy.name = starId + " (generated)";
+            copy.gameObject.hideFlags = HideFlags.DontSave;
+            copy.SetStarId(starId);
+            copy.SetHighlighted(false);
+            generatedTargets.Add(copy);
         }
     }
 

@@ -5,7 +5,7 @@ using UnityEngine;
 /// <summary>
 /// Drives the one-at-a-time guidance cues from game events. Step ids match the
 /// GuidanceDirector's step list (see Assets/CW_Guidance/GuidanceCopy.md):
-/// title-letter, title-start, rotate, match, sign, menu.
+/// title-letter, title-start, rotate, chart, match, sign, menu.
 /// The two title steps alternate for as long as the title is up (every
 /// return to the title restarts them); the puzzle steps are onlyOnce in the
 /// director, so after the first puzzle they stay quiet.
@@ -36,6 +36,10 @@ public sealed class GuidanceHooks : MonoBehaviour
     [SerializeField]
     private ConstellationSigning signing;
 
+    [Tooltip("Star chart: its first star touch completes the chart hint.")]
+    [SerializeField]
+    private BlueprintController blueprint;
+
     [Tooltip("Seconds each title hint (letter, Start) shows before the other replaces it.")]
     [SerializeField]
     private float titleHintSeconds = 6f;
@@ -62,6 +66,7 @@ public sealed class GuidanceHooks : MonoBehaviour
 
         if (reveal != null) reveal.Presented += OnPresented;
         if (signing != null) signing.Signed += OnSigned;
+        if (blueprint != null) blueprint.StarTouched += OnChartStarTouched;
     }
 
     private void OnDisable()
@@ -79,6 +84,7 @@ public sealed class GuidanceHooks : MonoBehaviour
 
         if (reveal != null) reveal.Presented -= OnPresented;
         if (signing != null) signing.Signed -= OnSigned;
+        if (blueprint != null) blueprint.StarTouched -= OnChartStarTouched;
     }
 
     private IEnumerator Start()
@@ -195,8 +201,30 @@ public sealed class GuidanceHooks : MonoBehaviour
     {
         if (director != null && director.Complete("rotate"))
         {
-            // Shown after the rotate acknowledgement finishes.
+            // Shown after the rotate acknowledgement finishes; the chart hint
+            // first, unless the chart has already been used.
+            if (!director.Show("chart"))
+            {
+                director.Show("match");
+            }
+        }
+    }
+
+    private void OnChartStarTouched(string starId)
+    {
+        if (director == null)
+        {
+            return;
+        }
+
+        if (director.Complete("chart"))
+        {
             director.Show("match");
+        }
+        else
+        {
+            // Used before the hint came up: no need to show it later.
+            director.RecordCompleted("chart");
         }
     }
 
@@ -205,6 +233,10 @@ public sealed class GuidanceHooks : MonoBehaviour
         if (director != null)
         {
             director.Complete("match");
+            if (director.IsActive("chart"))
+            {
+                director.Clear();
+            }
         }
     }
 
@@ -259,7 +291,7 @@ public sealed class GuidanceHooks : MonoBehaviour
         if (!director.Complete("menu"))
         {
             // Any other reset mid-cue: drop it rather than leave it pointing at nothing.
-            if (director.IsActive("rotate") || director.IsActive("match") || director.IsActive("sign"))
+            if (director.IsActive("rotate") || director.IsActive("chart") || director.IsActive("match") || director.IsActive("sign"))
             {
                 director.Clear();
             }

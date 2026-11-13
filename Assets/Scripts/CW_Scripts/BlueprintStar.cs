@@ -7,6 +7,12 @@ public class BlueprintStar : MonoBehaviour
 
     public string StarId => starId;
 
+    /// <summary>For targets generated at runtime (StarChartLayout).</summary>
+    public void SetStarId(string id)
+    {
+        starId = id;
+    }
+
     private void Awake()
     {
         SetHighlighted(false);

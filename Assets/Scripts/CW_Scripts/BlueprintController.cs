@@ -84,6 +84,9 @@ public class BlueprintController : MonoBehaviour
 
     private BlueprintStar currentStar;
 
+    /// <summary>Raised with the star id each time a finger lands on a chart star.</summary>
+    public event System.Action<string> StarTouched;
+
     private void Start()
     {
         foreach (BlueprintStar star in stars)
@@ -158,6 +161,7 @@ public class BlueprintController : MonoBehaviour
 
             // Show distance of current star
             ShowDistance(currentStar);
+            StarTouched?.Invoke(currentStar.StarId);
 
             if (showDebugLogs)
             {
@@ -215,9 +219,13 @@ public class BlueprintController : MonoBehaviour
         BlueprintStar closestStar = null;
         float closestDistance = Mathf.Infinity;
 
-        foreach (BlueprintStar star in stars)
+        // The chart's active targets follow the loaded constellation
+        // (generated for letters); the authored list is the fallback.
+        IReadOnlyList<BlueprintStar> candidates =
+            chartLayout != null ? chartLayout.ActiveTargets : stars;
+        foreach (BlueprintStar star in candidates)
         {
-            if (star == null)
+            if (star == null || !star.gameObject.activeInHierarchy)
             {
                 continue;
             }
