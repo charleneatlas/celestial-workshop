@@ -42,15 +42,15 @@ public sealed class PostPuzzleMenu : MonoBehaviour
     [SerializeField]
     private GameObject chooseAnotherBoxButton;
 
-    [Tooltip("Label of the Choose Another Box button; reads Back To Title Text until there are boxes.")]
+    [Tooltip("Label of the Choose Another Box button.")]
     [SerializeField]
     private TMPro.TMP_Text chooseAnotherBoxLabel;
 
     [SerializeField]
-    private string backToTitleText = "Back to title";
+    private string chooseAnotherBoxText = "Choose Another Box";
 
     [Header("Back to title during a puzzle")]
-    [Tooltip("Small poke button shown during a puzzle (hidden at the title and while this menu is up). Leaves the puzzle without solving it.")]
+    [Tooltip("Small poke button shown throughout a puzzle, including with this menu up (hidden at the title and box selection). Leaves the puzzle without solving it.")]
     [SerializeField]
     private GameObject puzzleBackButtonRoot;
 
@@ -109,7 +109,7 @@ public sealed class PostPuzzleMenu : MonoBehaviour
 
         if (chooseAnotherBoxLabel != null && gameFlow != null)
         {
-            chooseAnotherBoxLabel.text = backToTitleText;
+            chooseAnotherBoxLabel.text = chooseAnotherBoxText;
         }
 
         UpdatePuzzleBackButton();
@@ -235,7 +235,11 @@ public sealed class PostPuzzleMenu : MonoBehaviour
 
     // ---- Button callbacks (wired on each button's On Pressed; replace freely) ----
 
-    /// <summary>Temporary: reset this constellation and play again. After a practice letter: back to the title to pick another.</summary>
+    /// <summary>
+    /// Main puzzle: back to the opened Starter Pack to pick another
+    /// constellation. After a practice letter: back to the title to pick
+    /// another letter. Without a flow: reset this constellation in place.
+    /// </summary>
     public void ChooseAnotherConstellation()
     {
         if (!IsMenuShown || resetting)
@@ -247,6 +251,13 @@ public sealed class PostPuzzleMenu : MonoBehaviour
         {
             Log("Practice another letter: back to the title.");
             ReturnToTitleFromMenu();
+            return;
+        }
+
+        if (gameFlow != null)
+        {
+            Log("Choose Another Constellation: back to the open pack.");
+            LeaveMenu(() => gameFlow.ReturnToBoxes(true));
             return;
         }
 
@@ -282,9 +293,8 @@ public sealed class PostPuzzleMenu : MonoBehaviour
             return;
         }
 
-        // Until there are boxes, the title (letters + Start) is the way back.
-        Log("Back to title (Choose Another Box).");
-        ReturnToTitleFromMenu();
+        Log("Choose Another Box: back to all boxes.");
+        LeaveMenu(() => gameFlow.ReturnToBoxes(false));
     }
 
     /// <summary>
@@ -312,9 +322,16 @@ public sealed class PostPuzzleMenu : MonoBehaviour
 
     private void ReturnToTitleFromMenu()
     {
+        LeaveMenu(gameFlow.ReturnToTitle);
+    }
+
+    // Hides the menu, runs the GameFlow transition (which resets the puzzle),
+    // then hands the post-solve grab back to ConstellationSetup.
+    private void LeaveMenu(System.Action transition)
+    {
         resetting = true;
         HideMenu(false);
-        gameFlow.ReturnToTitle();
+        transition();
         if (setup != null)
         {
             setup.SetPostSolveGrabSuppressed(false);
@@ -343,7 +360,7 @@ public sealed class PostPuzzleMenu : MonoBehaviour
 
         if (chooseAnotherBoxLabel != null)
         {
-            chooseAnotherBoxLabel.text = backToTitleText;
+            chooseAnotherBoxLabel.text = chooseAnotherBoxText;
         }
     }
 
@@ -354,7 +371,8 @@ public sealed class PostPuzzleMenu : MonoBehaviour
             return;
         }
 
-        bool show = !IsMenuShown && (gameFlow == null || gameFlow.Current == GameFlow.Stage.Puzzle);
+        // Also with the menu up: the menu's own buttons go to the boxes, this goes to the title.
+        bool show = gameFlow == null || gameFlow.Current == GameFlow.Stage.Puzzle;
         if (puzzleBackButtonRoot.activeSelf != show)
         {
             puzzleBackButtonRoot.SetActive(show);

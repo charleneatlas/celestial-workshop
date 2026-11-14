@@ -5,7 +5,8 @@ using UnityEngine;
 /// <summary>
 /// Drives the one-at-a-time guidance cues from game events. Step ids match the
 /// GuidanceDirector's step list (see Assets/CW_Guidance/GuidanceCopy.md):
-/// title-letter, title-start, rotate, chart, match, sign, menu.
+/// title-letter, title-start, boxes-open, boxes-place, rotate, chart, match,
+/// sign, menu. The box steps (like the title ones) show on every visit.
 /// The two title steps alternate for as long as the title is up (every
 /// return to the title restarts them); the puzzle steps are onlyOnce in the
 /// director, so after the first puzzle they stay quiet.
@@ -35,6 +36,10 @@ public sealed class GuidanceHooks : MonoBehaviour
 
     [SerializeField]
     private ConstellationSigning signing;
+
+    [Tooltip("Constellation box selection: 'open the Starter Pack', then 'place a constellation'.")]
+    [SerializeField]
+    private BoxSelection boxSelection;
 
     [Tooltip("Star chart: its first star touch completes the chart hint.")]
     [SerializeField]
@@ -67,6 +72,7 @@ public sealed class GuidanceHooks : MonoBehaviour
         if (reveal != null) reveal.Presented += OnPresented;
         if (signing != null) signing.Signed += OnSigned;
         if (blueprint != null) blueprint.StarTouched += OnChartStarTouched;
+        if (boxSelection != null) boxSelection.StateChanged += OnBoxStateChanged;
     }
 
     private void OnDisable()
@@ -85,6 +91,7 @@ public sealed class GuidanceHooks : MonoBehaviour
         if (reveal != null) reveal.Presented -= OnPresented;
         if (signing != null) signing.Signed -= OnSigned;
         if (blueprint != null) blueprint.StarTouched -= OnChartStarTouched;
+        if (boxSelection != null) boxSelection.StateChanged -= OnBoxStateChanged;
     }
 
     private IEnumerator Start()
@@ -207,6 +214,36 @@ public sealed class GuidanceHooks : MonoBehaviour
             {
                 director.Show("match");
             }
+        }
+    }
+
+    private void OnBoxStateChanged(BoxSelection.State state)
+    {
+        if (director == null)
+        {
+            return;
+        }
+
+        switch (state)
+        {
+            case BoxSelection.State.Closed:
+                director.Show("boxes-open");
+                break;
+
+            case BoxSelection.State.PackOpen:
+                // Completing first plays the acknowledgement; the next hint follows it.
+                director.Complete("boxes-open");
+                director.Show("boxes-place");
+                break;
+
+            default:
+                if (!director.Complete("boxes-place") &&
+                    (director.IsActive("boxes-open") || director.IsActive("boxes-place")))
+                {
+                    director.Clear();
+                }
+
+                break;
         }
     }
 

@@ -9,6 +9,16 @@ namespace CW.Guidance
     /// particles and lines are skipped (they are labels, sparkles and guide
     /// strokes, not the object the player should look at).
     /// </summary>
+    /// <summary>
+    /// A target that knows where it appears better than its renderers do (for
+    /// example something seen through a camera image). When the target has one,
+    /// its bounds are used instead of the renderers'.
+    /// </summary>
+    public interface IGuidanceBoundsSource
+    {
+        bool TryGetBounds(out Bounds bounds);
+    }
+
     public static class GuidanceBounds
     {
         /// <summary>Size used when the target has no usable renderer.</summary>
@@ -40,6 +50,12 @@ namespace CW.Guidance
         /// </summary>
         public static Bounds Compute(Transform target, List<Renderer> renderers)
         {
+            if (target != null && target.TryGetComponent(out IGuidanceBoundsSource source)
+                && source.TryGetBounds(out Bounds sourced))
+            {
+                return sourced;
+            }
+
             bool any = false;
             Bounds bounds = default;
             for (int i = 0; i < renderers.Count; i++)

@@ -1,8 +1,8 @@
 using UnityEngine;
 
 /// <summary>
-/// Connects the constellation title (TitleShelf) to GameFlow: Start begins the
-/// main puzzle, a letter dropped in the globe becomes a practice puzzle. Shows
+/// Connects the constellation title (TitleShelf) to GameFlow: Start opens the
+/// constellation boxes, a letter dropped in the globe becomes a practice puzzle. Shows
 /// the title only at the Title stage and floats it above the globe, facing the
 /// player, once the sky volume has been placed.
 /// </summary>
@@ -125,9 +125,11 @@ public sealed class TitleFlowBridge : MonoBehaviour
 
     private void OnStartPressed()
     {
+        // Start opens the constellation boxes (GameFlow falls back to the
+        // main puzzle when there is no box selection).
         if (gameFlow != null && gameFlow.Current == GameFlow.Stage.Title)
         {
-            gameFlow.StartMain();
+            gameFlow.OpenBoxes();
         }
     }
 

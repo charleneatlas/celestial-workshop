@@ -17,6 +17,11 @@ using UnityEngine;
 ///       Generated Constellation (stars + connections, colliders removed)
 ///     ISDK Grab (HandGrabInteractable / GrabInteractable -> this Grabbable)
 ///
+/// Custom constellation mode (UseConstellation): instead of a letter glyph the
+/// mini shows a given star set (e.g. the Starter Pack's sculptures) with its
+/// real depths, sized so its widest side is Letter Height. Grab, glide home
+/// and drop zones work the same.
+///
 /// The visual is generated flat (displayDepthVariation 0: every star at the
 /// same distance, a shallow spherical cap) so it reads as the letter from the
 /// front; the practice puzzle itself uses LetterConstellation.Build with the
@@ -35,6 +40,23 @@ public sealed class TitleLetterMini : MonoBehaviour
     [Tooltip("Depth seed handed on for the practice puzzle (the title display is flat).")]
     [SerializeField]
     private int seed = 1;
+
+    [Header("Custom constellation (instead of a letter)")]
+    [SerializeField]
+    private bool useCustomConstellation;
+
+    [SerializeField]
+    private string customName = "";
+
+    [SerializeField]
+    private Vector2 customArtboard = new Vector2(1920f, 1080f);
+
+    [SerializeField]
+    private List<ConstellationGenerator.StarData> customStars = new List<ConstellationGenerator.StarData>();
+
+    [Tooltip("Generator shape settings copied for a custom constellation (angular spread, radius, log distance). Empty = the letter settings.")]
+    [SerializeField]
+    private ConstellationGenerator customShapeSource;
 
     [Header("Generation")]
     [Tooltip("This mini's own generator. Empty = one on this object (added if missing). Never the scene's puzzle generator.")]
@@ -98,6 +120,31 @@ public sealed class TitleLetterMini : MonoBehaviour
 
     /// <summary>Raised when the letter is released inside a drop zone.</summary>
     public event Action<TitleLetterMini> PlacedInZone;
+
+    /// <summary>True while held with its centre inside a drop zone (the zone shows it).</summary>
+    public bool IsHeldInDropZone { get; private set; }
+
+    public bool IsCustomConstellation => useCustomConstellation;
+
+    public string ConstellationName => useCustomConstellation ? customName : Letter.ToString();
+
+    public Vector2 CustomArtboard => customArtboard;
+
+    /// <summary>A copy of the custom star set (null for a letter).</summary>
+    public List<ConstellationGenerator.StarData> CopyCustomStars()
+    {
+        return useCustomConstellation ? new List<ConstellationGenerator.StarData>(customStars) : null;
+    }
+
+    /// <summary>Shows this star set instead of a letter (applied on the next Rebuild).</summary>
+    public void UseConstellation(string displayName, Vector2 artboard, List<ConstellationGenerator.StarData> starSet, ConstellationGenerator shapeSource)
+    {
+        useCustomConstellation = true;
+        customName = displayName;
+        customArtboard = artboard;
+        customStars = new List<ConstellationGenerator.StarData>(starSet);
+        customShapeSource = shapeSource;
+    }
 
     public char Letter
     {
@@ -168,6 +215,7 @@ public sealed class TitleLetterMini : MonoBehaviour
     private bool homeCaptured;
     private bool subscribed;
     private Coroutine glide;
+    private SphereDropZone hoveredZone;
 
     private void Awake()
     {
@@ -207,7 +255,38 @@ public sealed class TitleLetterMini : MonoBehaviour
         }
 
         IsGrabbed = false;
+        SetHoveredZone(null);
         Highlight(false);
+    }
+
+    private void Update()
+    {
+        if (IsGrabbed)
+        {
+            SetHoveredZone(FindDropZone(transform.position) as SphereDropZone);
+        }
+    }
+
+    // Lets the zone glow while this is held inside it.
+    private void SetHoveredZone(SphereDropZone zone)
+    {
+        bool inside = zone != null;
+        if (zone == hoveredZone && inside == IsHeldInDropZone)
+        {
+            return;
+        }
+
+        if (hoveredZone != null)
+        {
+            hoveredZone.SetHovered(this, false);
+        }
+
+        hoveredZone = zone;
+        IsHeldInDropZone = inside;
+        if (hoveredZone != null)
+        {
+            hoveredZone.SetHovered(this, true);
+        }
     }
 
     // ---------------------------------------------------------------- Home
@@ -298,13 +377,18 @@ public sealed class TitleLetterMini : MonoBehaviour
 
     public bool IsInAnyDropZone(Vector3 worldPoint)
     {
+        return FindDropZone(worldPoint) != null;
+    }
+
+    private ITitleDropZone FindDropZone(Vector3 worldPoint)
+    {
         if (dropZones != null)
         {
             foreach (MonoBehaviour behaviour in dropZones)
             {
                 if (behaviour != null && behaviour is ITitleDropZone zone && zone.Contains(worldPoint))
                 {
-                    return true;
+                    return zone;
                 }
             }
         }
@@ -319,11 +403,11 @@ public sealed class TitleLetterMini : MonoBehaviour
 
             if (zone != null && zone.Contains(worldPoint))
             {
-                return true;
+                return zone;
             }
         }
 
-        return false;
+        return null;
     }
 
     // ---------------------------------------------------------------- Grab
@@ -396,6 +480,7 @@ public sealed class TitleLetterMini : MonoBehaviour
                 if (IsGrabbed && grabbable.SelectingPointsCount == 0)
                 {
                     IsGrabbed = false;
+                    SetHoveredZone(null);
                     HandleReleased();
                 }
 
@@ -459,6 +544,12 @@ public sealed class TitleLetterMini : MonoBehaviour
     [ContextMenu("Rebuild Visual")]
     public void Rebuild()
     {
+        if (useCustomConstellation)
+        {
+            RebuildCustom();
+            return;
+        }
+
         if (!LetterGlyphs.Has(Letter))
         {
             Debug.LogWarning($"TitleLetterMini: no glyph for '{letter}'.", this);
@@ -482,7 +573,56 @@ public sealed class TitleLetterMini : MonoBehaviour
         generator.showEarthViewMarker = false;
 
         LetterConstellation.ApplyTo(generator, Letter, seed, displayDepthVariation);
+        BuildVisual(false);
+    }
 
+    private void RebuildCustom()
+    {
+        if (customStars == null || customStars.Count < 2)
+        {
+            Debug.LogWarning("TitleLetterMini: custom constellation needs at least two stars.", this);
+            return;
+        }
+
+        EnsureGenerator();
+        if (customShapeSource != null)
+        {
+            generator.maximumRadius = customShapeSource.maximumRadius;
+            generator.angularSpread = customShapeSource.angularSpread;
+            generator.useLogarithmicDistance = customShapeSource.useLogarithmicDistance;
+            generator.logarithmicMinimumRadius = customShapeSource.logarithmicMinimumRadius;
+        }
+        else
+        {
+            generator.maximumRadius = 1f;
+            generator.angularSpread = 0.7f;
+            generator.useLogarithmicDistance = false;
+        }
+
+        generator.showDebugLabels = false;
+        generator.showEarthViewMarker = false;
+        generator.constellationName = customName;
+        generator.artboardSize = customArtboard;
+        generator.stars = new List<ConstellationGenerator.StarData>(customStars);
+        BuildVisual(true);
+    }
+
+    private void EnsureGenerator()
+    {
+        if (generator == null)
+        {
+            generator = GetComponent<ConstellationGenerator>();
+            if (generator == null)
+            {
+                generator = gameObject.AddComponent<ConstellationGenerator>();
+            }
+        }
+    }
+
+    // sizeByWidestSide: custom constellations are sized by their largest
+    // extent (a wide, short shape like Cassiopeia); letters by their height.
+    private void BuildVisual(bool sizeByWidestSide)
+    {
         visualRoot = EnsureVisualRoot();
         visualRoot.localPosition = Vector3.zero;
         visualRoot.localRotation = Quaternion.identity;
@@ -519,7 +659,10 @@ public sealed class TitleLetterMini : MonoBehaviour
             bounds.Encapsulate(star.transform.localPosition);
         }
 
-        visualScale = letterHeight / Mathf.Max(0.0001f, bounds.size.y);
+        float measured = sizeByWidestSide
+            ? Mathf.Max(bounds.size.x, Mathf.Max(bounds.size.y, bounds.size.z))
+            : bounds.size.y;
+        visualScale = letterHeight / Mathf.Max(0.0001f, measured);
         visualRoot.localScale = Vector3.one * visualScale;
 
         // Centre the letter on this object (the grab / glide pivot).
@@ -655,7 +798,7 @@ public sealed class TitleLetterMini : MonoBehaviour
     {
         if (logEvents)
         {
-            Debug.Log($"TitleLetterMini '{Letter}': {message}", this);
+            Debug.Log($"TitleLetterMini '{ConstellationName}': {message}", this);
         }
     }
 

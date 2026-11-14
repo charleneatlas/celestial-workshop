@@ -3,17 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// Top-level flow: Title -> Puzzle (a practice letter or the main constellation).
-/// At the title the globe holds no puzzle (display dark, rotation and solving
-/// off, via ConstellationIntro's hold). Start loads the main constellation;
-/// placing a letter loads that letter as a practice puzzle. The solve, stamp,
-/// signing and menu flow is unchanged; PostPuzzleMenu asks this to move on.
+/// Top-level flow:
+///   Title  -> (letter placed)    -> Puzzle (practice letter)
+///   Title  -> (Start)            -> Boxes (constellation box selection)
+///   Boxes  -> (sculpture placed) -> Puzzle (a real constellation)
+/// At the title and box selection the globe holds no puzzle (display dark,
+/// rotation and solving off, via ConstellationIntro's hold) and the puzzle
+/// visuals are hidden. The solve, stamp, signing and menu flow is unchanged;
+/// PostPuzzleMenu asks this to move on.
 /// </summary>
 public sealed class GameFlow : MonoBehaviour
 {
     public enum Stage
     {
         Title,
+        Boxes,
         Puzzle
     }
 
@@ -29,6 +33,10 @@ public sealed class GameFlow : MonoBehaviour
     [Tooltip("Shown at the title, hidden during a puzzle (e.g. the constellation title shelf). Optional.")]
     [SerializeField]
     private GameObject titleRoot;
+
+    [Tooltip("Constellation box selection (shown only at the Boxes stage). Optional: without it, Start goes straight to the main puzzle.")]
+    [SerializeField]
+    private BoxSelection boxSelection;
 
     [Tooltip("Off: skip the title and start the main puzzle as before.")]
     [SerializeField]
@@ -63,6 +71,7 @@ public sealed class GameFlow : MonoBehaviour
     private readonly List<Renderer> hiddenRenderers = new List<Renderer>();
     private readonly List<Renderer> rendererScratch = new List<Renderer>();
     private bool visibilityReady;
+    private bool pendingOpenPack;
 
     private void Awake()
     {
@@ -119,7 +128,63 @@ public sealed class GameFlow : MonoBehaviour
         mainStars = new List<ConstellationGenerator.StarData>(generator.stars);
     }
 
-    /// <summary>Start the main constellation puzzle (title Start, or after practice).</summary>
+    /// <summary>Title Start: the box selection (or the main puzzle if there is none).</summary>
+    [ContextMenu("Open Boxes")]
+    public void OpenBoxes()
+    {
+        if (boxSelection == null)
+        {
+            StartMain();
+            return;
+        }
+
+        EnterSelection(Stage.Boxes, false);
+    }
+
+    /// <summary>
+    /// Back to box selection after a puzzle (or mid-puzzle): the puzzle is
+    /// reset and held hidden. openPack: straight back into the opened
+    /// Starter Pack ("Choose another constellation") instead of all boxes.
+    /// </summary>
+    public void ReturnToBoxes(bool openPack)
+    {
+        if (boxSelection == null)
+        {
+            ReturnToTitle();
+            return;
+        }
+
+        EnterSelection(Stage.Boxes, openPack);
+    }
+
+    /// <summary>
+    /// Loads and starts a real constellation (e.g. a box sculpture placed in
+    /// the globe), always through ConstellationSetup.LoadConstellation, so
+    /// the puzzle, chart and stamp are rebuilt and the normal intro plays.
+    /// </summary>
+    public void StartConstellation(string displayName, Vector2 artboardSize, List<ConstellationGenerator.StarData> stars)
+    {
+        if (setup == null || stars == null || stars.Count < 2)
+        {
+            Debug.LogWarning("GameFlow: a constellation needs at least two stars.", this);
+            return;
+        }
+
+        IsPractice = false;
+        BeginPuzzle();
+        setup.LoadConstellation(displayName, artboardSize, stars);
+    }
+
+    /// <summary>The scene's own (main) constellation, as captured at startup.</summary>
+    public bool TryGetMainConstellation(out string displayName, out Vector2 artboardSize, out List<ConstellationGenerator.StarData> stars)
+    {
+        displayName = mainName;
+        artboardSize = mainArtboard;
+        stars = mainStars != null ? new List<ConstellationGenerator.StarData>(mainStars) : null;
+        return stars != null;
+    }
+
+    /// <summary>Start the main constellation puzzle directly (fallback when there is no box selection).</summary>
     [ContextMenu("Start Main")]
     public void StartMain()
     {
@@ -159,18 +224,25 @@ public sealed class GameFlow : MonoBehaviour
     [ContextMenu("Return To Title")]
     public void ReturnToTitle()
     {
+        EnterSelection(Stage.Title, false);
+    }
+
+    // Title and Boxes are both "waiting" states: the puzzle is reset and held.
+    private void EnterSelection(Stage stage, bool openPack)
+    {
         if (intro != null)
         {
             intro.SetHold(true);
         }
 
         // Clears any solved / revealed / signed state; the held intro won't play.
-        if (solveController != null)
+        if (solveController != null && Current == Stage.Puzzle)
         {
             solveController.ResetSolve();
         }
 
-        SetStage(Stage.Title);
+        pendingOpenPack = openPack;
+        SetStage(stage);
     }
 
     private void BeginPuzzle()
@@ -187,6 +259,19 @@ public sealed class GameFlow : MonoBehaviour
     {
         Current = stage;
         ShowTitle(stage == Stage.Title);
+        if (boxSelection != null)
+        {
+            if (stage == Stage.Boxes)
+            {
+                boxSelection.Show(pendingOpenPack);
+            }
+            else
+            {
+                boxSelection.Hide();
+            }
+        }
+
+        pendingOpenPack = false;
         ApplyVisibility();
         Debug.Log($"GameFlow: {stage}{(stage == Stage.Puzzle ? (IsPractice ? " (practice)" : " (main)") : "")}", this);
         StageChanged?.Invoke(stage);
