@@ -45,6 +45,10 @@ public sealed class TitleFlowBridge : MonoBehaviour
     [SerializeField]
     private float dropRadiusFactor = 1f;
 
+    [Tooltip("Re-place the title in front of the player when this moves the rig (recenter, height). Found automatically if empty.")]
+    [SerializeField]
+    private WorkshopPlacement placement;
+
     private bool placed;
 
     private void OnEnable()
@@ -59,7 +63,20 @@ public sealed class TitleFlowBridge : MonoBehaviour
         {
             gameFlow.StageChanged += OnStageChanged;
         }
+
+        if (placement == null)
+        {
+            placement = FindFirstObjectByType<WorkshopPlacement>();
+        }
+
+        if (placement != null)
+        {
+            placement.RigMoved += OnRigMoved;
+        }
     }
+
+    // After a recenter the player sees the globe from a new side; face them again.
+    private void OnRigMoved(Pose before, Pose after) => placed = false;
 
     private void OnDisable()
     {
@@ -72,6 +89,11 @@ public sealed class TitleFlowBridge : MonoBehaviour
         if (gameFlow != null)
         {
             gameFlow.StageChanged -= OnStageChanged;
+        }
+
+        if (placement != null)
+        {
+            placement.RigMoved -= OnRigMoved;
         }
     }
 

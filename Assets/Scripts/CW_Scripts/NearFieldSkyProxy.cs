@@ -112,11 +112,11 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
     [Range(-180f, 180f)]
     private float observerHeading;
 
-    [Tooltip("When the rig moves after placement (DeskAlign, recenter), swing the sky around the volume's center so the observer is placed relative to the new head again. Same Earth view, same puzzle rotation.")]
+    [Tooltip("When the rig moves after placement (Workshop Placement: recenter, height), swing the sky around the volume's center so the observer is placed relative to the new head again. Same Earth view, same puzzle rotation.")]
     [SerializeField]
     private bool reaimOnRigMove = true;
 
-    [Tooltip("The rig must move at least this far (m) since the last aim to re-aim. DeskAlign re-runs nudge the rig by the head's drift; those are ignored, so the aim is set once and stays.")]
+    [Tooltip("The rig must move at least this far (m) since the last aim to re-aim. Re-aligns nudge the rig by the head's drift; those are ignored, so the aim is set once and stays.")]
     [SerializeField]
     [Min(0f)]
     private float reaimMoveThreshold = 0.15f;
@@ -164,7 +164,16 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
     [Min(0f)]
     private float trackingTimeout = 3f;
 
-    [Tooltip("Wait after tracking starts, so DeskAlign has moved the rig first.")]
+    [Tooltip("Placement authority: the volume is placed once it has aligned the rig. Found automatically if empty.")]
+    [SerializeField]
+    private WorkshopPlacement placement;
+
+    [Tooltip("With a Workshop Placement: place anyway after this long (real seconds) if it never aligns.")]
+    [SerializeField]
+    [Min(0f)]
+    private float alignTimeout = 8f;
+
+    [Tooltip("Wait after the rig is aligned (or tracking starts), so ConstellationSetup has generated the sky.")]
     [SerializeField]
     [Min(0f)]
     private float settleDelay = 0.5f;
@@ -259,11 +268,34 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
 
     private IEnumerator Start()
     {
-        // Real time, so a long first-frame hitch (Editor, Link) doesn't use up the timeout.
-        float giveUpAt = Time.realtimeSinceStartup + trackingTimeout;
-        while (!IsHeadTracked() && Time.realtimeSinceStartup < giveUpAt)
+        if (placement == null)
         {
-            yield return null;
+            placement = FindFirstObjectByType<WorkshopPlacement>();
+        }
+
+        // Real time, so a long first-frame hitch (Editor, Link) doesn't use up the timeout.
+        if (placement != null)
+        {
+            // Wait for the rig to be put at the desk, so the volume is placed
+            // (and the sky aimed) from the player's real seat.
+            float giveUpAt = Time.realtimeSinceStartup + alignTimeout;
+            while (!placement.IsAligned && Time.realtimeSinceStartup < giveUpAt)
+            {
+                yield return null;
+            }
+
+            if (!placement.IsAligned)
+            {
+                Debug.LogWarning($"NearFieldSkyProxy: rig not aligned after {alignTimeout:0.#} s, placing anyway.", this);
+            }
+        }
+        else
+        {
+            float giveUpAt = Time.realtimeSinceStartup + trackingTimeout;
+            while (!IsHeadTracked() && Time.realtimeSinceStartup < giveUpAt)
+            {
+                yield return null;
+            }
         }
 
         // Also lets ConstellationSetup generate and center the sky first.
@@ -362,7 +394,7 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
         volume.Radius = volumeRadius;
 
         Debug.Log(
-            $"NearFieldSkyProxy: volume at {center} (r {volumeRadius:F2} m, {eyeView.magnitude:F2} m from eyes, " +
+            $"NearFieldSkyProxy: t {Time.realtimeSinceStartup:0.0} s, volume at {center} (r {volumeRadius:F2} m, {eyeView.magnitude:F2} m from eyes, " +
             $"observer {observerPlacement}{(observerPlacement == ObserverPlacement.FixedDirection ? $" elevation {observerElevation:F0} heading {observerHeading:F0}" : "")}, " +
             $"head {(tracked ? "tracked" : "NOT tracked, used fallback eye")}), sky scaled x{scale:G3} around the {skyAnchor}, " +
             $"pivot {Vector3.Distance(skyConstellationPivot.position, center):F3} m from center, reach {contentRadius * scale:F3} m",

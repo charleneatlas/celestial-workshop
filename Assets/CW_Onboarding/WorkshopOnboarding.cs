@@ -57,6 +57,10 @@ public sealed class WorkshopOnboarding : MonoBehaviour
     [SerializeField]
     private NearFieldSkyProxy skyProxy;
 
+    [Tooltip("Optional: the board moves with the player when this re-aligns the rig (recenter, height). Found automatically if empty.")]
+    [SerializeField]
+    private WorkshopPlacement placement;
+
     [Tooltip("Optional: keep the board in front of this volume so they never intersect.")]
     [SerializeField]
     private CircularWindow volume;
@@ -110,7 +114,7 @@ public sealed class WorkshopOnboarding : MonoBehaviour
     [Tooltip("Show anyway after this long without placement (s).")]
     [SerializeField]
     [Min(0f)]
-    private float maxWaitForPlacement = 4f;
+    private float maxWaitForPlacement = 8f;
 
     [Header("Board parts")]
     [Tooltip("Visual root of the board (hidden before and after).")]
@@ -253,6 +257,16 @@ public sealed class WorkshopOnboarding : MonoBehaviour
 
     private void OnEnable()
     {
+        if (placement == null)
+        {
+            placement = FindFirstObjectByType<WorkshopPlacement>();
+        }
+
+        if (placement != null)
+        {
+            placement.RigMoved += OnRigMoved;
+        }
+
         if (signature != null)
         {
             signature.Completed += OnSigned;
@@ -266,6 +280,11 @@ public sealed class WorkshopOnboarding : MonoBehaviour
 
     private void OnDisable()
     {
+        if (placement != null)
+        {
+            placement.RigMoved -= OnRigMoved;
+        }
+
         if (signature != null)
         {
             signature.Completed -= OnSigned;
@@ -624,6 +643,22 @@ public sealed class WorkshopOnboarding : MonoBehaviour
     }
 
     // ---- Placement ----
+
+    // The rig was re-aligned (recenter, turn, height): carry the board along,
+    // so it keeps its place in front of the player.
+    private void OnRigMoved(Pose before, Pose after)
+    {
+        if (!Application.isPlaying || CurrentPhase == Phase.Idle)
+        {
+            return;
+        }
+
+        Quaternion turn = after.rotation * Quaternion.Inverse(before.rotation);
+        Vector3 position = after.position + turn * (transform.position - before.position);
+        transform.SetPositionAndRotation(position, turn * transform.rotation);
+        placedEye = after.position + turn * (placedEye - before.position);
+        Log("rig moved; board carried along.");
+    }
 
     [ContextMenu("Place In Front Of Viewer")]
     private void Place()

@@ -2,7 +2,7 @@ using UnityEngine;
 
 /// <summary>
 /// Turns a display to face the player's head square on, but only when the rig
-/// or the display's parent has moved: DeskAlign putting the player at the desk
+/// or the display's parent has moved: WorkshopPlacement putting the player at the desk
 /// (startup, recenter, headset back on) or NearFieldSkyProxy placing the
 /// volume. Between those it stays put, so it doesn't follow the head around.
 /// Picture frame is the Earth View Disc screen mesh's: normal = local +Y,
@@ -14,7 +14,7 @@ public sealed class FaceViewerOnAlign : MonoBehaviour
     [SerializeField]
     private Transform viewer;
 
-    [Tooltip("Rig whose moves (DeskAlign) trigger a re-face. Defaults to the OVRCameraRig.")]
+    [Tooltip("Rig whose moves (WorkshopPlacement) trigger a re-face. Defaults to the OVRCameraRig.")]
     [SerializeField]
     private Transform rig;
 
@@ -32,7 +32,7 @@ public sealed class FaceViewerOnAlign : MonoBehaviour
     private float distanceBehindCenter = 0.07f;
 
     [Header("Re-face only on a re-seat")]
-    [Tooltip("The rig must move at least this far (m) since the last facing to re-face. DeskAlign re-runs nudge the rig by the head's drift; those are ignored, so the display is set once and stays.")]
+    [Tooltip("The rig must move at least this far (m) since the last facing to re-face. Re-aligns nudge the rig by the head's drift; those are ignored, so the display is set once and stays.")]
     [SerializeField]
     [Min(0f)]
     private float rigMoveThreshold = 0.15f;

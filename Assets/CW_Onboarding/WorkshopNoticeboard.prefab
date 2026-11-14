@@ -6809,7 +6809,7 @@ MonoBehaviour:
   fallbackEyeHeight: 1.2
   replaceIfHeadMoved: 0.3
   hideWhileShowing: []
-  maxWaitForPlacement: 4
+  maxWaitForPlacement: 8
   board: {fileID: 691097581112809538}
   signature: {fileID: 6195079881815724583}
   ghost: {fileID: 90733263521335262}
