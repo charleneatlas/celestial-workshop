@@ -257897,7 +257897,7 @@ MonoBehaviour:
     - {fileID: 562363778}
     - {fileID: 659806748}
     - {fileID: 218224247}
-  totalDuration: 1
+  totalDuration: 3
   hopDuration: 0.33
   startDelay: 0
   stagger: 0.06
