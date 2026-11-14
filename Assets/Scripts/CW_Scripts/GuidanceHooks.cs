@@ -117,6 +117,13 @@ public sealed class GuidanceHooks : MonoBehaviour
             titleRoutine = null;
         }
 
+        if (stage == GameFlow.Stage.Onboarding)
+        {
+            // The noticeboard teaches by itself; no cues meanwhile.
+            director.Clear();
+            return;
+        }
+
         if (stage == GameFlow.Stage.Title)
         {
             // Nothing from the puzzle points at what is now hidden.

@@ -18,7 +18,10 @@ public sealed class GameFlow : MonoBehaviour
     {
         Title,
         Boxes,
-        Puzzle
+        Puzzle,
+        // Workshop noticeboard at launch: title, boxes and puzzle hidden and
+        // not interactable until WorkshopOnboarding calls FinishOnboarding.
+        Onboarding
     }
 
     [SerializeField]
@@ -37,6 +40,10 @@ public sealed class GameFlow : MonoBehaviour
     [Tooltip("Constellation box selection (shown only at the Boxes stage). Optional: without it, Start goes straight to the main puzzle.")]
     [SerializeField]
     private BoxSelection boxSelection;
+
+    [Tooltip("Optional: the workshop noticeboard. When it runs on launch, GameFlow waits in its Onboarding stage until it finishes.")]
+    [SerializeField]
+    private WorkshopOnboarding onboarding;
 
     [Tooltip("Off: skip the title and start the main puzzle as before.")]
     [SerializeField]
@@ -78,7 +85,16 @@ public sealed class GameFlow : MonoBehaviour
         CaptureMain();
 
         // Before ConstellationSetup's first reset, so the startup intro is held.
-        if (startAtTitle && intro != null)
+        if (onboarding != null && onboarding.WillRunOnLaunch)
+        {
+            if (intro != null)
+            {
+                intro.SetHold(true);
+            }
+
+            SetStage(Stage.Onboarding);
+        }
+        else if (startAtTitle && intro != null)
         {
             intro.SetHold(true);
             SetStage(Stage.Title);
@@ -126,6 +142,30 @@ public sealed class GameFlow : MonoBehaviour
         mainName = generator.constellationName;
         mainArtboard = generator.artboardSize;
         mainStars = new List<ConstellationGenerator.StarData>(generator.stars);
+    }
+
+    /// <summary>Back to the noticeboard stage (for replaying the onboarding).</summary>
+    public void EnterOnboarding()
+    {
+        EnterSelection(Stage.Onboarding, false);
+    }
+
+    /// <summary>The noticeboard was signed: on to the boxes (or the title).</summary>
+    public void FinishOnboarding(bool toTitle)
+    {
+        if (Current != Stage.Onboarding)
+        {
+            return;
+        }
+
+        if (toTitle && startAtTitle)
+        {
+            ReturnToTitle();
+        }
+        else
+        {
+            OpenBoxes();
+        }
     }
 
     /// <summary>Title Start: the box selection (or the main puzzle if there is none).</summary>
