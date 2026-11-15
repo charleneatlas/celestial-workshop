@@ -188,7 +188,22 @@ public sealed class VolumePinchRotation : MonoBehaviour
     [Tooltip("Hand travel before one of the offered axes is chosen.")]
     [SerializeField]
     [Min(0.001f)]
-    private float selectDeadZone = 0.015f;
+    private float selectDeadZone = 0.025f;
+
+    [Tooltip("The pinch point keeps moving while the fingers finish closing. For this long after the pinch starts, the start point follows the hand, so closing the pinch doesn't count as movement.")]
+    [SerializeField]
+    [Min(0f)]
+    private float pinchSettleSeconds = 0.1f;
+
+    [Tooltip("An axis locks only once the hand has moved this many times further around it than around the other offered axis. 1 = whichever is ahead (the old behaviour).")]
+    [SerializeField]
+    [Range(1f, 4f)]
+    private float lockDominance = 1.6f;
+
+    [Tooltip("If the movement stays ambiguous, lock whichever axis is ahead once the hand has travelled this multiple of the dead zone.")]
+    [SerializeField]
+    [Range(1f, 6f)]
+    private float forceLockTravel = 3f;
 
     [Header("Rotation")]
     [Tooltip("Degrees of constellation per degree of hand angle. 1 keeps the grabbed spot under the fingers.")]
@@ -200,6 +215,20 @@ public sealed class VolumePinchRotation : MonoBehaviour
     [SerializeField]
     [Range(0.05f, 1f)]
     private float minLeverFraction = 0.35f;
+
+    [Tooltip("Rotation stops following the hand once pinch strength falls below this (the pinch itself ends at Pinch Off Strength), so the fingers opening doesn't nudge the constellation.")]
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float releaseGuardStrength = 0.5f;
+
+    [Tooltip("Largest turn applied in one frame. Stops a tracking glitch from spinning the constellation.")]
+    [SerializeField]
+    [Range(1f, 45f)]
+    private float maxDegreesPerFrame = 10f;
+
+    [Tooltip("Optional: re-derives the workspace axes after Recenter or Raise/Lower so X/Y/Z stay matched to the player's view. Found automatically if empty.")]
+    [SerializeField]
+    private WorkshopPlacement placement;
 
     [Header("Guides")]
     [Tooltip("LineRenderer: camera-facing ribbons. Tube: a thin 3D mesh with the same circle.")]
@@ -313,6 +342,9 @@ public sealed class VolumePinchRotation : MonoBehaviour
     private Quaternion workspaceFrame;
 
     private Vector3 pinchStart;
+    private float pinchStartTime;
+    private bool reseedDirection;
+    private bool recaptureAfterPinch;
     private readonly int[] offeredAxes = new int[2];
     private int lockedAxis = -1;
     private Vector3 previousDirection;
@@ -372,10 +404,39 @@ public sealed class VolumePinchRotation : MonoBehaviour
         HideGuides();
         lastPinchMode = pinchMode;
         lastControlCenter = controlCenter;
+
+        if (placement == null)
+        {
+            placement = FindFirstObjectByType<WorkshopPlacement>();
+        }
+
+        if (placement != null)
+        {
+            placement.RigMoved += HandleRigMoved;
+        }
+    }
+
+    // The player moved relative to the workshop: re-derive X/Y/Z from the new
+    // view on the next hand entry (not mid-pinch, which would swap the axis under the hand).
+    private void HandleRigMoved(Pose before, Pose after)
+    {
+        if (state == State.Idle)
+        {
+            frameCaptured = false;
+        }
+        else
+        {
+            recaptureAfterPinch = true;
+        }
     }
 
     private void OnDestroy()
     {
+        if (placement != null)
+        {
+            placement.RigMoved -= HandleRigMoved;
+        }
+
         foreach (Mesh mesh in ringMeshes)
         {
             Destroy(mesh);
@@ -535,6 +596,8 @@ public sealed class VolumePinchRotation : MonoBehaviour
         activeHand = pinchHand;
         untrackedTime = 0f;
         pinchStart = point;
+        pinchStartTime = Time.time;
+        reseedDirection = false;
         lockedAxis = -1;
         state = State.Pending;
 
@@ -578,12 +641,15 @@ public sealed class VolumePinchRotation : MonoBehaviour
                 EndPinch("tracking lost");
             }
 
+            // Don't apply the motion missed during the gap in one jump.
+            reseedDirection = true;
             return;
         }
 
         untrackedTime = 0f;
 
-        if (hand.GetFingerPinchStrength(HandFinger.Index) <= pinchOffStrength)
+        float strength = hand.GetFingerPinchStrength(HandFinger.Index);
+        if (strength <= pinchOffStrength)
         {
             EndPinch("released");
             return;
@@ -598,30 +664,88 @@ public sealed class VolumePinchRotation : MonoBehaviour
 
         if (state == State.Pending)
         {
-            if (Vector3.Distance(point, pinchStart) >= selectDeadZone)
+            // Closing the pinch moves the fingertips; start measuring once it has settled.
+            if (Time.time - pinchStartTime < pinchSettleSeconds)
             {
-                LockAxis(point, center);
+                pinchStart = point;
+                return;
             }
 
+            if (Vector3.Distance(point, pinchStart) >= selectDeadZone)
+            {
+                TryLockAxis(point, center);
+            }
+
+            return;
+        }
+
+        // Opening the fingers moves the pinch point too: stop following the
+        // hand as the pinch lets go, but keep tracking its angle so there's no jump if it tightens again.
+        if (strength < releaseGuardStrength)
+        {
+            reseedDirection = true;
             return;
         }
 
         RotateWithHand(point, center);
     }
 
-    private void LockAxis(Vector3 point, Vector3 center)
+    // Distance the hand has moved around an axis (arc length in metres), so the
+    // choice follows the direction the hand moved, not how close it is to an axis.
+    private static float TravelAround(Vector3 from, Vector3 to, Vector3 axis)
     {
-        // Pick the axis the hand has turned the constellation about most so far.
-        float bestTurn = -1f;
+        Vector3 planarFrom = Vector3.ProjectOnPlane(from, axis);
+        Vector3 planarTo = Vector3.ProjectOnPlane(to, axis);
+        if (planarFrom.sqrMagnitude < 0.000001f || planarTo.sqrMagnitude < 0.000001f)
+        {
+            return 0f;
+        }
+
+        float radians = Vector3.SignedAngle(planarFrom, planarTo, axis) * Mathf.Deg2Rad;
+        return Mathf.Abs(radians) * 0.5f * (planarFrom.magnitude + planarTo.magnitude);
+    }
+
+    // Locks the axis the hand is clearly moving around. While the two offered
+    // axes are close, stay pending; after a long ambiguous move, take the leader.
+    private void TryLockAxis(Vector3 point, Vector3 center)
+    {
+        int best = -1;
+        float bestTravel = -1f;
+        float secondTravel = 0f;
         foreach (int axisIndex in offeredAxes)
         {
-            float turn = Mathf.Abs(LeveredAngle(pinchStart - center, point - center, WorkspaceAxis(axisIndex)));
-            if (turn > bestTurn)
+            float travel = TravelAround(pinchStart - center, point - center, WorkspaceAxis(axisIndex));
+            if (travel > bestTravel)
             {
-                bestTurn = turn;
-                lockedAxis = axisIndex;
+                secondTravel = Mathf.Max(bestTravel, 0f);
+                bestTravel = travel;
+                best = axisIndex;
+            }
+            else
+            {
+                secondTravel = Mathf.Max(secondTravel, travel);
             }
         }
+
+        // Moving straight in or out (along the dropped axis) turns neither axis: wait.
+        if (best < 0 || bestTravel < selectDeadZone * 0.5f)
+        {
+            return;
+        }
+
+        bool dominant = bestTravel >= secondTravel * lockDominance;
+        bool forced = Vector3.Distance(point, pinchStart) >= selectDeadZone * forceLockTravel;
+        if (!dominant && !forced)
+        {
+            return;
+        }
+
+        if (!dominant && logPinchRejections)
+        {
+            Debug.Log($"VolumePinchRotation: ambiguous move ({bestTravel * 100f:F1} vs {secondTravel * 100f:F1} cm), locking the leader", this);
+        }
+
+        lockedAxis = best;
 
         // Measure from here on, so the dead-zone movement doesn't jump the constellation.
         Vector3 planar = Vector3.ProjectOnPlane(point - center, WorkspaceAxis(lockedAxis));
@@ -658,11 +782,13 @@ public sealed class VolumePinchRotation : MonoBehaviour
         }
 
         Vector3 direction = planar.normalized;
-        if (previousDirection != Vector3.zero)
+        if (previousDirection != Vector3.zero && !reseedDirection)
         {
             float angle = Vector3.SignedAngle(previousDirection, direction, axis) * LeverScale(planar.magnitude) * gain;
-            RotateSky(axis, angle);
+            RotateSky(axis, Mathf.Clamp(angle, -maxDegreesPerFrame, maxDegreesPerFrame));
         }
+
+        reseedDirection = false;
 
         previousDirection = direction;
         UpdateGripMarker(center);
@@ -694,6 +820,13 @@ public sealed class VolumePinchRotation : MonoBehaviour
         activeHand = null;
         lockedAxis = -1;
         state = State.Idle;
+        reseedDirection = false;
+
+        if (recaptureAfterPinch)
+        {
+            recaptureAfterPinch = false;
+            frameCaptured = false;
+        }
         HideGuides();
 
         if (wasPinching)
@@ -850,19 +983,6 @@ public sealed class VolumePinchRotation : MonoBehaviour
             default:
                 return workspaceFrame * Vector3.forward;
         }
-    }
-
-    // Angle about axis from one offset to another, scaled down near the axis.
-    private float LeveredAngle(Vector3 from, Vector3 to, Vector3 axis)
-    {
-        Vector3 planarFrom = Vector3.ProjectOnPlane(from, axis);
-        Vector3 planarTo = Vector3.ProjectOnPlane(to, axis);
-        if (planarFrom.sqrMagnitude < 0.000001f || planarTo.sqrMagnitude < 0.000001f)
-        {
-            return 0f;
-        }
-
-        return Vector3.SignedAngle(planarFrom, planarTo, axis) * LeverScale(planarTo.magnitude);
     }
 
     private float LeverScale(float lever)

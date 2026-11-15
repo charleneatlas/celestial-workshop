@@ -200538,9 +200538,15 @@ MonoBehaviour:
   frontWeight: 1
   regionHysteresis: 0.15
   tiltFrameWithView: 0
-  selectDeadZone: 0.015
+  selectDeadZone: 0.025
+  pinchSettleSeconds: 0.1
+  lockDominance: 1.6
+  forceLockTravel: 3
   gain: 1
   minLeverFraction: 0.35
+  releaseGuardStrength: 0.5
+  maxDegreesPerFrame: 10
+  placement: {fileID: 0}
   guideStyle: 1
   guideMaterial: {fileID: 2100000, guid: 80b5943a4f4c6044cb0436bbb3b0a62d, type: 2}
   tubeMaterial: {fileID: 2100000, guid: 72664ac10b5556146b65911a9039c5fd, type: 2}
