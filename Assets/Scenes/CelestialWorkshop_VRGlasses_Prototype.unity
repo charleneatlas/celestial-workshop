@@ -18491,6 +18491,83 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 99749397}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &101960870
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 101960873}
+  - component: {fileID: 101960872}
+  - component: {fileID: 101960871}
+  m_Layer: 0
+  m_Name: Signing Star Trail
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &101960871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101960870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1bd96d9846d94d64ba97d3562c7a98a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SigningStarTrail
+  signing: {fileID: 832476892}
+  trail: {fileID: 101960872}
+  trailHeight: 0.45
+--- !u!114 &101960872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101960870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 115379204a0769a41bec975b8270c804, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::StarTrail
+  glowMaterial: {fileID: 2100000, guid: 872209603af0f5548b5674e52785f5b4, type: 2}
+  sparkleMaterial: {fileID: 2100000, guid: 1025d2ebffe6eb04b87450f5abcd61bd, type: 2}
+  glowColor: {r: 1, g: 0.78, b: 0.42, a: 1}
+  sparkleColor: {r: 1, g: 0.93, b: 0.75, a: 1}
+  intensity: 1
+  lifetime: 0.9
+  glowPerMetre: 180
+  sparklesPerMetre: 190
+  glowSize: 0.021
+  sparkleSize: {x: 0.0045, y: 0.011}
+  scatter: 0.006
+  drift: 0.012
+  headSize: 0.03
+  headPulse: 0.8
+  flourishSparkles: 70
+  flourishLifetime: 1.5
+  flourishRise: 0.03
+--- !u!4 &101960873
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 101960870}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &104393377
 GameObject:
   m_ObjectHideFlags: 0
@@ -289912,3 +289989,4 @@ SceneRoots:
   - {fileID: 1106382735}
   - {fileID: 1770362971}
   - {fileID: 991274341}
+  - {fileID: 101960873}

@@ -322,6 +322,23 @@ public sealed class ConstellationSigning : MonoBehaviour
     /// <summary>The pen tip (null while no pen exists).</summary>
     public Transform PenTip => penTip;
 
+    /// <summary>
+    /// A point on the signing line at lineFraction of its length (0 = left end),
+    /// raised to capFraction of the name's cap height above the text baseline.
+    /// False while there is no signing line. Read-only; used by SigningStarTrail.
+    /// </summary>
+    public bool TryGetLinePoint(float lineFraction, float capFraction, out Vector3 point)
+    {
+        if (signingRoot == null)
+        {
+            point = default;
+            return false;
+        }
+
+        point = lineLeft + frameRight * (signingWidth * lineFraction) + frameUp * (textLift + fittedCapHeight * capFraction);
+        return true;
+    }
+
     private void Awake()
     {
         foreach (Object handObject in hands)
