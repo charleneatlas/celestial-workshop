@@ -58,25 +58,25 @@ public sealed class GuidanceGhostHand : MonoBehaviour
     [Tooltip("Height of the sweep below the centre. Negative = below, under the constellation picture.")]
     [SerializeField]
     [Range(-0.95f, 0.95f)]
-    private float heightFraction = -0.6f;
+    private float heightFraction = -0.25f;
 
     [Tooltip("Distance of the pinch from the globe's vertical axis.")]
     [SerializeField]
     [Range(0.1f, 0.95f)]
-    private float leverFraction = 0.7f;
+    private float leverFraction = 0.55f;
 
     [Tooltip("Sweep around the vertical axis, centred on the side facing the player (degrees).")]
     [SerializeField]
     [Range(10f, 150f)]
     private float sweepDegrees = 70f;
 
-    [Tooltip("Hand orientation, as in GhostHandDemo: the invisible pen's axis in the viewer frame (x right, y up, z away).")]
+    [Tooltip("Where the fingers point, in the viewer frame (x right, y up, z away from the player). Default: forward into the globe, a little down and inward, as when reaching in to pinch.")]
     [SerializeField]
-    private Vector3 penAxis = new Vector3(0.35f, -0.45f, -0.8f);
+    private Vector3 fingerDirection = new Vector3(-0.25f, -0.3f, 1f);
 
-    [Tooltip("Which side of the pinch the hand sits on, in the viewer frame.")]
+    [Tooltip("Where the back of the hand faces, in the viewer frame. Default: up and a little to the outside, palm toward the globe's centre.")]
     [SerializeField]
-    private Vector3 handSide = new Vector3(0.6f, -0.8f, 0f);
+    private Vector3 backOfHandDirection = new Vector3(0.45f, 0.85f, -0.15f);
 
     [Header("Timing (seconds)")]
     [SerializeField]
@@ -121,6 +121,15 @@ public sealed class GuidanceGhostHand : MonoBehaviour
     private readonly List<Renderer> renderers = new List<Renderer>();
     private Transform indexTip;
     private Transform thumbTip;
+    private Transform wristBone;
+    private Transform middleBase;
+    private Transform indexBase;
+    private Transform littleBase;
+
+    // The grip's own hand frame (fingers forward, back of hand up) relative to
+    // the root rotation passed to SetPose; measured once from the bones.
+    private Quaternion handFrameInRoot = Quaternion.identity;
+    private bool calibrated;
 
     private bool stepOpen;
     private bool done;
@@ -291,7 +300,8 @@ public sealed class GuidanceGhostHand : MonoBehaviour
         }
     }
 
-    // Poses the ghost so the middle of its thumb and index tips sits on point.
+    // Poses the ghost so the middle of its thumb and index tips sits on point,
+    // with the fingers and the back of the hand facing the configured directions.
     private void PoseAt(Vector3 point)
     {
         PenGripPose.Side side = gripPose != null ? gripPose.For(handedness) : null;
@@ -301,23 +311,44 @@ public sealed class GuidanceGhostHand : MonoBehaviour
             return;
         }
 
-        Vector3 axis = frame * (penAxis.sqrMagnitude > 1e-6f ? penAxis.normalized : Vector3.back);
-        Vector3 toHand = Vector3.ProjectOnPlane(frame * handSide, axis);
-        if (toHand.sqrMagnitude < 1e-6f)
+        if (!calibrated)
         {
-            toHand = Vector3.ProjectOnPlane(Vector3.down, axis);
+            Calibrate(side);
         }
 
-        Quaternion penRotation = Quaternion.LookRotation(-toHand.normalized, axis);
-        var wrist = new Pose(point + penRotation * side.wristPosition, penRotation * side.wristRotation);
+        Vector3 fingers = frame * (fingerDirection.sqrMagnitude > 1e-6f ? fingerDirection.normalized : Vector3.forward);
+        Vector3 back = frame * (backOfHandDirection.sqrMagnitude > 1e-6f ? backOfHandDirection.normalized : Vector3.up);
+        Quaternion desired = Quaternion.LookRotation(fingers, back);
+        var wrist = new Pose(point, desired * Quaternion.Inverse(handFrameInRoot));
         ghost.SetPose(side.handPose, wrist);
 
-        // The recorded grip holds a pen, not a pinch point: shift so the fingertips meet on it.
+        // Shift so the fingertips meet on the point.
         if (indexTip != null && thumbTip != null)
         {
             Vector3 pinch = 0.5f * (indexTip.position + thumbTip.position);
             wrist.position += point - pinch;
             ghost.SetPose(side.handPose, wrist);
+        }
+    }
+
+    // Measures the grip's hand frame from its bones with an identity root, so
+    // any desired finger / back-of-hand direction can be turned into a root rotation.
+    private void Calibrate(PenGripPose.Side side)
+    {
+        calibrated = true;
+        if (wristBone == null || middleBase == null || indexBase == null || littleBase == null)
+        {
+            Debug.LogWarning("GuidanceGhostHand: hand bones not found; using the root orientation as is.", this);
+            return;
+        }
+
+        ghost.SetPose(side.handPose, new Pose(Vector3.zero, Quaternion.identity));
+        Vector3 fingers = middleBase.position - wristBone.position;
+        Vector3 across = indexBase.position - littleBase.position; // toward the thumb side
+        Vector3 back = handedness == Handedness.Right ? Vector3.Cross(across, fingers) : Vector3.Cross(fingers, across);
+        if (fingers.sqrMagnitude > 1e-8f && back.sqrMagnitude > 1e-8f)
+        {
+            handFrameInRoot = Quaternion.LookRotation(fingers.normalized, back.normalized);
         }
     }
 
@@ -352,6 +383,22 @@ public sealed class GuidanceGhostHand : MonoBehaviour
             else if (thumbTip == null && n.Contains("thumb") && n.Contains("tip"))
             {
                 thumbTip = bone;
+            }
+            else if (wristBone == null && n.Contains("wrist"))
+            {
+                wristBone = bone;
+            }
+            else if (middleBase == null && n.Contains("middle") && n.Contains("proximal"))
+            {
+                middleBase = bone;
+            }
+            else if (indexBase == null && n.Contains("index") && n.Contains("proximal"))
+            {
+                indexBase = bone;
+            }
+            else if (littleBase == null && n.Contains("little") && n.Contains("proximal"))
+            {
+                littleBase = bone;
             }
         }
 

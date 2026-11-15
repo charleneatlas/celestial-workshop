@@ -127988,11 +127988,11 @@ MonoBehaviour:
   gripPose: {fileID: 11400000, guid: 3d196eec1af46124c8b175f085651c90, type: 2}
   ghostMaterial: {fileID: 2100000, guid: cb68c0fab3e9e164eb0029a2e156e736, type: 2}
   stepId: rotate
-  heightFraction: -0.6
-  leverFraction: 0.7
+  heightFraction: -0.25
+  leverFraction: 0.55
   sweepDegrees: 70
-  penAxis: {x: 0.35, y: -0.45, z: -0.8}
-  handSide: {x: 0.6, y: -0.8, z: 0}
+  fingerDirection: {x: -0.3, y: 0.3, z: 1}
+  backOfHandDirection: {x: 0.55, y: 0.8, z: -0.25}
   startDelay: 1.5
   approachDuration: 0.5
   sweepDuration: 1.6
@@ -138621,8 +138621,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -213.99976, y: -49.999626}
-  m_SizeDelta: {x: 16, y: 20}
+  m_AnchoredPosition: {x: 0, y: -0.00038909912}
+  m_SizeDelta: {x: 99.99963, y: 431.99875}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1078503067
 MonoBehaviour:
@@ -214171,8 +214171,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -213.99976, y: -49.999626}
-  m_SizeDelta: {x: 26, y: 22}
+  m_AnchoredPosition: {x: 0, y: -0.00038909912}
+  m_SizeDelta: {x: 437.99875, y: 105.99963}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1748899006
 MonoBehaviour:
