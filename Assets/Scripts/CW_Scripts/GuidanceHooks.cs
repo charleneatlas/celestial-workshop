@@ -53,8 +53,29 @@ public sealed class GuidanceHooks : MonoBehaviour
     [SerializeField]
     private string practiceMenuText = "Practice another letter";
 
+    [Tooltip("Hints fade out while the Recenter countdown owns the view. Found automatically if empty.")]
+    [SerializeField]
+    private WorkshopPlacement placement;
+
     private Coroutine titleRoutine;
     private string mainMenuText;
+
+    private void Awake()
+    {
+        if (placement == null)
+        {
+            placement = FindFirstObjectByType<WorkshopPlacement>();
+        }
+    }
+
+    private void LateUpdate()
+    {
+        // The Recenter prompt floats in the same place as the hints; let it speak alone.
+        if (director != null && director.label != null)
+        {
+            director.label.Suppressed = placement != null && placement.IsChoosing;
+        }
+    }
 
     private void OnEnable()
     {

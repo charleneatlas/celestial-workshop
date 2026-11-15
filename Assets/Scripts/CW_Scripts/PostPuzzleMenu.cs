@@ -65,6 +65,12 @@ public sealed class PostPuzzleMenu : MonoBehaviour
     [SerializeField]
     private GameObject menuRoot;
 
+    [Header("Timing")]
+    [Tooltip("Seconds the finished signature stays on its own before the menu appears, so the success moment lands.")]
+    [SerializeField]
+    [Min(0f)]
+    private float menuDelay = 1.5f;
+
     [Header("Menu Layout")]
     [Tooltip("Menu position in this object's space (metres).")]
     [SerializeField]
@@ -93,6 +99,7 @@ public sealed class PostPuzzleMenu : MonoBehaviour
 
     private bool resetting;
     private string mainChooseAnotherText;
+    private Coroutine pendingShow;
 
     private void Awake()
     {
@@ -160,6 +167,8 @@ public sealed class PostPuzzleMenu : MonoBehaviour
             reveal.Cleared -= HandleCleared;
         }
 
+        CancelPendingShow();
+
         // Never leave the puzzle tools hidden.
         if (IsMenuShown)
         {
@@ -169,11 +178,41 @@ public sealed class PostPuzzleMenu : MonoBehaviour
 
     private void HandleSigned()
     {
-        ShowMenu();
+        CancelPendingShow();
+        if (menuDelay <= 0f || !isActiveAndEnabled)
+        {
+            ShowMenu();
+            return;
+        }
+
+        pendingShow = StartCoroutine(ShowMenuAfterDelay());
+    }
+
+    private System.Collections.IEnumerator ShowMenuAfterDelay()
+    {
+        yield return new WaitForSeconds(menuDelay);
+        pendingShow = null;
+
+        // Left the puzzle (or reset) during the hold: nothing to show.
+        if (gameFlow == null || gameFlow.Current == GameFlow.Stage.Puzzle)
+        {
+            ShowMenu();
+        }
+    }
+
+    private void CancelPendingShow()
+    {
+        if (pendingShow != null)
+        {
+            StopCoroutine(pendingShow);
+            pendingShow = null;
+        }
     }
 
     private void HandleCleared()
     {
+        CancelPendingShow();
+
         // Any other reset path (Reset Solve, Preview Reveal, Stellar Forge)
         // also brings the puzzle tools back.
         if (IsMenuShown)
@@ -184,6 +223,11 @@ public sealed class PostPuzzleMenu : MonoBehaviour
 
     private void HandleStageChanged(GameFlow.Stage stage)
     {
+        if (stage != GameFlow.Stage.Puzzle)
+        {
+            CancelPendingShow();
+        }
+
         UpdatePuzzleBackButton();
     }
 

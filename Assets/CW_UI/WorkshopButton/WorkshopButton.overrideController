@@ -1,0 +1,29 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: WorkshopButton
+  m_Controller: {fileID: 9100000, guid: 781b75b5de7c1dd4b92e4a2c35298bae, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 590884715474941886, guid: 781b75b5de7c1dd4b92e4a2c35298bae, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 312bf540ae59ae444a5a3531a03cd7ec, type: 2}
+  - m_OriginalClip: {fileID: -3882874336873131204, guid: 781b75b5de7c1dd4b92e4a2c35298bae, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 767aa9aa8ab7a684b8f2234576c63e67, type: 2}
+  - m_OriginalClip: {fileID: -5292983036523939493, guid: 781b75b5de7c1dd4b92e4a2c35298bae, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 460c4bc275e728b43b0ff0d86c302344, type: 2}
+  - m_OriginalClip: {fileID: -7558862251275676704, guid: 781b75b5de7c1dd4b92e4a2c35298bae, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 3ff74960f6b476945aec3693e5d4a238, type: 2}
+  - m_OriginalClip: {fileID: 6055790640338001329, guid: 781b75b5de7c1dd4b92e4a2c35298bae, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 611ca716180690c4eae788642491e624, type: 2}
+  - m_OriginalClip: {fileID: -592818536803443932, guid: 781b75b5de7c1dd4b92e4a2c35298bae, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: ed71da913a9910848ad7a8226e2359d0, type: 2}
+  - m_OriginalClip: {fileID: -9196398583103166868, guid: 781b75b5de7c1dd4b92e4a2c35298bae, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: a13830353dd2c7740be859c76c420b10, type: 2}
+  - m_OriginalClip: {fileID: 3978888999767895996, guid: 781b75b5de7c1dd4b92e4a2c35298bae, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 8e2fde34e07890045bb187e2447d8d2c, type: 2}
+  - m_OriginalClip: {fileID: -6533896353357172086, guid: 781b75b5de7c1dd4b92e4a2c35298bae, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: e2a8baf7e22398549b94d42d6b71f33f, type: 2}

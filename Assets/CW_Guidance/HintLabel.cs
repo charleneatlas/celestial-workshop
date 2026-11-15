@@ -59,6 +59,18 @@ namespace CW.Guidance
         public float followSmoothTime = 0.2f;
         public float yawSharpness = 8f;
 
+        [Header("Keep Clear")]
+        [Tooltip("Objects the label must not cover as seen from the eye (e.g. the globe). Each is treated as a sphere around its renderers' bounds; the label is pushed just outside it, even past the gaze cone.")]
+        public List<Transform> keepClearOf = new List<Transform>();
+        [Tooltip("Extra gap between the label's edge and a keep-clear object (degrees).")]
+        public float keepClearMarginDegrees = 1.5f;
+
+        /// <summary>
+        /// While true the label fades out but keeps its step (e.g. while another
+        /// prompt, like the Recenter countdown, owns the view).
+        /// </summary>
+        public bool Suppressed { get; set; }
+
         [Header("Timing (seconds)")]
         public float fadeInSeconds = 0.35f;
         public float fadeOutSeconds = 0.3f;
@@ -83,6 +95,8 @@ namespace CW.Guidance
         private Transform target;
         private Vector3 offset;
         private readonly List<Renderer> targetRenderers = new List<Renderer>();
+        private readonly List<Renderer> keepClearRenderers = new List<Renderer>();
+        private float suppressFade = 1f;
 
         public bool IsVisible => phase != Phase.Hidden;
         /// <summary>True while the success acknowledgement is playing.</summary>
@@ -218,7 +232,8 @@ namespace CW.Guidance
                 Place(eye, dt, pop);
             }
 
-            Apply(color, alpha);
+            suppressFade = Mathf.MoveTowards(suppressFade, Suppressed ? 0f : 1f, dt / Mathf.Max(0.01f, fadeOutSeconds));
+            Apply(color, alpha * suppressFade);
         }
 
         private void Place(Transform eye, float dt, float pop)
@@ -251,6 +266,8 @@ namespace CW.Guidance
             {
                 direction = Vector3.RotateTowards(forward, direction, maxGazeAngle * Mathf.Deg2Rad, 0f);
             }
+
+            direction = KeepClear(eyePosition, direction);
 
             Vector3 desired = eyePosition + direction * distance;
             Vector3 lookFlat = Flat(desired - eyePosition, flatForward);
@@ -294,6 +311,68 @@ namespace CW.Guidance
                 under.a *= Mathf.Clamp01(a);
                 material.SetColor(ShaderUtilities.ID_UnderlayColor, under);
             }
+        }
+
+        // Pushes the label's direction just outside each keep-clear object's
+        // angular disc, away from its centre (straight up if it's dead centre).
+        private Vector3 KeepClear(Vector3 eyePosition, Vector3 direction)
+        {
+            if (keepClearOf == null || keepClearOf.Count == 0 || text == null)
+            {
+                return direction;
+            }
+
+            // The label's angular half-size from last frame's layout.
+            float labelDistance = Mathf.Max(0.05f, Vector3.Distance(eyePosition, transform.position));
+            Vector3 size = Vector3.Scale(text.textBounds.size, text.transform.lossyScale);
+            float halfWidth = Mathf.Atan2(0.5f * Mathf.Abs(size.x), labelDistance) * Mathf.Rad2Deg;
+            float halfHeight = Mathf.Atan2(0.5f * Mathf.Abs(size.y), labelDistance) * Mathf.Rad2Deg;
+
+            foreach (Transform keep in keepClearOf)
+            {
+                if (keep == null || !keep.gameObject.activeInHierarchy)
+                {
+                    continue;
+                }
+
+                GuidanceBounds.Collect(keep, keepClearRenderers);
+                if (keepClearRenderers.Count == 0)
+                {
+                    continue;
+                }
+
+                Bounds bounds = GuidanceBounds.Compute(keep, keepClearRenderers);
+                Vector3 toCenter = bounds.center - eyePosition;
+                float centerDistance = toCenter.magnitude;
+                float radius = Mathf.Max(bounds.extents.x, Mathf.Max(bounds.extents.y, bounds.extents.z));
+                if (centerDistance <= radius + 0.01f)
+                {
+                    continue; // eye inside or touching it: nothing sensible to avoid
+                }
+
+                Vector3 centerDirection = toCenter / centerDistance;
+                Vector3 axis = Vector3.Cross(centerDirection, direction);
+                if (axis.sqrMagnitude < 1e-8f)
+                {
+                    axis = Vector3.Cross(centerDirection, Vector3.up); // dead centre: go up
+                }
+
+                axis.Normalize();
+
+                // Wider labels need more room sideways than up or down.
+                Vector3 pushDirection = Vector3.Cross(axis, centerDirection);
+                float vertical = Mathf.Abs(Vector3.Dot(pushDirection, Vector3.up));
+                float labelExtent = Mathf.Lerp(halfWidth, halfHeight, vertical);
+
+                float discRadius = Mathf.Asin(Mathf.Clamp01(radius / centerDistance)) * Mathf.Rad2Deg;
+                float needed = discRadius + keepClearMarginDegrees + labelExtent;
+                if (Vector3.Angle(centerDirection, direction) < needed)
+                {
+                    direction = Quaternion.AngleAxis(needed, axis) * centerDirection;
+                }
+            }
+
+            return direction;
         }
 
         // Horizontal part of v, normalized; fallback when v is (nearly) vertical.
