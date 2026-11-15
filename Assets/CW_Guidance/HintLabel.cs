@@ -335,13 +335,22 @@ namespace CW.Guidance
                     continue;
                 }
 
-                GuidanceBounds.Collect(keep, keepClearRenderers);
-                if (keepClearRenderers.Count == 0)
+                // A bounds source (e.g. the globe's exact sphere) wins; otherwise its renderers.
+                Bounds bounds;
+                if (keep.TryGetComponent(out IGuidanceBoundsSource source) && source.TryGetBounds(out Bounds sourced))
                 {
-                    continue;
+                    bounds = sourced;
                 }
+                else
+                {
+                    GuidanceBounds.Collect(keep, keepClearRenderers);
+                    if (keepClearRenderers.Count == 0)
+                    {
+                        continue;
+                    }
 
-                Bounds bounds = GuidanceBounds.Compute(keep, keepClearRenderers);
+                    bounds = GuidanceBounds.Compute(keep, keepClearRenderers);
+                }
                 Vector3 toCenter = bounds.center - eyePosition;
                 float centerDistance = toCenter.magnitude;
                 float radius = Mathf.Max(bounds.extents.x, Mathf.Max(bounds.extents.y, bounds.extents.z));
