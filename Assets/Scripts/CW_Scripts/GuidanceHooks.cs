@@ -73,7 +73,7 @@ public sealed class GuidanceHooks : MonoBehaviour
         // The Recenter prompt floats in the same place as the hints; let it speak alone.
         if (director != null && director.label != null)
         {
-            director.label.Suppressed = placement != null && placement.IsChoosing;
+            director.label.Suppressed = (placement != null && placement.IsChoosing) || CreditsBoard.IsAnyOpen;
         }
     }
 
@@ -179,9 +179,22 @@ public sealed class GuidanceHooks : MonoBehaviour
         bool letterTurn = true;
         while (gameFlow == null || gameFlow.Current == GameFlow.Stage.Title)
         {
+            // The credits board hides the letters and Start: no hint points at them meanwhile.
+            if (CreditsBoard.IsAnyOpen)
+            {
+                director.Clear();
+                while (CreditsBoard.IsAnyOpen)
+                {
+                    yield return null;
+                }
+
+                yield return new WaitForSeconds(0.5f);
+                continue;
+            }
+
             director.Show(letterTurn ? "title-letter" : "title-start");
             float until = Time.time + Mathf.Max(1f, titleHintSeconds);
-            while (Time.time < until || IsLetterHeld())
+            while ((Time.time < until || IsLetterHeld()) && !CreditsBoard.IsAnyOpen)
             {
                 if (IsLetterHeld() && !director.IsActive("title-letter"))
                 {
