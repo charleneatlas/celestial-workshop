@@ -40470,7 +40470,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SkyConstellationHighlightController
   normalColor: {r: 0.36, g: 0.58, b: 0.82, a: 0.5}
   nearSolveColor: {r: 0.2, g: 0.7921569, b: 1, a: 0.9}
-  solvedColor: {r: 1, g: 1, b: 1, a: 1}
+  solvedColor: {r: 1, g: 0.82, b: 0.4, a: 1}
 --- !u!1 &244487832
 GameObject:
   m_ObjectHideFlags: 0
@@ -211685,11 +211685,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edd62d7e746e6e34c9266964da81d76e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
-  impactDuration: 0.14
-  holdDuration: 0.12
+  impactDuration: 0.2
+  holdDuration: 0.45
   disappearDuration: 0.25
-  starImpactScale: 2.5
-  lineImpactThickness: 3.5
+  starImpactScale: 3.2
+  lineImpactThickness: 4
 --- !u!1 &1711840148
 GameObject:
   m_ObjectHideFlags: 0
