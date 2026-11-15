@@ -127950,6 +127950,72 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a1d29a744cc7c0c4c93e5e32f8b583ff, type: 3}
+--- !u!1 &991274339
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 991274341}
+  - component: {fileID: 991274340}
+  m_Layer: 0
+  m_Name: Rotate Ghost Hand Demo
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &991274340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991274339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e8ae61d6b5e83d45aed85f9262dba3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GuidanceGhostHand
+  director: {fileID: 1106382736}
+  pinchRotation: {fileID: 1633549548}
+  volume: {fileID: 1735069867}
+  viewer: {fileID: 828061963}
+  ghostHandPrefab: {fileID: 9220527422184078088, guid: a577701db3e23d8489feb76cd34e2336, type: 3}
+  handedness: 1
+  gripPose: {fileID: 11400000, guid: 3d196eec1af46124c8b175f085651c90, type: 2}
+  ghostMaterial: {fileID: 2100000, guid: cb68c0fab3e9e164eb0029a2e156e736, type: 2}
+  stepId: rotate
+  heightFraction: -0.6
+  leverFraction: 0.7
+  sweepDegrees: 70
+  penAxis: {x: 0.35, y: -0.45, z: -0.8}
+  handSide: {x: 0.6, y: -0.8, z: 0}
+  startDelay: 1.5
+  approachDuration: 0.5
+  sweepDuration: 1.6
+  releaseDuration: 0.4
+  pauseDuration: 2
+  returnAfterIdle: 6
+  opacity: 0.5
+  approachDistance: 0.06
+--- !u!4 &991274341
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991274339}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &991637813
 GameObject:
   m_ObjectHideFlags: 0
@@ -289842,3 +289908,4 @@ SceneRoots:
   - {fileID: 1398797426}
   - {fileID: 1106382735}
   - {fileID: 1770362971}
+  - {fileID: 991274341}
