@@ -4,15 +4,37 @@ using UnityEngine;
 
 public sealed class SkyStamp3DVFX : MonoBehaviour
 {
+    // The stamp is a copy of the constellation laid exactly over the solved
+    // one (additive material: alpha = brightness). Only where it differs from
+    // the original is it visible, so it swells, glows in the flash colour,
+    // settles back onto the stars and then dissolves into them by brightness.
+
     [Header("Timing")]
+    [Tooltip("Swell up to the impact size and full flash brightness (s).")]
     [SerializeField]
-    private float impactDuration = 0.14f;
+    private float riseDuration = 0.08f;
 
+    [Tooltip("Held at the impact size, fully bright (s).")]
     [SerializeField]
-    private float holdDuration = 0.12f;
+    private float holdDuration = 0.3f;
 
+    [Tooltip("Settle from the impact size back onto the stars (s).")]
     [SerializeField]
-    private float disappearDuration = 0.25f;
+    private float impactDuration = 0.35f;
+
+    [Tooltip("Fade the flash colour out, leaving the solved constellation (s).")]
+    [SerializeField]
+    private float disappearDuration = 0.4f;
+
+    [Header("Flash")]
+    [Tooltip("Colour of the stamp copy (additive: alpha = brightness). The solved constellation underneath keeps its own colour, so this is the colour of the flash only.")]
+    [SerializeField]
+    private Color flashColor = new Color(1f, 0.8f, 0.35f, 1f);
+
+    [Tooltip("Brightness left when the settle ends, before the fade.")]
+    [SerializeField]
+    [Range(0f, 1f)]
+    private float settledBrightness = 0.6f;
 
     [Header("Impact")]
     [SerializeField]
@@ -23,6 +45,11 @@ public sealed class SkyStamp3DVFX : MonoBehaviour
 
     private GameObject constellationRoot;
     private Coroutine playRoutine;
+    private Renderer[] renderers = new Renderer[0];
+    private MaterialPropertyBlock block;
+
+    private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
+    private static readonly int ColorId = Shader.PropertyToID("_Color");
 
     public bool IsPlaying => playRoutine != null;
 
@@ -93,6 +120,7 @@ public sealed class SkyStamp3DVFX : MonoBehaviour
             }
         }
 
+        renderers = constellationRoot.GetComponentsInChildren<Renderer>(true);
         constellationRoot.SetActive(false);
     }
 
@@ -137,72 +165,67 @@ public sealed class SkyStamp3DVFX : MonoBehaviour
     {
         constellationRoot.SetActive(true);
 
-        float elapsed = 0f;
-
-        // Impact: thick/large -> normal.
-        while (elapsed < impactDuration)
+        // Rise: normal -> impact size, dark -> full flash.
+        yield return Phase(riseDuration, t =>
         {
-            elapsed += Time.deltaTime;
+            float k = 1f - Mathf.Pow(1f - t, 3f);
+            SetGeometryScale(Mathf.Lerp(1f, starImpactScale, k), Mathf.Lerp(1f, lineImpactThickness, k));
+            SetBrightness(k);
+        });
 
-            float t =
-                Mathf.Clamp01(elapsed / impactDuration);
+        // Hold at the impact size.
+        SetGeometryScale(starImpactScale, lineImpactThickness);
+        SetBrightness(1f);
+        yield return Phase(holdDuration, null);
 
-            // Quick ease-out.
-            float eased =
-                1f - Mathf.Pow(1f - t, 3f);
-
-            float starScale =
-                Mathf.Lerp(
-                    starImpactScale,
-                    1f,
-                    eased
-                );
-
-            float lineThickness =
-                Mathf.Lerp(
-                    lineImpactThickness,
-                    1f,
-                    eased
-                );
-
-            SetGeometryScale(
-                starScale,
-                lineThickness
-            );
-
-            yield return null;
-        }
+        // Settle back onto the stars, dimming a little.
+        yield return Phase(impactDuration, t =>
+        {
+            float k = t * t * (3f - 2f * t);
+            SetGeometryScale(Mathf.Lerp(starImpactScale, 1f, k), Mathf.Lerp(lineImpactThickness, 1f, k));
+            SetBrightness(Mathf.Lerp(1f, settledBrightness, k));
+        });
 
         SetGeometryScale(1f, 1f);
 
-        yield return new WaitForSeconds(holdDuration);
-
-        elapsed = 0f;
-
-        // Collapse away.
-        while (elapsed < disappearDuration)
-        {
-            elapsed += Time.deltaTime;
-
-            float t =
-                Mathf.Clamp01(
-                    elapsed / disappearDuration
-                );
-
-            float remaining = 1f - t;
-
-            SetGeometryScale(
-                remaining,
-                remaining
-            );
-
-            yield return null;
-        }
+        // Dissolve into the solved constellation.
+        yield return Phase(disappearDuration, t => SetBrightness(settledBrightness * (1f - t)));
 
         RestoreOriginalScales();
+        SetBrightness(0f);
         constellationRoot.SetActive(false);
 
         playRoutine = null;
+    }
+
+    private static IEnumerator Phase(float duration, System.Action<float> step)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            step?.Invoke(Mathf.Clamp01(elapsed / Mathf.Max(0.0001f, duration)));
+            yield return null;
+        }
+    }
+
+    private void SetBrightness(float brightness)
+    {
+        block ??= new MaterialPropertyBlock();
+        Color c = flashColor;
+        c.a *= Mathf.Clamp01(brightness);
+        foreach (Renderer r in renderers)
+        {
+            if (r == null)
+            {
+                continue;
+            }
+
+            block.Clear();
+            block.SetColor(BaseColorId, c);
+            block.SetColor(ColorId, c);
+            r.SetPropertyBlock(block);
+        }
     }
 
     private void SetGeometryScale(
