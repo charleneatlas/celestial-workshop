@@ -26,6 +26,9 @@ public class SkyConstellationHighlightController : MonoBehaviour
 
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
     private static readonly int ColorId = Shader.PropertyToID("_Color");
+    // SkyStarTwinkle: the star palette shows only in the normal state, so the
+    // near-solve and solved tints read as clearly as before.
+    private static readonly int PaletteMixId = Shader.PropertyToID("_PaletteMix");
 
     private Renderer[] renderers;
     private readonly Dictionary<Renderer, GeneratedConstellationStar> starsByRenderer =
@@ -114,6 +117,12 @@ public class SkyConstellationHighlightController : MonoBehaviour
             block.Clear();
             block.SetColor(BaseColorId, color);
             block.SetColor(ColorId, color);
+            block.SetFloat(PaletteMixId, state == State.Normal ? 1f : 0f);
+            if (starsByRenderer.TryGetValue(renderer, out GeneratedConstellationStar twinkler))
+            {
+                // Keep the star's twinkle seed (the block is rebuilt here).
+                block.SetFloat(GeneratedConstellationStar.TwinkleSeedId, twinkler.TwinkleSeed);
+            }
             renderer.SetPropertyBlock(block);
         }
     }

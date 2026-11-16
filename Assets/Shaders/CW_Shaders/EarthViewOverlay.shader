@@ -1,7 +1,12 @@
 // Shows the Earth view render texture with no background: additive, so the
 // camera's near-black clear adds nothing and only the constellation (and
 // anything else bright in the view) appears, floating over whatever is behind.
-// Black Cutoff removes the faint clear colour and MSAA edge noise first.
+// Black Cutoff removes the faint clear colour and MSAA edge noise first. It is
+// subtracted in linear colour, so keep it just above the background (~0.002):
+// a large cutoff erases the soft edges of thin lines and, once the image is
+// minified onto the display, whole stretches of them, which then flicker.
+// Mip Bias samples a slightly softer mip: the 1024 px image covers only about
+// 600 px of the headset's view, and sampling the sharp level there shimmers.
 // Samples the screen mesh's UVs exactly like CRTScreen at rest, so the picture
 // keeps the same orientation as the Earth View Disc.
 Shader "CelestialWorkshop/EarthViewOverlay"
@@ -10,7 +15,8 @@ Shader "CelestialWorkshop/EarthViewOverlay"
     {
         [MainTexture] _BaseMap ("Earth View", 2D) = "black" {}
         _Intensity ("Intensity", Range(0, 4)) = 1.5
-        _BlackCutoff ("Black Cutoff", Range(0, 0.5)) = 0.06
+        _BlackCutoff ("Black Cutoff", Range(0, 0.5)) = 0.008
+        _MipBias ("Mip Bias (softer when minified)", Range(0, 2)) = 0.08
     }
 
     SubShader
@@ -47,6 +53,7 @@ Shader "CelestialWorkshop/EarthViewOverlay"
                 float4 _BaseMap_ST;
                 half _Intensity;
                 half _BlackCutoff;
+                half _MipBias;
             CBUFFER_END
 
             struct Attributes
@@ -76,7 +83,7 @@ Shader "CelestialWorkshop/EarthViewOverlay"
             half4 Frag(Varyings input) : SV_Target
             {
                 UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(input);
-                half3 c = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, input.uv).rgb;
+                half3 c = SAMPLE_TEXTURE2D_BIAS(_BaseMap, sampler_BaseMap, input.uv, _MipBias).rgb;
                 c = max(c - _BlackCutoff, 0) / max(1 - _BlackCutoff, 1e-3);
                 return half4(c * _Intensity, 0);
             }

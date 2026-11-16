@@ -90712,7 +90712,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8799059317084717617, guid: 490f91ccd91e7e549a813be82e9666d0, type: 3}
       propertyPath: offset.z
-      value: -0.07
+      value: -0.015
       objectReference: {fileID: 0}
     - target: {fileID: 8799059317084717617, guid: 490f91ccd91e7e549a813be82e9666d0, type: 3}
       propertyPath: extraTilt

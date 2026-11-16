@@ -16,6 +16,32 @@ public class GeneratedConstellationStar : MonoBehaviour
 
     public Renderer StarRenderer => starRenderer;
 
+    /// <summary>
+    /// Per-star value (0..1) the SkyStarTwinkle shader uses to decide whether
+    /// this star twinkles and with what phase. Set once when the constellation
+    /// is built; ignored by materials without _TwinkleSeed (the wooden model).
+    /// </summary>
+    public float TwinkleSeed { get; private set; } = 1f;
+
+    public static readonly int TwinkleSeedId = Shader.PropertyToID("_TwinkleSeed");
+
+    private static MaterialPropertyBlock seedBlock;
+
+    public void SetTwinkleSeed(float seed)
+    {
+        TwinkleSeed = seed;
+        if (starRenderer == null || IsHighlighted || starRenderer.sharedMaterial == null ||
+            !starRenderer.sharedMaterial.HasProperty(TwinkleSeedId))
+        {
+            return;
+        }
+
+        seedBlock ??= new MaterialPropertyBlock();
+        starRenderer.GetPropertyBlock(seedBlock);
+        seedBlock.SetFloat(TwinkleSeedId, seed);
+        starRenderer.SetPropertyBlock(seedBlock);
+    }
+
     public void Initialize(
         string id,
         Renderer renderer,

@@ -349,7 +349,42 @@ public class ConstellationGenerator : MonoBehaviour
             );
         }
 
+        AssignTwinkleSeeds(generatedRootObject);
         return generatedRootObject;
+    }
+
+    // Spreads twinkle seeds evenly over the stars in a fixed, name-based order,
+    // so the twinkling share holds even for a few stars and each constellation
+    // twinkles the same way every time. Only the sky's twinkle material reads it.
+    private static void AssignTwinkleSeeds(GameObject root)
+    {
+        GeneratedConstellationStar[] stars = root.GetComponentsInChildren<GeneratedConstellationStar>(true);
+        if (stars.Length == 0)
+        {
+            return;
+        }
+
+        var order = new List<GeneratedConstellationStar>(stars);
+        order.Sort((a, b) => StableHash(a.StarId).CompareTo(StableHash(b.StarId)));
+        for (int i = 0; i < order.Count; i++)
+        {
+            order[i].SetTwinkleSeed((i + 0.5f) / order.Count);
+        }
+    }
+
+    // FNV-1a: the same value on every platform and run.
+    private static uint StableHash(string text)
+    {
+        uint hash = 2166136261u;
+        if (text != null)
+        {
+            foreach (char c in text)
+            {
+                hash = (hash ^ c) * 16777619u;
+            }
+        }
+
+        return hash;
     }
 
     private void CreateCylinderBetweenPoints(

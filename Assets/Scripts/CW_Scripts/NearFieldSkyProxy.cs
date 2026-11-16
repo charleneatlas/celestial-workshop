@@ -200,6 +200,8 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
     /// <summary>Farthest star from the sky pivot after placement (world metres), so the constellation fits a sphere this big around its pivot in any rotation. 0 before placement.</summary>
     public float ConstellationReach { get; private set; }
 
+    private static readonly int SkySphereId = Shader.PropertyToID("_SkySphere");
+
     private void Awake()
     {
         authoredCenter = transform.position;
@@ -400,6 +402,10 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
         // The volume itself keeps facing the viewer, whatever the observer does.
         volume.transform.SetPositionAndRotation(center, Quaternion.LookRotation(-eyeView, Vector3.up));
         volume.Radius = volumeRadius;
+
+        // The sky shader (SkyStarTwinkle) glows only inside the globe; outside
+        // (the intro copy on its way in, over passthrough) it draws plain.
+        Shader.SetGlobalVector(SkySphereId, new Vector4(center.x, center.y, center.z, volumeRadius));
 
         Debug.Log(
             $"NearFieldSkyProxy: t {Time.realtimeSinceStartup:0.0} s, volume at {center} (r {volumeRadius:F2} m, {eyeView.magnitude:F2} m from eyes, " +
