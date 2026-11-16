@@ -202,7 +202,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
     [Range(0f, 1f)]
     private float regionHysteresis = 0.15f;
 
-    [Tooltip("Off: workspace up is world up. On: tilted with the view down to the volume, like the gimbal.")]
+    [Tooltip("Off: workspace up is world up. On: tilted with the view down to the volume, like the gimbal. (Workstation mode always uses the mini's frame, matched to the Earth view camera.)")]
     [SerializeField]
     private bool tiltFrameWithView;
 
@@ -1020,6 +1020,17 @@ public sealed class VolumePinchRotation : MonoBehaviour
 
     private void CaptureWorkspaceFrame(Vector3 center)
     {
+        // Workstation: the axes (and guide rings) follow the mini's view frame,
+        // matched to the Earth view camera, not world-level ones: the mini is
+        // seen from above, and level axes there map to tilted axes in the sky.
+        if (UseWorkstation)
+        {
+            workspaceFrame = workstation.ControlFrame;
+            frameCaptured = true;
+            meshKey = null;
+            return;
+        }
+
         Vector3 view = center - viewer.transform.position;
         if (!tiltFrameWithView)
         {

@@ -80,6 +80,10 @@ public sealed class WorkstationMini : MonoBehaviour
     [SerializeField]
     private GameFlow gameFlow;
 
+    [Tooltip("The rotation axes at the mini follow this camera's axes in the sky. Found automatically if empty.")]
+    [SerializeField]
+    private Transform earthViewCamera;
+
     [Header("Placement (relative to the head at placement)")]
     [Tooltip("Horizontal distance from the eyes toward the globe (m). About 0.35-0.45 keeps the elbows bent.")]
     [SerializeField]
@@ -193,6 +197,19 @@ public sealed class WorkstationMini : MonoBehaviour
     public Quaternion MiniToSkyRotation =>
         skyRotation != null && miniEarth != null ? skyRotation.rotation * Quaternion.Inverse(miniEarth.rotation) : Quaternion.identity;
 
+    /// <summary>
+    /// Rotation axes for turning the mini: the Earth view camera's own right /
+    /// up / forward carried back to the mini, so each axis the hand turns the
+    /// mini about turns the sky about the matching camera axis (the projection
+    /// in the globe spins, tilts or pans exactly on-axis). It is within a few
+    /// degrees of the mini's own frame, which faces the eyes. Without an Earth
+    /// view camera it is the mini's frame.
+    /// </summary>
+    public Quaternion ControlFrame =>
+        earthViewCamera != null && miniEarth != null
+            ? Quaternion.Inverse(MiniToSkyRotation) * earthViewCamera.rotation
+            : (miniEarth != null ? miniEarth.rotation : transform.rotation);
+
     /// <summary>Sky size / mini size (live: the sky is shrunk into the globe after startup).</summary>
     public float MiniToSkyScale { get; private set; } = 1f;
 
@@ -222,6 +239,12 @@ public sealed class WorkstationMini : MonoBehaviour
         if (gameFlow == null)
         {
             gameFlow = FindFirstObjectByType<GameFlow>();
+        }
+
+        if (earthViewCamera == null)
+        {
+            EarthViewCamera earthView = FindFirstObjectByType<EarthViewCamera>(FindObjectsInactive.Include);
+            earthViewCamera = earthView != null ? earthView.transform : null;
         }
 
         rig = viewer != null ? viewer.GetComponentInParent<OVRCameraRig>() : null;
