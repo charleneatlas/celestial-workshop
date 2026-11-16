@@ -94,6 +94,21 @@ public sealed class ConstellationBox : MonoBehaviour
     [SerializeField]
     private string comingSoonText = "Coming soon";
 
+    [Header("Fittings (optional)")]
+    [Tooltip("Brass nameplate behind the name label: bright when available, tarnished when not.")]
+    [SerializeField]
+    private Renderer nameplate;
+
+    [SerializeField]
+    private Material nameplateMaterial;
+
+    [SerializeField]
+    private Material nameplateUnavailableMaterial;
+
+    [Tooltip("Shown only on unavailable boxes (e.g. the padlock).")]
+    [SerializeField]
+    private GameObject lockedOnly;
+
     [Header("Contents")]
     [Tooltip("Shown only while the box is open (e.g. the Starter Pack's sculptures).")]
     [SerializeField]
@@ -296,6 +311,17 @@ public sealed class ConstellationBox : MonoBehaviour
                     r.SetPropertyBlock(null);
                 }
             }
+        }
+
+        Material plate = available ? nameplateMaterial : nameplateUnavailableMaterial;
+        if (nameplate != null && plate != null && nameplate.sharedMaterial != plate)
+        {
+            nameplate.sharedMaterial = plate;
+        }
+
+        if (lockedOnly != null)
+        {
+            lockedOnly.SetActive(!available);
         }
 
         if (nameLabel != null)

@@ -73,7 +73,7 @@ public sealed class GuidanceHooks : MonoBehaviour
         // The Recenter prompt floats in the same place as the hints; let it speak alone.
         if (director != null && director.label != null)
         {
-            director.label.Suppressed = (placement != null && placement.IsChoosing) || CreditsBoard.IsAnyOpen;
+            director.label.Suppressed = (placement != null && placement.IsChoosing) || CreditsBoard.IsAnyOpen || FieldNoteReader.IsAnyOpen;
         }
     }
 
