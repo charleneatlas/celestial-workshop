@@ -46,6 +46,21 @@ public sealed class GuidanceGhostHand : MonoBehaviour
     [Range(-1f, 1f)]
     private float workstationHeightFraction = 0f;
 
+    [Tooltip("At the workstation, how steeply the forearm drops below horizontal from the pinch toward the player (degrees). Steep keeps the wrist's cut end facing the floor instead of the player's face.")]
+    [SerializeField]
+    [Range(0f, 85f)]
+    private float workstationArmDrop = 85f;
+
+    [Tooltip("At the workstation, how far the forearm swings toward the hand's own side (degrees), as a right hand reaches in from the right.")]
+    [SerializeField]
+    [Range(-60f, 60f)]
+    private float workstationArmSide = 20f;
+
+    [Tooltip("At the workstation, the fingers dip below the forearm line by this much (degrees), toward the ring.")]
+    [SerializeField]
+    [Range(0f, 60f)]
+    private float workstationFingerDip = 20f;
+
     [Tooltip("Player camera (CenterEyeAnchor). Defaults to the main camera.")]
     [SerializeField]
     private Transform viewer;
@@ -346,6 +361,39 @@ public sealed class GuidanceGhostHand : MonoBehaviour
 
     // Poses the ghost so the middle of its thumb and index tips sits on point,
     // with the fingers and the back of the hand facing the configured directions.
+    // Workstation: the forearm drops steeply from the pinch toward the player
+    // (and a little to the hand's side), so the open end of the ghost wrist
+    // faces the floor; the fingers point back up along it, dipping toward the
+    // ring, with the back of the hand toward the player and up.
+    private void ReachFromBelow(Vector3 point, ref Vector3 fingers, ref Vector3 back)
+    {
+        Transform eye = viewer != null ? viewer : (Camera.main != null ? Camera.main.transform : null);
+        if (eye == null)
+        {
+            return;
+        }
+
+        Vector3 toward = Vector3.ProjectOnPlane(eye.position - point, Vector3.up);
+        if (toward.sqrMagnitude < 1e-6f)
+        {
+            return;
+        }
+
+        toward.Normalize();
+        Vector3 side = Vector3.Cross(toward, Vector3.up) * (handedness == Handedness.Right ? 1f : -1f);   // the hand's side, seen from the player
+        float a = workstationArmSide * Mathf.Deg2Rad;
+        float d = workstationArmDrop * Mathf.Deg2Rad;
+        Vector3 horizontal = toward * Mathf.Cos(a) + side * Mathf.Sin(a);
+        Vector3 towardWrist = horizontal * Mathf.Cos(d) - Vector3.up * Mathf.Sin(d);
+
+        Vector3 arm = -towardWrist;   // wrist -> pinch
+        Vector3 across = Vector3.Cross(Vector3.up, arm);
+        fingers = across.sqrMagnitude > 1e-6f
+            ? Quaternion.AngleAxis(workstationFingerDip, across.normalized) * arm   // positive turns the fingers down
+            : arm;
+        back = Vector3.ProjectOnPlane(Vector3.up + toward + side * 0.3f, fingers);
+    }
+
     private void PoseAt(Vector3 point)
     {
         PenGripPose.Side side = gripPose != null ? gripPose.For(handedness) : null;
@@ -362,6 +410,10 @@ public sealed class GuidanceGhostHand : MonoBehaviour
 
         Vector3 fingers = frame * (fingerDirection.sqrMagnitude > 1e-6f ? fingerDirection.normalized : Vector3.forward);
         Vector3 back = frame * (backOfHandDirection.sqrMagnitude > 1e-6f ? backOfHandDirection.normalized : Vector3.up);
+        if (UseWorkstation)
+        {
+            ReachFromBelow(point, ref fingers, ref back);
+        }
         Quaternion desired = Quaternion.LookRotation(fingers, back);
         var wrist = new Pose(point, desired * Quaternion.Inverse(handFrameInRoot));
         ghost.SetPose(side.handPose, wrist);

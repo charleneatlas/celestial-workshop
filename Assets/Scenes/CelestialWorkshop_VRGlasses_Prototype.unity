@@ -132791,6 +132791,9 @@ MonoBehaviour:
   workstation: {fileID: 2106688612}
   workstationRadiusFactor: 1.1
   workstationHeightFraction: 0
+  workstationArmDrop: 85
+  workstationArmSide: 20
+  workstationFingerDip: 20
   viewer: {fileID: 828061963}
   ghostHandPrefab: {fileID: 9220527422184078088, guid: a577701db3e23d8489feb76cd34e2336, type: 3}
   handedness: 1
