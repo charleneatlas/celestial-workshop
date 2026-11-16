@@ -132878,8 +132878,8 @@ MonoBehaviour:
   ghostMaterial: {fileID: 2100000, guid: cb68c0fab3e9e164eb0029a2e156e736, type: 2}
   viewer: {fileID: 828061963}
   stepId: chart
-  fingerLean: 35
-  approachYaw: -25
+  fingerElevation: 30
+  approachFromLeft: 35
   startHeight: 0.06
   hoverHeight: 0.015
   contactHeight: 0.002
