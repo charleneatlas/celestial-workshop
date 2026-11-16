@@ -29,6 +29,15 @@ public sealed class ConstellationSetup : MonoBehaviour
     [SerializeField]
     private GameObject handGrabInteractable;
 
+    [Tooltip("On: the mini is generated as an exact scaled copy of the hidden sky constellation (same elevation offset, angular scale and depth), so turning it looks like turning the sky. Off: the original tabletop layout (wider, full depth).")]
+    [SerializeField]
+    private bool miniMatchesSky;
+
+    [Tooltip("Mini Matches Sky: the copy's reach (farthest star from the star centroid) in the generated root's local units, so star and line sizes keep their tabletop proportions. Overall world size is set by the Workstation Mini.")]
+    [SerializeField]
+    [Min(0.05f)]
+    private float miniLocalReach = 0.5f;
+
     [Header("Sky Constellation")]
     [SerializeField]
     private Transform skyConstellationPivot;
@@ -141,6 +150,17 @@ public sealed class ConstellationSetup : MonoBehaviour
 
     public Transform SkyConstellationPivot => skyConstellationPivot;
     public Transform SkyVisualContainer => skyVisualContainer;
+    public Transform MiniConstellationPivot => miniConstellationPivot;
+    public Transform MiniVisualContainer => miniVisualContainer;
+    public Transform MiniEarthReference => miniEarthReference;
+    public Transform SkyRotationReference => skyRotationReference;
+
+    /// <summary>
+    /// After the solve settle: true (the original) drops the mini to physics
+    /// and offers it as a grab; false leaves it where it is (the workstation
+    /// takes it away at the stamp or signing instead).
+    /// </summary>
+    public bool DropMiniAfterSolve { get; set; } = true;
     public SkyStamp3DVFX SkyStampVFX => skyStampVFX;
 
     /// <summary>Display name of the current constellation (from the generator).</summary>
@@ -355,11 +375,7 @@ public sealed class ConstellationSetup : MonoBehaviour
 
     private void GenerateConstellations(float skyGroupScale)
     {
-        GameObject miniGeneratedRoot =
-            constellationGenerator.GenerateConstellation(
-                miniVisualContainer,
-                tableConstellationAppearance
-            );
+        GameObject miniGeneratedRoot = GenerateMini();
 
         GameObject skyGeneratedRoot =
             constellationGenerator.GenerateConstellation(
@@ -389,6 +405,79 @@ public sealed class ConstellationSetup : MonoBehaviour
                 skyGeneratedRoot
             );
         }
+    }
+
+    // The mini, either in its original tabletop layout or (Mini Matches Sky)
+    // as the sky's own star directions and depths with the observer at the
+    // generated root's origin. Star offsets from their centroid are then the
+    // sky's, scaled; centering both pivots on that centroid makes the mini a
+    // similar copy in its pivot's frame. Generated twice: once to measure the
+    // reach, once at the scale that gives miniLocalReach.
+    private GameObject GenerateMini()
+    {
+        if (!miniMatchesSky)
+        {
+            return constellationGenerator.GenerateConstellation(
+                miniVisualContainer,
+                tableConstellationAppearance
+            );
+        }
+
+        float containerScale = Mathf.Max(1e-6f, miniVisualContainer.lossyScale.x);
+        Vector3 directionOffset = new Vector3(-skyElevationDegrees, skyAzimuthDegrees, 0f);
+
+        GameObject root = constellationGenerator.GenerateConstellation(
+            miniVisualContainer, tableConstellationAppearance, miniVisualContainer,
+            containerScale, directionOffset, skyAngularScale, skyDepthScale, true);
+
+        float reach = LocalStarReach(root);
+        if (reach > 1e-6f)
+        {
+            // Destroy is deferred and the generator finds old roots by name.
+            DetachGeneratedRoot(miniVisualContainer);
+            root = constellationGenerator.GenerateConstellation(
+                miniVisualContainer, tableConstellationAppearance, miniVisualContainer,
+                containerScale * miniLocalReach / reach, directionOffset, skyAngularScale, skyDepthScale, true);
+        }
+
+        // The Earth view marker sits at the (virtual) observer, far from the mini's stars.
+        Transform marker = root != null ? root.transform.Find("Earth View Marker") : null;
+        if (marker != null)
+        {
+            marker.gameObject.SetActive(false);
+        }
+
+        return root;
+    }
+
+    // Farthest star from the stars' centroid, in the root's local units.
+    private static float LocalStarReach(GameObject root)
+    {
+        if (root == null)
+        {
+            return 0f;
+        }
+
+        GeneratedConstellationStar[] stars = root.GetComponentsInChildren<GeneratedConstellationStar>();
+        if (stars.Length == 0)
+        {
+            return 0f;
+        }
+
+        Vector3 centroid = Vector3.zero;
+        foreach (GeneratedConstellationStar star in stars)
+        {
+            centroid += star.transform.localPosition;
+        }
+
+        centroid /= stars.Length;
+        float reach = 0f;
+        foreach (GeneratedConstellationStar star in stars)
+        {
+            reach = Mathf.Max(reach, Vector3.Distance(star.transform.localPosition, centroid));
+        }
+
+        return reach;
     }
 
     private void GenerateSkyStampConstellation()
@@ -760,14 +849,17 @@ public sealed class ConstellationSetup : MonoBehaviour
             skyStampVFX.Play();
         }
 
-        // Release the tabletop constellation to physics to allow to fall to tabletop.
-        miniConstellationRigidbody.useGravity = true;
-        miniConstellationRigidbody.isKinematic = false;
+        if (DropMiniAfterSolve)
+        {
+            // Release the tabletop constellation to physics to allow to fall to tabletop.
+            miniConstellationRigidbody.useGravity = true;
+            miniConstellationRigidbody.isKinematic = false;
 
-        // Turn on the tabletop constellation's HandGrabInteractable to allow it to be grabbed by player
-        // (unless something has it suppressed right now).
-        postSolveGrabAvailable = true;
-        ApplyPostSolveGrab();
+            // Turn on the tabletop constellation's HandGrabInteractable to allow it to be grabbed by player
+            // (unless something has it suppressed right now).
+            postSolveGrabAvailable = true;
+            ApplyPostSolveGrab();
+        }
 
         isSettling = false;
 
@@ -805,8 +897,13 @@ public sealed class ConstellationSetup : MonoBehaviour
         }
     }
 
+    /// <summary>Raised at the start of every reset (including a constellation load, before regenerating).</summary>
+    public event Action Resetting;
+
     public void HandleReset()
     {
+        Resetting?.Invoke();
+
         // A reset mid-settle (e.g. back to the title right after solving)
         // must not finish the solve later: no stamp, no drop, no reveal.
         if (settleRoutine != null)

@@ -6,6 +6,10 @@ using UnityEngine;
 /// Puzzle-start intro: shows how the Earth view display's image comes from
 /// the 3D constellation in the globe.
 ///
+/// 0. With a Workstation Mini: the copy first appears exactly on the mini at
+///    the player's workstation (the mini is a scaled copy of the sky) and
+///    travels into the globe by the inverse of the workstation's mini -> sky
+///    similarity, so the player sees their workstation project into the sky.
 /// 1. A visuals-only copy of the hidden sky constellation (the one the Earth
 ///    view camera renders) appears exactly where it is, in the puzzle's
 ///    starting (unsolved) orientation, on the Default layer, so the player
@@ -50,6 +54,26 @@ public sealed class ConstellationIntro : MonoBehaviour
     [Tooltip("Waits for the volume and sky to be placed before starting.")]
     [SerializeField]
     private NearFieldSkyProxy nearFieldSkyProxy;
+
+    [Header("From the workstation")]
+    [Tooltip("Optional: the copy first appears on the workstation mini (same shape, size and orientation) and travels into the globe before compressing, so the player sees the workstation project into the sky. Empty or disabled = start in the globe as before.")]
+    [SerializeField]
+    private WorkstationMini workstation;
+
+    [Tooltip("Time for the copy to travel from the workstation into the globe (s).")]
+    [SerializeField]
+    [Min(0f)]
+    private float travelDuration = 1.1f;
+
+    [SerializeField]
+    private AnimationCurve travelEasing = AnimationCurve.EaseInOut(0f, 0f, 1f, 1f);
+
+    [Tooltip("Show the copy in the globe this long after it arrives, before compressing (s).")]
+    [SerializeField]
+    [Min(0f)]
+    private float arrivedHold = 0.3f;
+
+    private bool FromWorkstation => workstation != null && workstation.isActiveAndEnabled && workstation.IsReady;
 
     [Header("Start")]
     [Tooltip("Play on every puzzle start: startup, Choose Another, reset.")]
@@ -307,14 +331,42 @@ public sealed class ConstellationIntro : MonoBehaviour
 
         Camera cam = earthView.GetComponent<Camera>();
 
-        // 1. Show the 3D copy.
-        PoseCopy(cam, 0f, 0f);
+        // 1. Show the 3D copy: on the workstation mini first (then carried into
+        // the globe), or straight in the globe.
+        bool fromWorkstation = FromWorkstation;
+        float startTravel = fromWorkstation ? 0f : 1f;
+        PoseCopy(cam, 0f, 0f, startTravel);
         if (showDuration > 0f)
         {
             float shown = 0f;
             while (shown < showDuration)
             {
                 shown += Time.deltaTime;
+                PoseCopy(cam, 0f, 0f, startTravel);
+                yield return null;
+            }
+        }
+
+        if (fromWorkstation)
+        {
+            float travelled = 0f;
+            while (true)
+            {
+                travelled += Time.deltaTime;
+                float t = travelDuration > 0f ? Mathf.Clamp01(travelled / travelDuration) : 1f;
+                PoseCopy(cam, 0f, 0f, travelEasing.Evaluate(t));
+                if (t >= 1f)
+                {
+                    break;
+                }
+
+                yield return null;
+            }
+
+            float held = 0f;
+            while (held < arrivedHold)
+            {
+                held += Time.deltaTime;
                 PoseCopy(cam, 0f, 0f);
                 yield return null;
             }
@@ -485,7 +537,8 @@ public sealed class ConstellationIntro : MonoBehaviour
 
     // compress: 0 = the source's 3D arrangement, 1 = flat on the plane.
     // map: 0 = where the source is, 1 = on the display (similarity S).
-    private void PoseCopy(Camera cam, float compress, float map)
+    // travel: 0 = on the workstation mini (similarity sky -> mini), 1 = in the globe.
+    private void PoseCopy(Camera cam, float compress, float map, float travel = 1f)
     {
         if (copy == null || sourceRoot == null)
         {
@@ -517,9 +570,25 @@ public sealed class ConstellationIntro : MonoBehaviour
 
         copy.UpdateConnections(rodThickness);
 
+        Transform root = copyObject.transform;
+        if (travel < 1f && workstation != null)
+        {
+            // Inverse of the workstation's mini -> sky similarity, eased out:
+            // position along the line, rotation by slerp, scale geometrically.
+            Vector3 skyPivot = setup.SkyConstellationPivot.position;
+            float k = Mathf.Max(1e-6f, workstation.MiniToSkyScale);
+            float travelScale = Mathf.Exp(Mathf.Lerp(-Mathf.Log(k), 0f, travel));
+            Quaternion travelTurn = Quaternion.Slerp(Quaternion.Inverse(workstation.MiniToSkyRotation), Quaternion.identity, travel);
+            Vector3 travelTo = Vector3.Lerp(workstation.Center, skyPivot, travel);
+            root.SetPositionAndRotation(
+                travelTo + travelTurn * ((sourceRoot.position - skyPivot) * travelScale),
+                travelTurn * sourceRoot.rotation);
+            root.localScale = sourceRoot.lossyScale * travelScale;
+            return;
+        }
+
         // The copy root follows the source root, carried by S_map.
         Similarity(cam, map, out Vector3 fromPoint, out Vector3 toPoint, out Quaternion turn, out float scale);
-        Transform root = copyObject.transform;
         root.SetPositionAndRotation(
             toPoint + turn * ((sourceRoot.position - fromPoint) * scale),
             turn * sourceRoot.rotation);

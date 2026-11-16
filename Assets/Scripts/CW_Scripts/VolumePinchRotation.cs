@@ -35,7 +35,10 @@ public sealed class VolumePinchRotation : MonoBehaviour
         Constellation,
 
         [Tooltip("They center on the Earth view display, around the projected constellation. The sky still turns about its own pivot.")]
-        Display
+        Display,
+
+        [Tooltip("Pinch region, guides and hand angles center on the workstation mini near the player; the mini follows the hand and the sky follows the mini. Nothing rotates from inside the globe.")]
+        Workstation
     }
 
     private enum State
@@ -73,20 +76,32 @@ public sealed class VolumePinchRotation : MonoBehaviour
     [Min(0.05f)]
     private float displayGuideFraction = 0.8f;
 
+    [Tooltip("Workstation mode: the mini at the player's workstation (placement, reach and the mini-to-sky mapping).")]
+    [SerializeField]
+    private WorkstationMini workstation;
+
     private bool UseDisplay => controlCenter == ControlCenterMode.Display && display != null;
+
+    private bool WorkstationMode => controlCenter == ControlCenterMode.Workstation;
+
+    private bool UseWorkstation => WorkstationMode && workstation != null && workstation.IsReady;
 
     // Ring radius: a fraction of the volume, in Constellation mode a multiple
     // of the constellation's reach (falls back to the volume until it's placed),
     // in Display mode a fraction of the display's radius.
     private float GuideRadius =>
-        UseDisplay
+        UseWorkstation
+            ? workstation.Reach * constellationGuideFraction
+            : UseDisplay
             ? DisplayRadius() * displayGuideFraction
             : controlCenter == ControlCenterMode.Constellation && nearFieldSkyProxy != null && nearFieldSkyProxy.ConstellationReach > 0f
                 ? nearFieldSkyProxy.ConstellationReach * constellationGuideFraction
                 : volume.Radius * guideRadiusFraction;
 
     private Vector3 ControlCenter =>
-        UseDisplay
+        UseWorkstation
+            ? workstation.Center
+            : UseDisplay
             ? display.bounds.center
             : controlCenter == ControlCenterMode.Constellation || volume == null
                 ? skyConstellationPivot.position
@@ -153,7 +168,14 @@ public sealed class VolumePinchRotation : MonoBehaviour
 
     // The pinch region is always the sphere itself, so it matches the glass
     // even when the controls are centered elsewhere (Display mode).
-    private Vector3 EntryCenter => volume != null ? volume.transform.position : ControlCenter;
+    // Workstation mode: the sphere around the mini instead.
+    private Vector3 EntryCenter =>
+        UseWorkstation ? workstation.Center : volume != null ? volume.transform.position : ControlCenter;
+
+    private float EntryRadius => UseWorkstation ? workstation.EntryRadius : volume.Radius * entryRadiusFactor;
+
+    // Scale for the center region and the lever: the pinch region's radius.
+    private float RegionRadius => UseWorkstation ? workstation.EntryRadius : volume.Radius;
 
     [Tooltip("Log why a fresh pinch didn't start a rotation (debugging).")]
     [SerializeField]
@@ -311,6 +333,12 @@ public sealed class VolumePinchRotation : MonoBehaviour
     public event System.Action PinchEnded;
 
     public bool IsPinching => activeHand != null;
+
+    /// <summary>The hand doing the current rotation pinch (null when idle).</summary>
+    public IHand ActiveHand => activeHand != null ? activeHand.Hand : null;
+
+    /// <summary>True once the pinch has chosen an axis and the constellation follows the hand.</summary>
+    public bool IsRotating => state == State.Locked;
 
     private const int GuideSegments = 64;
     private const int ArcSegments = 16;
@@ -563,7 +591,8 @@ public sealed class VolumePinchRotation : MonoBehaviour
                 solved ? "solved" :
                 !hand.IsHighConfidence ? "low confidence" :
                 !hasPoint ? "no fingertip pose" :
-                distance > volume.Radius * entryRadiusFactor ? "outside volume" :
+                WorkstationMode && !UseWorkstation ? "workstation not placed" :
+                distance > EntryRadius ? (UseWorkstation ? "outside workstation" : "outside volume") :
                 null;
 
             if (rejected != null)
@@ -572,7 +601,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
                 {
                     Debug.Log(
                         $"VolumePinchRotation: pinch ignored ({rejected}), strength {strength:F2}, " +
-                        $"{(distance >= 0f ? $"{distance:F3} m from center (entry {volume.Radius * entryRadiusFactor:F3})" : "no point")}, " +
+                        $"{(distance >= 0f ? $"{distance:F3} m from center (entry {EntryRadius:F3})" : "no point")}, " +
                         $"preview {(previewHand == pinchHand ? "on this hand" : previewHand == null ? "off" : "on other hand")}, t {Time.time:F2}",
                         this
                     );
@@ -799,6 +828,14 @@ public sealed class VolumePinchRotation : MonoBehaviour
     // (same remap as GimbalHandleTransformer.TargetAxisRemap).
     private void RotateSky(Vector3 worldAxis, float angle)
     {
+        // Workstation: the mini is what's under the fingers, so it turns about
+        // the hand's own axis; the mirror carries that to the sky.
+        if (WorkstationMode)
+        {
+            miniConstellationPivot.Rotate(worldAxis, angle, Space.World);
+            return;
+        }
+
         Quaternion skyFromEarth = skyRotationReference.rotation * Quaternion.Inverse(miniEarthReference.rotation);
         miniConstellationPivot.Rotate(Quaternion.Inverse(skyFromEarth) * worldAxis, angle, Space.World);
     }
@@ -839,14 +876,14 @@ public sealed class VolumePinchRotation : MonoBehaviour
     // nearest the center that's inside the volume and not already pinching.
     private void UpdatePreview()
     {
-        if (!showPreview || IsLocked())
+        if (!showPreview || IsLocked() || (WorkstationMode && !UseWorkstation))
         {
             HidePreview();
             return;
         }
 
         Vector3 center = ControlCenter;
-        float entryRadius = volume.Radius * entryRadiusFactor;
+        float entryRadius = EntryRadius;
 
         PinchHand nearest = null;
         Vector3 nearestPoint = default;
@@ -890,7 +927,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
         previewDropped = ClassifyDroppedAxis(offset, previewDropped);
 
         float alpha = previewAlpha;
-        if (offset.magnitude < volume.Radius * centerFraction)
+        if (offset.magnitude < RegionRadius * centerFraction)
         {
             alpha *= centerPreviewScale;
         }
@@ -951,7 +988,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
     // Holds the current answer until another axis wins by the hysteresis margin.
     private int ClassifyDroppedAxis(Vector3 offset, int current)
     {
-        if (offset.magnitude < volume.Radius * centerFraction)
+        if (offset.magnitude < RegionRadius * centerFraction)
         {
             return 2;
         }
@@ -987,7 +1024,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
 
     private float LeverScale(float lever)
     {
-        return Mathf.Min(1f, lever / Mathf.Max(0.0001f, volume.Radius * minLeverFraction));
+        return Mathf.Min(1f, lever / Mathf.Max(0.0001f, RegionRadius * minLeverFraction));
     }
 
     private static bool TryGetPinchPoint(PinchHand pinchHand, out Vector3 point)
