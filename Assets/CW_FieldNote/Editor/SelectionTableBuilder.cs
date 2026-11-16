@@ -125,8 +125,21 @@ public static class SelectionTableBuilder
         var report = new List<string> { art, boxes };
         report.Add(BuildTable(sel, m));
         Transform folded = BuildFoldedNote(sel, m);
-        MomentaryToggleButton openButton = BuildOpenButton(rowRoot);
-        var reader = BuildReader(sel, rowRoot, openButton, m, out Transform readingBoard);
+        // A Field Note button in both box rows: Back to title (boxes shut) and
+        // All boxes (Starter Pack open).
+        var allBoxesRoot = (GameObject)new SerializedObject(selection).FindProperty("allBoxesButtonRoot").objectReferenceValue;
+        var openButtons = new List<MomentaryToggleButton> { BuildOpenButton(rowRoot, "Btn Back to title") };
+        var rows = new List<GameObject> { rowRoot };
+        if (allBoxesRoot != null)
+        {
+            bool was = allBoxesRoot.activeSelf;
+            allBoxesRoot.SetActive(true);
+            openButtons.Add(BuildOpenButton(allBoxesRoot, "Btn All boxes"));
+            allBoxesRoot.SetActive(was);
+            rows.Add(allBoxesRoot);
+        }
+
+        var reader = BuildReader(sel, rowRoot, rows, openButtons, folded, m, out Transform readingBoard);
         ConfigureBoxInstances(selection);
         var layout = EnsureLayout(selection, folded, readingBoard);
         layout.Apply();
@@ -384,10 +397,10 @@ public static class SelectionTableBuilder
 
     // ================================================================ Field Note button
 
-    static MomentaryToggleButton BuildOpenButton(GameObject rowRoot)
+    static MomentaryToggleButton BuildOpenButton(GameObject rowRoot, string templateName)
     {
         Transform row = rowRoot.transform.Find("Menu Canvas/Buttons");
-        Transform template = row.Find("Btn Back to title");
+        Transform template = row.Find(templateName);
         Transform t = row.Find("Btn Field Note");
         if (t == null)
         {
@@ -407,7 +420,7 @@ public static class SelectionTableBuilder
 
     // ================================================================ Reader
 
-    static FieldNoteReader BuildReader(Transform sel, GameObject rowRoot, MomentaryToggleButton openButton, Mats m, out Transform board)
+    static FieldNoteReader BuildReader(Transform sel, GameObject rowRoot, List<GameObject> rows, List<MomentaryToggleButton> openButtons, Transform folded, Mats m, out Transform board)
     {
         Rebuild(sel, "Field Note Reader", out Transform readerT);
         var reader = readerT.gameObject.AddComponent<FieldNoteReader>();
@@ -464,10 +477,15 @@ public static class SelectionTableBuilder
 
         var so = new SerializedObject(reader);
         so.FindProperty("selection").objectReferenceValue = sel.GetComponent<BoxSelection>();
-        so.FindProperty("openButton").objectReferenceValue = openButton;
+        var ob = so.FindProperty("openButtons");
+        ob.arraySize = openButtons.Count;
+        for (int i = 0; i < openButtons.Count; i++) ob.GetArrayElementAtIndex(i).objectReferenceValue = openButtons[i];
         so.FindProperty("backButton").objectReferenceValue = backButton;
         so.FindProperty("board").objectReferenceValue = board.gameObject;
-        so.FindProperty("boxRow").objectReferenceValue = rowRoot;
+        var br = so.FindProperty("boxRows");
+        br.arraySize = rows.Count;
+        for (int i = 0; i < rows.Count; i++) br.GetArrayElementAtIndex(i).objectReferenceValue = rows[i];
+        so.FindProperty("foldedNote").objectReferenceValue = folded.gameObject;
         so.ApplyModifiedPropertiesWithoutUndo();
         board.gameObject.SetActive(false);
         return reader;

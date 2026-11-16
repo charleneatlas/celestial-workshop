@@ -76,7 +76,8 @@ public static class SelectionTableSelfTest
         var bp = so.FindProperty("boxes");
         for (int i = 0; i < bp.arraySize; i++) boxes.Add((ConstellationBox)bp.GetArrayElementAtIndex(i).objectReferenceValue);
         var rso = new SerializedObject(reader);
-        var openBtn = (MomentaryToggleButton)rso.FindProperty("openButton").objectReferenceValue;
+        var openBtn = (MomentaryToggleButton)rso.FindProperty("openButtons").GetArrayElementAtIndex(0).objectReferenceValue;
+        var openBtnPack = (MomentaryToggleButton)rso.FindProperty("openButtons").GetArrayElementAtIndex(1).objectReferenceValue;
         var backBtn = (MomentaryToggleButton)rso.FindProperty("backButton").objectReferenceValue;
         var board = (GameObject)rso.FindProperty("board").objectReferenceValue;
         Transform table = sel.transform.Find("Selection Table");
@@ -115,6 +116,7 @@ public static class SelectionTableSelfTest
                     Check(reader.IsOpen && board.activeInHierarchy, "Field Note button opens the reader");
                     Check(FieldNoteReader.IsAnyOpen, "IsAnyOpen (hints suppressed)");
                     Check(!row.activeSelf, "box row steps aside while reading");
+                    Check(!note.gameObject.activeSelf, "folded note hidden while the sheet is open");
                     Check(sel.Current == BoxSelection.State.Closed && boxes.TrueForAll(b => b.gameObject.activeInHierarchy), "boxes untouched while reading");
                     Check(board.transform.localScale.x > 0.99f, $"sheet settled to full size ({board.transform.localScale.x:F3})");
                     {
@@ -135,6 +137,7 @@ public static class SelectionTableSelfTest
                     Check(!reader.IsOpen && !board.activeSelf, "Back closes the reader");
                     Check(row.activeSelf, "box row restored");
                     Check(!FieldNoteReader.IsAnyOpen, "IsAnyOpen cleared");
+                    Check(note.gameObject.activeSelf, "folded note back on the table");
                     openBtn.Press();
                     break;
                 case 4:
@@ -145,22 +148,35 @@ public static class SelectionTableSelfTest
                     Check(!reader.IsOpen && !board.activeSelf, "reader closes when a box opens");
                     Check(!row.activeSelf && allBoxesRow.activeSelf, "All boxes button replaces the box row");
                     Check(boxes.FindAll(b => b.gameObject.activeSelf).Count == 1, "other boxes step aside");
+                    Check(note.gameObject.activeSelf, "folded note back when the reader closes itself");
+                    Check(openBtnPack != null && openBtnPack.gameObject.activeInHierarchy, "Field Note button beside All boxes with the pack open");
+                    openBtnPack.Press();
                     break;
                 case 5:
+                    Check(reader.IsOpen && sel.Current == BoxSelection.State.PackOpen, "reader opens with the pack open");
+                    Check(!allBoxesRow.activeSelf && !note.gameObject.activeSelf, "All boxes row and folded note step aside");
+                    Check(sel.StarterPack.IsOpen && sel.StarterPack.gameObject.activeInHierarchy, "Starter Pack stays open while reading");
+                    backBtn.Press();
+                    break;
+                case 6:
+                    Check(!reader.IsOpen && allBoxesRow.activeSelf && note.gameObject.activeSelf, "Back restores All boxes row and folded note");
+                    Check(sel.Current == BoxSelection.State.PackOpen, "still in the open pack");
+                    break;
+                case 7:
                     sel.ShowAllBoxes();
                     Check(sel.Current == BoxSelection.State.Closed && boxes.TrueForAll(b => b.gameObject.activeInHierarchy), "All boxes: back to four shut boxes");
                     Check(row.activeSelf && !reader.IsOpen, "box row back, reader shut");
                     tableToRig = rig.transform.InverseTransformPoint(table.position);
                     wp.Raise();
                     break;
-                case 6:
+                case 8:
                 {
                     Vector3 now = rig.transform.InverseTransformPoint(table.position);
                     Check(Mathf.Abs((now.y - tableToRig.y) - 0.05f) < 0.006f, $"Raise lifts the table relative to the player ({(now.y - tableToRig.y) * 100f:F1} cm)");
                     wp.Lower();
                     break;
                 }
-                case 7:
+                case 9:
                 {
                     Vector3 now = rig.transform.InverseTransformPoint(table.position);
                     Check((now - tableToRig).magnitude < 0.006f, "Lower puts it back");
@@ -168,18 +184,24 @@ public static class SelectionTableSelfTest
                     sel.DebugPlaceSculpture(1);
                     break;
                 }
-                case 8:
+                case 10:
                     Check(gf.Current == GameFlow.Stage.Puzzle, $"placing a sculpture launches the puzzle (stage {gf.Current})");
                     Check(!sel.gameObject.activeInHierarchy && !reader.IsOpen, "table hidden in the puzzle");
                     break;
-                case 10:
-                    gf.ReturnToBoxes(false);
+                case 12:
+                    gf.ReturnToBoxes(true);
                     break;
-                case 11:
-                    Check(sel.Current == BoxSelection.State.Closed && note.gameObject.activeInHierarchy && row.activeSelf, "return to boxes: table, note and row back");
+                case 13:
+                    // "Choose another constellation" from the post-puzzle menu: straight into the open pack.
+                    Check(sel.Current == BoxSelection.State.PackOpen && note.gameObject.activeInHierarchy, "back into the open pack: note on the table");
+                    Check(openBtnPack.gameObject.activeInHierarchy, "Field Note button there after a puzzle");
+                    sel.ShowAllBoxes();
+                    break;
+                case 14:
+                    Check(sel.Current == BoxSelection.State.Closed && row.activeSelf && openBtn.gameObject.activeInHierarchy, "All boxes: row with Field Note button");
                     Check(!boxes.Exists(b => b.IsOpen), "all lids shut again");
                     break;
-                case 12:
+                case 15:
                     Debug.Log($"FNTEST DONE: {fails} failure(s)\n{log}");
                     EditorApplication.update -= Tick;
                     EditorApplication.ExitPlaymode();

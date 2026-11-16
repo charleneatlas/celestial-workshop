@@ -3,16 +3,17 @@ using UnityEngine;
 
 /// <summary>
 /// The Skycrafter's Field Note's reading view (the Credits board pattern, on
-/// the constellation-selection table). The Field Note button in the box row
+/// the constellation-selection table). A Field Note button in the box row
+/// (beside Back to title, or beside All boxes while the Starter Pack is open)
 /// opens a large, readable copy of the tri-fold sheet in front of the player;
 /// its Back button closes it. Reading is optional and never changes the box
-/// selection: the boxes stay as they are, only the box row (Back to title,
-/// Field Note) steps aside while the sheet is up, as the title row does for
-/// Credits.
+/// selection: the boxes stay as they are; only the button row and the folded
+/// note on the table step aside while the sheet is up (the note is "open"),
+/// as the title row does for Credits.
 ///
-/// It only opens while all boxes are shut (BoxSelection Closed), and puts the
-/// sheet away quietly whenever the selection moves on (a box opens, the stage
-/// changes, the selection hides).
+/// It opens with the boxes shut or the Starter Pack open, and puts the sheet
+/// away quietly whenever the selection moves on (a box opens, All boxes, a
+/// launch, the stage changes, the selection hides).
 /// </summary>
 public sealed class FieldNoteReader : MonoBehaviour
 {
@@ -20,9 +21,9 @@ public sealed class FieldNoteReader : MonoBehaviour
     [SerializeField]
     private BoxSelection selection;
 
-    [Tooltip("The Field Note button (in the box row).")]
+    [Tooltip("The Field Note buttons (one in each box row).")]
     [SerializeField]
-    private MomentaryToggleButton openButton;
+    private MomentaryToggleButton[] openButtons = new MomentaryToggleButton[0];
 
     [Tooltip("The Back button under the open sheet.")]
     [SerializeField]
@@ -32,9 +33,13 @@ public sealed class FieldNoteReader : MonoBehaviour
     [SerializeField]
     private GameObject board;
 
-    [Tooltip("The box row (Back to title + Field Note): hidden while reading, restored after if the boxes are still shut.")]
+    [Tooltip("The box rows (Back to title / All boxes, each with a Field Note button): whichever is showing steps aside while reading and comes back after.")]
     [SerializeField]
-    private GameObject boxRow;
+    private GameObject[] boxRows = new GameObject[0];
+
+    [Tooltip("The folded note on the table: hidden while the sheet is open.")]
+    [SerializeField]
+    private GameObject foldedNote;
 
     [Header("Appear")]
     [Tooltip("Seconds for the sheet to settle in when opened.")]
@@ -54,6 +59,8 @@ public sealed class FieldNoteReader : MonoBehaviour
 
     private float appearT = 1f;
     private Vector3 boardScale = Vector3.one;
+    private BoxSelection.State openedIn;
+    private readonly System.Collections.Generic.List<GameObject> hiddenRows = new System.Collections.Generic.List<GameObject>();
 
     private void Awake()
     {
@@ -71,14 +78,14 @@ public sealed class FieldNoteReader : MonoBehaviour
 
     private void OnEnable()
     {
-        if (openButton != null) openButton.Pressed += Open;
+        foreach (var b in openButtons) if (b != null) b.Pressed += Open;
         if (backButton != null) backButton.Pressed += Close;
         if (selection != null) selection.StateChanged += OnSelectionState;
     }
 
     private void OnDisable()
     {
-        if (openButton != null) openButton.Pressed -= Open;
+        foreach (var b in openButtons) if (b != null) b.Pressed -= Open;
         if (backButton != null) backButton.Pressed -= Close;
         if (selection != null) selection.StateChanged -= OnSelectionState;
 
@@ -94,11 +101,12 @@ public sealed class FieldNoteReader : MonoBehaviour
             return;
         }
 
-        if (selection != null && selection.Current != BoxSelection.State.Closed)
+        if (selection != null && selection.Current != BoxSelection.State.Closed && selection.Current != BoxSelection.State.PackOpen)
         {
             return;
         }
 
+        openedIn = selection != null ? selection.Current : BoxSelection.State.Closed;
         SetOpen(true, true);
     }
 
@@ -110,9 +118,9 @@ public sealed class FieldNoteReader : MonoBehaviour
 
     private void OnSelectionState(BoxSelection.State state)
     {
-        if (state != BoxSelection.State.Closed)
+        if (IsOpen && state != openedIn)
         {
-            // BoxSelection drives the box row itself from here on.
+            // BoxSelection drives the box rows itself from here on.
             SetOpen(false, false);
         }
     }
@@ -127,16 +135,35 @@ public sealed class FieldNoteReader : MonoBehaviour
         IsOpen = open;
         IsAnyOpen = open;
 
-        if (driveRow && boxRow != null)
+        if (open)
         {
-            if (open)
+            hiddenRows.Clear();
+            foreach (GameObject row in boxRows)
             {
-                boxRow.SetActive(false);
+                if (row != null && row.activeSelf)
+                {
+                    hiddenRows.Add(row);
+                    row.SetActive(false);
+                }
             }
-            else if (selection == null || selection.Current == BoxSelection.State.Closed)
+        }
+        else
+        {
+            if (driveRow && (selection == null || selection.Current == openedIn))
             {
-                boxRow.SetActive(true);
+                foreach (GameObject row in hiddenRows)
+                {
+                    if (row != null) row.SetActive(true);
+                }
             }
+
+            hiddenRows.Clear();
+        }
+
+        // The note on the table is the one being read.
+        if (foldedNote != null)
+        {
+            foldedNote.SetActive(!open);
         }
 
         if (board != null)
