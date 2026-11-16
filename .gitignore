@@ -77,3 +77,8 @@ crashlytics-build.properties
 # Meta Immersive Debugger AI assistant settings (contains local IP and access token)
 /Assets/Resources/DevAgentSettings.asset
 /Assets/Resources/DevAgentSettings.asset.meta
+
+# Generated solution file (new format) and Unity crash-recovery scenes
+*.slnx
+/[Aa]ssets/_Recovery/
+/[Aa]ssets/_Recovery.meta
