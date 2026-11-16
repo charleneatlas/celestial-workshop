@@ -132797,6 +132797,7 @@ GameObject:
   m_Component:
   - component: {fileID: 991274341}
   - component: {fileID: 991274340}
+  - component: {fileID: 991274342}
   m_Layer: 0
   m_Name: Rotate Ghost Hand Demo
   m_TagString: Untagged
@@ -132859,6 +132860,39 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &991274342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 991274339}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1ab4a3535b47d8489e6c7778c16c435, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChartGhostHand
+  director: {fileID: 1106382736}
+  chart: {fileID: 330823360}
+  pointingHandPrefab: {fileID: 2113516600698793651, guid: 46c0c1dacdb7e7a4580d2a8412d8787e, type: 3}
+  ghostMaterial: {fileID: 2100000, guid: cb68c0fab3e9e164eb0029a2e156e736, type: 2}
+  viewer: {fileID: 828061963}
+  stepId: chart
+  fingerLean: 35
+  approachYaw: -25
+  startHeight: 0.06
+  hoverHeight: 0.015
+  contactHeight: 0.002
+  startDelay: 1.2
+  approachDuration: 0.6
+  tapDownDuration: 0.35
+  tapHoldDuration: 0.2
+  tapUpDuration: 0.35
+  leaveDuration: 0.5
+  pauseDuration: 1.8
+  opacity: 0.5
+  stepAsideDistance: 0.15
+  returnAfter: 4
 --- !u!1 &991637813
 GameObject:
   m_ObjectHideFlags: 0
