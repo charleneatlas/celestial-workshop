@@ -17,6 +17,8 @@ public class ConstellationSolveController : MonoBehaviour
     [Tooltip("How close the viewing direction must be to enter the near-solve state.")]
     [SerializeField] private float nearSolveToleranceDegrees = 20f;
 
+    private const float NearSolveHysteresisDegrees = 1.5f;
+
     [Tooltip("How long the constellation must remain within tolerance.")]
     [SerializeField] private float requiredHoldTime = 0.4f;
 
@@ -118,8 +120,11 @@ public class ConstellationSolveController : MonoBehaviour
     {
         // Near-solve remains active all the way through
         // the actual solve tolerance until Solve() completes.
-        bool shouldBeNearSolve =
-            angle <= nearSolveToleranceDegrees;
+        // A little hysteresis: hovering right at the tolerance must not flip
+        // the state (events, highlight swap, logs) every frame.
+        bool shouldBeNearSolve = isNearSolve
+            ? angle <= nearSolveToleranceDegrees + NearSolveHysteresisDegrees
+            : angle <= nearSolveToleranceDegrees;
 
         if (shouldBeNearSolve == isNearSolve)
             return;

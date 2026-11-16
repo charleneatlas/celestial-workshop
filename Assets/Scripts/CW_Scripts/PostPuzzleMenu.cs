@@ -2,6 +2,10 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
+/// Practice letters have no signing: their menu comes up after the solve
+/// celebration (when the reveal presents the letter), with Try Another Letter
+/// (the letters-only title) and Enter the Workshop (the boxes).
+///
 /// After the constellation is signed, swaps the puzzle tools (Earth View Disc,
 /// Star Chart) for a small poke menu in the same spot under the sphere.
 ///
@@ -36,7 +40,16 @@ public sealed class PostPuzzleMenu : MonoBehaviour
     private TMPro.TMP_Text chooseAnotherLabel;
 
     [SerializeField]
-    private string practiceAnotherText = "Practice another letter";
+    private string practiceAnotherText = "Try Another Letter";
+
+    [Tooltip("Label of the second button after a practice letter (goes straight to the constellation boxes).")]
+    [SerializeField]
+    private string practiceWorkshopText = "Enter the Workshop";
+
+    [Tooltip("Practice: the menu comes up this long after the solved letter is presented (no signing).")]
+    [SerializeField]
+    [Min(0f)]
+    private float practiceMenuDelay = 1.2f;
 
     [Tooltip("The Choose Another Box button: hidden after practice (the first button already returns to the title).")]
     [SerializeField]
@@ -101,6 +114,9 @@ public sealed class PostPuzzleMenu : MonoBehaviour
     private string mainChooseAnotherText;
     private Coroutine pendingShow;
 
+    /// <summary>Raised when the menu comes up (guidance listens).</summary>
+    public event System.Action MenuShown;
+
     private void Awake()
     {
         ApplyLayout();
@@ -142,6 +158,7 @@ public sealed class PostPuzzleMenu : MonoBehaviour
         if (reveal != null)
         {
             reveal.Cleared += HandleCleared;
+            reveal.Presented += HandlePresented;
         }
     }
 
@@ -165,6 +182,7 @@ public sealed class PostPuzzleMenu : MonoBehaviour
         if (reveal != null)
         {
             reveal.Cleared -= HandleCleared;
+            reveal.Presented -= HandlePresented;
         }
 
         CancelPendingShow();
@@ -178,19 +196,33 @@ public sealed class PostPuzzleMenu : MonoBehaviour
 
     private void HandleSigned()
     {
+        ScheduleMenu(menuDelay);
+    }
+
+    // Practice letters skip signing: straight from the celebration to the menu.
+    private void HandlePresented()
+    {
+        if (signing != null && signing.SkipsSigning)
+        {
+            ScheduleMenu(practiceMenuDelay);
+        }
+    }
+
+    private void ScheduleMenu(float delay)
+    {
         CancelPendingShow();
-        if (menuDelay <= 0f || !isActiveAndEnabled)
+        if (delay <= 0f || !isActiveAndEnabled)
         {
             ShowMenu();
             return;
         }
 
-        pendingShow = StartCoroutine(ShowMenuAfterDelay());
+        pendingShow = StartCoroutine(ShowMenuAfterDelay(delay));
     }
 
-    private System.Collections.IEnumerator ShowMenuAfterDelay()
+    private System.Collections.IEnumerator ShowMenuAfterDelay(float delay)
     {
-        yield return new WaitForSeconds(menuDelay);
+        yield return new WaitForSeconds(delay);
         pendingShow = null;
 
         // Left the puzzle (or reset) during the hold: nothing to show.
@@ -250,6 +282,7 @@ public sealed class PostPuzzleMenu : MonoBehaviour
         IsMenuShown = true;
         UpdatePuzzleBackButton();
         Log("menu shown.");
+        MenuShown?.Invoke();
     }
 
     [ContextMenu("Hide Menu")]
@@ -293,8 +326,8 @@ public sealed class PostPuzzleMenu : MonoBehaviour
 
         if (gameFlow != null && gameFlow.IsPractice)
         {
-            Log("Practice another letter: back to the title.");
-            ReturnToTitleFromMenu();
+            Log("Try Another Letter: back to the title letters (no menu).");
+            LeaveMenu(gameFlow.ReturnToPracticeSelection);
             return;
         }
 
@@ -337,7 +370,7 @@ public sealed class PostPuzzleMenu : MonoBehaviour
             return;
         }
 
-        Log("Choose Another Box: back to all boxes.");
+        Log(gameFlow.IsPractice ? "Enter the Workshop: to the constellation boxes." : "Choose Another Box: back to all boxes.");
         LeaveMenu(() => gameFlow.ReturnToBoxes(false));
     }
 
@@ -399,12 +432,12 @@ public sealed class PostPuzzleMenu : MonoBehaviour
 
         if (chooseAnotherBoxButton != null)
         {
-            chooseAnotherBoxButton.SetActive(!practice);
+            chooseAnotherBoxButton.SetActive(true);
         }
 
         if (chooseAnotherBoxLabel != null)
         {
-            chooseAnotherBoxLabel.text = chooseAnotherBoxText;
+            chooseAnotherBoxLabel.text = practice ? practiceWorkshopText : chooseAnotherBoxText;
         }
     }
 

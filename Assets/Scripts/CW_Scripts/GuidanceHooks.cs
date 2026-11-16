@@ -51,7 +51,11 @@ public sealed class GuidanceHooks : MonoBehaviour
 
     [Tooltip("Menu hint text after a practice letter (the main puzzle keeps the step's own text).")]
     [SerializeField]
-    private string practiceMenuText = "Practice another letter";
+    private string practiceMenuText = "Try another letter, or enter the workshop";
+
+    [Tooltip("Practice letters show the menu hint when their menu comes up (they have no signing). Found automatically if empty.")]
+    [SerializeField]
+    private PostPuzzleMenu postPuzzleMenu;
 
     [Tooltip("Hints fade out while the Recenter countdown owns the view. Found automatically if empty.")]
     [SerializeField]
@@ -65,6 +69,11 @@ public sealed class GuidanceHooks : MonoBehaviour
         if (placement == null)
         {
             placement = FindFirstObjectByType<WorkshopPlacement>();
+        }
+
+        if (postPuzzleMenu == null)
+        {
+            postPuzzleMenu = FindFirstObjectByType<PostPuzzleMenu>();
         }
     }
 
@@ -94,6 +103,7 @@ public sealed class GuidanceHooks : MonoBehaviour
         if (signing != null) signing.Signed += OnSigned;
         if (blueprint != null) blueprint.StarTouched += OnChartStarTouched;
         if (boxSelection != null) boxSelection.StateChanged += OnBoxStateChanged;
+        if (postPuzzleMenu != null) postPuzzleMenu.MenuShown += OnMenuShown;
     }
 
     private void OnDisable()
@@ -113,6 +123,7 @@ public sealed class GuidanceHooks : MonoBehaviour
         if (signing != null) signing.Signed -= OnSigned;
         if (blueprint != null) blueprint.StarTouched -= OnChartStarTouched;
         if (boxSelection != null) boxSelection.StateChanged -= OnBoxStateChanged;
+        if (postPuzzleMenu != null) postPuzzleMenu.MenuShown -= OnMenuShown;
     }
 
     private IEnumerator Start()
@@ -192,7 +203,9 @@ public sealed class GuidanceHooks : MonoBehaviour
                 continue;
             }
 
-            director.Show(letterTurn ? "title-letter" : "title-start");
+            // The practice-selection title has no menu row: only the letter hint.
+            bool lettersOnly = gameFlow != null && gameFlow.TitleLettersOnly;
+            director.Show(letterTurn || lettersOnly ? "title-letter" : "title-start");
             float until = Time.time + Mathf.Max(1f, titleHintSeconds);
             while ((Time.time < until || IsLetterHeld()) && !CreditsBoard.IsAnyOpen)
             {
@@ -329,9 +342,19 @@ public sealed class GuidanceHooks : MonoBehaviour
 
     private void OnPresented()
     {
-        if (director != null)
+        // Practice letters have no signing (their menu hint follows the menu).
+        if (director != null && (signing == null || !signing.SkipsSigning))
         {
             director.Show("sign");
+        }
+    }
+
+    private void OnMenuShown()
+    {
+        if (director != null && gameFlow != null && gameFlow.IsPractice)
+        {
+            SetMenuText(true);
+            director.Show("menu");
         }
     }
 

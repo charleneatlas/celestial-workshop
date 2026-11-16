@@ -54,11 +54,6 @@ public sealed class GuildCertificate : MonoBehaviour
     [SerializeField]
     private Transform seal;
 
-    [Header("Use")]
-    [Tooltip("Practice letters are signed on the certificate too. Off = they sign in the sphere as before.")]
-    [SerializeField]
-    private bool useForPractice = true;
-
     [Header("Placement (tune in the headset)")]
     [Tooltip("Offset from the workstation's center (its frame: x right, y up, z away from the player), metres.")]
     [SerializeField]
@@ -93,10 +88,6 @@ public sealed class GuildCertificate : MonoBehaviour
     [Min(0.003f)]
     private float nameCapHeight = 0.013f;
 
-    [Tooltip("Ink of the signed name.")]
-    [SerializeField]
-    private Color inkColor = new Color(0.20f, 0.11f, 0.33f, 1f);
-
     [Header("Timing (s)")]
     [SerializeField]
     [Min(0.01f)]
@@ -114,7 +105,7 @@ public sealed class GuildCertificate : MonoBehaviour
     [Tooltip("The finished, sealed certificate stays this long.")]
     [SerializeField]
     [Min(0f)]
-    private float holdAfterSeal = 2.5f;
+    private float holdAfterSeal = 3.5f;
 
     [SerializeField]
     [Min(0.01f)]
@@ -126,8 +117,6 @@ public sealed class GuildCertificate : MonoBehaviour
     /// <summary>True from Present until it has gone (or was hidden).</summary>
     public bool IsShown { get; private set; }
 
-    /// <summary>Signed name ink.</summary>
-    public Color InkColor => inkColor;
 
     /// <summary>The name line (signing visuals are parented here so they leave with the certificate).</summary>
     public Transform NameLine => nameLine;
@@ -212,10 +201,8 @@ public sealed class GuildCertificate : MonoBehaviour
         HideNow();
     }
 
-    /// <summary>Whether the current puzzle signs here (always, unless it's practice and practice is off).</summary>
-    public bool ShouldUse =>
-        isActiveAndEnabled && visual != null && nameLine != null &&
-        (useForPractice || gameFlow == null || !gameFlow.IsPractice);
+    /// <summary>Whether signing can use the certificate (practice letters are never signed at all).</summary>
+    public bool ShouldUse => isActiveAndEnabled && visual != null && nameLine != null;
 
     /// <summary>
     /// Places the certificate at the workstation, full size, so the signing

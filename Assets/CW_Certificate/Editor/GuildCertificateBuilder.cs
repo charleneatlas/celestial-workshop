@@ -31,12 +31,15 @@ public static class GuildCertificateBuilder
     const string MatDir = Root + "/Materials";
     const string PrefabPath = Root + "/GuildCertificate.prefab";
     const string NB = "Assets/CW_Onboarding";
-    const string FontCaps = "Assets/CW_Art/Fonts/ArchitectsDaughter SDF.asset";
+    const string FontTitle = "Assets/CW_Art/Fonts/Meddon SDF.asset";
+    const string TitleInkMaterial = NB + "/Materials/Title_Ink.mat";
     const string FontHand = "Assets/CW_Art/Fonts/Caveat SDF.asset";
     const string InstanceName = "Guild Certificate";
 
     // ---- Copy ----
-    const string TitleText = "THE CELESTIAL WORKSHOP GUILD";
+    // The noticeboard's own title treatment (Meddon, Title_Ink), in its title case.
+    // Meddon's own word space is narrow; widened like the noticeboard's title.
+    const string TitleText = "The<space=0.45em>Celestial<space=0.45em>Workshop<space=0.45em>Guild";
     const string CertifiesText = "Hereby certifies";
     const string ClosingText = "for the night sky of Earth";
 
@@ -44,7 +47,7 @@ public static class GuildCertificateBuilder
     const float PaperW = 0.26f, PaperH = 0.10f;
     const float BoardW = 0.285f, BoardH = 0.13f, BoardT = 0.012f;
     const float TitleY = 0.0305f, CertifiesY = 0.0168f, LineY = -0.012f, ClosingY = -0.0315f;
-    const float TitleCap = 0.0056f, HandCap = 0.0068f;
+    const float TitleCap = 0.0078f, HandCap = 0.0068f;
     const float TitleMaxW = 0.17f;
     const float LineHalf = 0.075f;
     static readonly Vector2 SealCenter = new Vector2(-0.113f, 0.030f);
@@ -99,7 +102,8 @@ public static class GuildCertificateBuilder
             Quad(visual, "Ink", ink, Vector2.zero, new Vector2(PaperW, PaperH), SortInk, -0.0004f);
 
             var placed = new List<(TextMeshPro, Vector3)>();
-            TextMeshPro title = Text(visual, "Title", TitleText, FontCaps, TitleCap, Ink, new Vector2(0f, TitleY), 0.2f, placed, TitleMaxW, spacing: 14f);
+            TextMeshPro title = Text(visual, "Title", TitleText, FontTitle, TitleCap, Ink, new Vector2(0f, TitleY), 0.2f, placed, TitleMaxW,
+                material: AssetDatabase.LoadAssetAtPath<Material>(TitleInkMaterial));
             Text(visual, "Hereby Certifies", CertifiesText, FontHand, HandCap, InkBody, new Vector2(0f, CertifiesY), 0.1f, placed);
             Text(visual, "For The Night Sky", ClosingText, FontHand, HandCap, InkBody, new Vector2(0f, ClosingY), 0.15f, placed);
 
@@ -118,7 +122,7 @@ public static class GuildCertificateBuilder
 
             // TMP RectTransforms: re-assert (see SelectionTableBuilder).
             foreach (var (text, pos) in placed) text.rectTransform.anchoredPosition3D = pos;
-            log.Add($"title {title.GetPreferredValues(TitleText).x * title.transform.lossyScale.x:F3} m wide");
+            log.Add($"title {title.GetPreferredValues(TitleText).x:F3} m wide");
 
             PrefabUtility.SaveAsPrefabAsset(root, PrefabPath);
             log.Add("prefab saved");
@@ -502,14 +506,14 @@ public static class GuildCertificateBuilder
 
     // Same sizing rule as the noticeboard, Credits and Field Note: cap = cap height in metres.
     static TextMeshPro Text(Transform parent, string name, string text, string fontPath, float cap, Color color,
-        Vector2 pos, float width, List<(TextMeshPro, Vector3)> placed, float maxWidth = 0f, float spacing = 0f)
+        Vector2 pos, float width, List<(TextMeshPro, Vector3)> placed, float maxWidth = 0f, float spacing = 0f, Material material = null)
     {
         var t = new GameObject(name).transform;
         t.SetParent(parent, false);
         var tmp = t.gameObject.AddComponent<TextMeshPro>();
         var font = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(fontPath);
         tmp.font = font;
-        tmp.fontSharedMaterial = font.material;
+        tmp.fontSharedMaterial = material != null ? material : font.material;
         tmp.text = text;
         tmp.color = color;
         tmp.alignment = TextAlignmentOptions.Center;

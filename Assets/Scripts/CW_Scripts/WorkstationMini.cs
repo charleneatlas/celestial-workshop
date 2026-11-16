@@ -652,7 +652,7 @@ public sealed class WorkstationMini : MonoBehaviour
         UpdateMarker();
     }
 
-    private string markerKey;
+    private Vector2 markerKey = new Vector2(-1f, -1f);
 
     // The ring appears once a constellation box is opened, or while a title
     // letter is held, stays through the puzzle (main or practice) started from
@@ -712,7 +712,7 @@ public sealed class WorkstationMini : MonoBehaviour
         marker.transform.localRotation = Quaternion.identity;
         marker.transform.localScale = Vector3.one;
 
-        string key = $"{markerRadius:F4}|{markerWidth:F4}";
+        var key = new Vector2(markerRadius, markerWidth);
         if (key == markerKey)
         {
             return;

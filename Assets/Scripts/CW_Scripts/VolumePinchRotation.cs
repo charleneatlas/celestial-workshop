@@ -389,7 +389,10 @@ public sealed class VolumePinchRotation : MonoBehaviour
     private readonly GuideVisual[] arcs = new GuideVisual[3];
     private readonly Mesh[] ringMeshes = new Mesh[3];
     private Mesh arcMesh;
-    private string meshKey;
+    // What the tube meshes were last built for (compared as numbers: no per-frame strings).
+    private bool meshKeyValid;
+    private Vector4 meshKey;
+    private int meshKeySides;
 
     private readonly Vector3[] ringPoints = new Vector3[GuideSegments];
     private readonly Vector3[] arcPoints = new Vector3[ArcSegments + 1];
@@ -1027,7 +1030,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
         {
             workspaceFrame = workstation.ControlFrame;
             frameCaptured = true;
-            meshKey = null;
+            meshKeyValid = false;
             return;
         }
 
@@ -1041,7 +1044,7 @@ public sealed class VolumePinchRotation : MonoBehaviour
             ? Quaternion.LookRotation(view.normalized, Vector3.up)
             : Quaternion.identity;
         frameCaptured = true;
-        meshKey = null;
+        meshKeyValid = false;
     }
 
     // The axis the hand sits closest to: its circle would have no radius there.
@@ -1212,13 +1215,15 @@ public sealed class VolumePinchRotation : MonoBehaviour
     private void EnsureTubeMeshes()
     {
         float radius = GuideRadius;
-        string key = $"{radius:F4}|{guideWidth:F4}|{tubeSides}|{backFade:F2}|{previewArcDegrees:F1}";
-        if (key == meshKey)
+        var key = new Vector4(radius, guideWidth, backFade, previewArcDegrees);
+        if (meshKeyValid && key == meshKey && tubeSides == meshKeySides)
         {
             return;
         }
 
+        meshKeyValid = true;
         meshKey = key;
+        meshKeySides = tubeSides;
         float tubeRadius = guideWidth * 0.5f;
         Vector3 toViewer = -WorkspaceAxis(2);
 

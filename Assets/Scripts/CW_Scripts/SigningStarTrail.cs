@@ -9,6 +9,9 @@ using UnityEngine;
 /// Only watches ConstellationSigning (state, progress, line geometry) and drives
 /// a StarTrail the same way SignatureReveal does on the noticeboard; signing
 /// itself is unchanged.
+///
+/// Follow Sphere Copy: while signing on the Guild Certificate, this trail runs
+/// along the sphere copy of the name instead (a second trail, in step).
 /// </summary>
 public sealed class SigningStarTrail : MonoBehaviour
 {
@@ -24,6 +27,10 @@ public sealed class SigningStarTrail : MonoBehaviour
     [Range(0f, 1.5f)]
     private float trailHeight = 0.45f;
 
+    [Tooltip("Follow the sphere copy of the name (signing on the certificate) instead of the signing line.")]
+    [SerializeField]
+    private bool followSphereCopy;
+
     private ConstellationSigning.State lastState = ConstellationSigning.State.Off;
     private float lastProgress = -1f;
 
@@ -35,8 +42,8 @@ public sealed class SigningStarTrail : MonoBehaviour
         }
 
         ConstellationSigning.State state = signing.CurrentState;
-        float progress = signing.Progress;
-        bool hasEdge = signing.TryGetLinePoint(progress, trailHeight, out Vector3 edge);
+        float progress = followSphereCopy ? signing.SkyProgress : signing.Progress;
+        bool hasEdge = TryGetPoint(progress, out Vector3 edge);
 
         if (state != lastState)
         {
@@ -75,7 +82,7 @@ public sealed class SigningStarTrail : MonoBehaviour
 
             case ConstellationSigning.State.Paused:
                 trail.EndStroke(true);
-                if (hasEdge && signing.Progress > 0f)
+                if (hasEdge && (followSphereCopy ? signing.SkyProgress : signing.Progress) > 0f)
                 {
                     trail.SetHead(true, edge, true);
                 }
@@ -90,13 +97,19 @@ public sealed class SigningStarTrail : MonoBehaviour
                 }
 
                 trail.EndStroke(false);
-                if (signing.TryGetLinePoint(0f, trailHeight, out Vector3 start) &&
-                    signing.TryGetLinePoint(1f, trailHeight, out Vector3 end))
+                if (TryGetPoint(0f, out Vector3 start) && TryGetPoint(1f, out Vector3 end))
                 {
                     trail.Flourish(start, end);
                 }
 
                 break;
         }
+    }
+
+    private bool TryGetPoint(float lineFraction, out Vector3 point)
+    {
+        return followSphereCopy
+            ? signing.TryGetSkyLinePoint(lineFraction, trailHeight, out point)
+            : signing.TryGetLinePoint(lineFraction, trailHeight, out point);
     }
 }

@@ -6,10 +6,11 @@ using UnityEngine;
 
 /// <summary>
 /// First-time demonstration for rotating the constellation: while the guidance
-/// "rotate" step is up, a translucent ghost hand pinches low in the globe and
-/// sweeps sideways (the motion that turns the sky about its vertical axis),
-/// then fades and repeats. The sweep runs below the constellation picture so
-/// it never covers the stars.
+/// "rotate" step is up, a translucent ghost hand pinches beside the small
+/// constellation at the workstation and sweeps sideways, left to right, along
+/// the turn guide ring (tilted toward the player with the mini's control frame);
+/// without a workstation it sweeps low in the globe, below the constellation
+/// picture. Then it fades and repeats.
 ///
 /// It gets out of the way at once when the player pinches in the globe, comes
 /// back after a quiet spell if the step is still open, and stops for good when
@@ -27,9 +28,23 @@ public sealed class GuidanceGhostHand : MonoBehaviour
     [SerializeField]
     private VolumePinchRotation pinchRotation;
 
-    [Tooltip("The globe the demo happens in.")]
+    [Tooltip("The globe (the demo runs while it is active; without a workstation the demo happens in it).")]
     [SerializeField]
     private CircularWindow volume;
+
+    [Tooltip("The workstation mini the player turns: the demo pinches and sweeps around it. Found automatically if empty.")]
+    [SerializeField]
+    private WorkstationMini workstation;
+
+    [Tooltip("At the workstation, the sweep circle's radius as a multiple of the mini's reach. 1.1 = the turn guide ring (VolumePinchRotation's constellation guide fraction).")]
+    [SerializeField]
+    [Range(0.5f, 3f)]
+    private float workstationRadiusFactor = 1.1f;
+
+    [Tooltip("At the workstation, the sweep's offset along the ring's axis, as a fraction of its radius. 0 = on the guide ring.")]
+    [SerializeField]
+    [Range(-1f, 1f)]
+    private float workstationHeightFraction = 0f;
 
     [Tooltip("Player camera (CenterEyeAnchor). Defaults to the main camera.")]
     [SerializeField]
@@ -138,6 +153,21 @@ public sealed class GuidanceGhostHand : MonoBehaviour
     private float alpha;
     private Quaternion frame = Quaternion.identity;
 
+    private void Awake()
+    {
+        if (workstation == null)
+        {
+            workstation = FindFirstObjectByType<WorkstationMini>();
+        }
+    }
+
+    // Where the demo happens: around the workstation mini when there is one.
+    private bool UseWorkstation => workstation != null && workstation.isActiveAndEnabled && workstation.IsReady;
+
+    private Vector3 DemoCenter => UseWorkstation ? workstation.Center : volume.transform.position;
+
+    private float DemoRadius => UseWorkstation ? workstation.Reach * workstationRadiusFactor : volume.Radius;
+
     private void OnEnable()
     {
         if (director != null)
@@ -238,7 +268,7 @@ public sealed class GuidanceGhostHand : MonoBehaviour
             CaptureFrame();
         }
 
-        float radius = volume.Radius;
+        float radius = DemoRadius;
         float half = 0.5f * sweepDegrees;
         Vector3 inward = Vector3.zero;
         float azimuth;
@@ -247,30 +277,30 @@ public sealed class GuidanceGhostHand : MonoBehaviour
         if (t < approachDuration)
         {
             float k = Smooth(t / approachDuration);
-            azimuth = half;
-            inward = Arc(half, radius).normalized * (approachDistance * (1f - k));
+            azimuth = -half;
+            inward = Arc(-half, radius).normalized * (approachDistance * (1f - k));
             fade = k;
         }
         else if (t < approachDuration + sweepDuration)
         {
             float k = Smooth((t - approachDuration) / sweepDuration);
-            azimuth = Mathf.Lerp(half, -half, k);
+            azimuth = Mathf.Lerp(-half, half, k);   // left to right
             fade = 1f;
         }
         else if (t < approachDuration + sweepDuration + releaseDuration)
         {
             float k = Smooth((t - approachDuration - sweepDuration) / releaseDuration);
-            azimuth = -half;
-            inward = Vector3.up * (0.03f * k);
+            azimuth = half;
+            inward = (frame * Vector3.up) * (0.03f * k);
             fade = 1f - k;
         }
         else
         {
-            azimuth = -half;
+            azimuth = half;
             fade = 0f;
         }
 
-        Vector3 pinchPoint = volume.transform.position + Arc(azimuth, radius) + inward;
+        Vector3 pinchPoint = DemoCenter + Arc(azimuth, radius) + inward;
         PoseAt(pinchPoint);
         SetAlpha(fade * opacity);
     }
@@ -281,8 +311,10 @@ public sealed class GuidanceGhostHand : MonoBehaviour
         float a = azimuthDegrees * Mathf.Deg2Rad;
         Vector3 toward = frame * Vector3.back;
         Vector3 right = frame * Vector3.right;
-        return Vector3.up * (heightFraction * radius) +
-               (right * Mathf.Sin(a) + toward * Mathf.Cos(a)) * (leverFraction * radius);
+        float height = UseWorkstation ? workstationHeightFraction : heightFraction;
+        float lever = UseWorkstation ? 1f : leverFraction;
+        return frame * Vector3.up * (height * radius) +
+               (right * Mathf.Sin(a) + toward * Mathf.Cos(a)) * (lever * radius);
     }
 
     private void CaptureFrame()
@@ -293,10 +325,22 @@ public sealed class GuidanceGhostHand : MonoBehaviour
             return;
         }
 
-        Vector3 look = Vector3.ProjectOnPlane(volume.transform.position - eye.position, Vector3.up);
+        // At the workstation the sideways turn is about the mini's control-frame up
+        // (tilted toward the player), the axis of the turn guide ring.
+        Vector3 up = Vector3.up;
+        if (UseWorkstation)
+        {
+            up = workstation.ControlFrame * Vector3.up;
+            if (Vector3.Dot(up, Vector3.up) < 0f)
+            {
+                up = -up;
+            }
+        }
+
+        Vector3 look = Vector3.ProjectOnPlane(DemoCenter - eye.position, up);
         if (look.sqrMagnitude > 1e-6f)
         {
-            frame = Quaternion.LookRotation(look.normalized, Vector3.up);
+            frame = Quaternion.LookRotation(look.normalized, up);
         }
     }
 

@@ -195,7 +195,7 @@ public sealed class TitleFlowBridge : MonoBehaviour
         if (stage == GameFlow.Stage.Title)
         {
             placed = false;
-            shelf.Show();
+            shelf.Show(!gameFlow.TitleLettersOnly);
         }
         else
         {

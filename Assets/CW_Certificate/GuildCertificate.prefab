@@ -495,7 +495,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: -8068050142652601467, guid: 7a3e683d64ebc214aaf1e712fa292158, type: 2}
+  - {fileID: 2100000, guid: 9d41e5e4c94f41d4191b9b65d8494037, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -539,10 +539,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: THE CELESTIAL WORKSHOP GUILD
+  m_text: The<space=0.45em>Celestial<space=0.45em>Workshop<space=0.45em>Guild
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 7a3e683d64ebc214aaf1e712fa292158, type: 2}
-  m_sharedMaterial: {fileID: -8068050142652601467, guid: 7a3e683d64ebc214aaf1e712fa292158, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 8433b450e5a14dd4f89a9be44c8203b1, type: 2}
+  m_sharedMaterial: {fileID: 2100000, guid: 9d41e5e4c94f41d4191b9b65d8494037, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -566,8 +566,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 0.07753846
-  m_fontSizeBase: 0.07753846
+  m_fontSize: 0.07163265
+  m_fontSizeBase: 0.07163265
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -576,7 +576,7 @@ MonoBehaviour:
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
-  m_characterSpacing: 14
+  m_characterSpacing: 0
   m_characterHorizontalScale: 1
   m_wordSpacing: 0
   m_lineSpacing: 0
@@ -757,7 +757,6 @@ MonoBehaviour:
   visual: {fileID: 9024612311883654153}
   nameLine: {fileID: 2613773324499139974}
   seal: {fileID: 3200640614540552232}
-  useForPractice: 1
   offset: {x: 0, y: 0.01, z: 0}
   faceEyes: 1
   extraTilt: 8
@@ -765,11 +764,10 @@ MonoBehaviour:
   fallbackEyeHeight: 1.2
   lineWidth: 0.15
   nameCapHeight: 0.013
-  inkColor: {r: 0.2, g: 0.11, b: 0.33, a: 1}
   appearDuration: 0.45
   sealDelay: 0.35
   sealDuration: 0.4
-  holdAfterSeal: 2.5
+  holdAfterSeal: 3.5
   exitDuration: 0.5
   logEvents: 1
 --- !u!1 &5659899231788550063

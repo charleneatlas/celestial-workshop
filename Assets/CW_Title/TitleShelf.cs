@@ -129,6 +129,9 @@ public sealed class TitleShelf : MonoBehaviour
 
     public bool IsShown { get; private set; }
 
+    /// <summary>True while the menu row (Start button root) is shown with the letters.</summary>
+    public bool IsMenuShown { get; private set; }
+
     public IReadOnlyList<TitleLetterMini> Letters => letters;
 
     public float ViewingDistance => viewingDistance;
@@ -210,7 +213,7 @@ public sealed class TitleShelf : MonoBehaviour
         }
 
         Keyboard keyboard = Keyboard.current;
-        if (keyboard != null && startKey != Key.None && keyboard[startKey].wasPressedThisFrame)
+        if (IsMenuShown && keyboard != null && startKey != Key.None && keyboard[startKey].wasPressedThisFrame)
         {
             PressStart();
         }
@@ -222,13 +225,19 @@ public sealed class TitleShelf : MonoBehaviour
     [ContextMenu("Show")]
     public void Show()
     {
-        SetVisible(true);
+        SetVisible(true, true);
+    }
+
+    /// <summary>Shows the letters; withMenu false keeps the menu row hidden (practice selection).</summary>
+    public void Show(bool withMenu)
+    {
+        SetVisible(true, withMenu);
     }
 
     [ContextMenu("Hide")]
     public void Hide()
     {
-        SetVisible(false);
+        SetVisible(false, false);
     }
 
     [ContextMenu("Press Start")]
@@ -561,7 +570,7 @@ public sealed class TitleShelf : MonoBehaviour
         }
     }
 
-    private void SetVisible(bool visible)
+    private void SetVisible(bool visible, bool withMenu)
     {
         Transform root = lettersRoot != null ? lettersRoot : transform.Find(LettersName);
         if (root != null)
@@ -571,11 +580,12 @@ public sealed class TitleShelf : MonoBehaviour
 
         if (startButtonRoot != null)
         {
-            startButtonRoot.SetActive(visible);
+            startButtonRoot.SetActive(visible && withMenu);
         }
 
         IsShown = visible;
-        Log(visible ? "shown." : "hidden.");
+        IsMenuShown = visible && withMenu;
+        Log(visible ? (withMenu ? "shown." : "shown (letters only).") : "hidden.");
     }
 
     private void Log(string message)

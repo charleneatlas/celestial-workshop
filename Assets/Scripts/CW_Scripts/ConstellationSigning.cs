@@ -131,10 +131,31 @@ public sealed class ConstellationSigning : MonoBehaviour
     [SerializeField]
     private Shader lineShader;
 
+    [Tooltip("Optional: the TMP material the name is drawn with (e.g. the noticeboard's Signature_Gold, a gold glow). Empty = the font's own material.")]
+    [SerializeField]
+    private Material nameMaterial;
+
+    [Header("Practice")]
+    [Tooltip("Found automatically if empty.")]
+    [SerializeField]
+    private GameFlow gameFlow;
+
+    [Tooltip("Off: practice puzzles skip signing entirely (no line, pen, grip or name).")]
+    [SerializeField]
+    private bool signInPractice = false;
+
     [Header("Guild Certificate")]
-    [Tooltip("When set (and it accepts the current puzzle), the name is signed on this certificate at the workstation instead of under the constellation in the sphere. Same pen, gesture and thresholds.")]
+    [Tooltip("When set, the name is signed on this certificate at the workstation instead of under the constellation in the sphere. Same pen, gesture and thresholds.")]
     [SerializeField]
     private GuildCertificate certificate;
+
+    [Tooltip("While signing on the certificate, the same name is revealed in step inside the sphere, where it used to be signed (same layout as before).")]
+    [SerializeField]
+    private bool revealInSphereToo = true;
+
+    [Tooltip("Material of the sphere copy. Empty = the font's own material (the original sphere signature: crisp letters, sparkle from the star trail).")]
+    [SerializeField]
+    private Material sphereNameMaterial;
 
     [Header("Pen")]
     [Tooltip("Pen to spawn (tip at its origin, or at a child named \"Tip\"). Empty = a generated cylinder using the placeholder size and color below.")]
@@ -306,6 +327,19 @@ public sealed class ConstellationSigning : MonoBehaviour
     private bool onCertificate;
     private float certificateWidth;
     private float certificateCapHeight;
+
+    // The sphere copy of the name while signing on the certificate (no input of its own).
+    private TextMeshPro skyText;
+    private Material skyMaterial;
+    private bool hasSkyFrame;
+    private Vector3 skyCenter;
+    private Vector3 skyRight;
+    private Vector3 skyUp;
+    private Vector3 skyToward;
+    private Vector2 skyHalf;
+    private Vector3 skyLineLeft;
+    private float skyCapHeight;
+    private float skyRevealFraction;
     private Vector3 lineLeft;
     private float fittedCapHeight;
     private bool layoutDirty;
@@ -343,6 +377,25 @@ public sealed class ConstellationSigning : MonoBehaviour
     /// raised to capFraction of the name's cap height above the text baseline.
     /// False while there is no signing line. Read-only; used by SigningStarTrail.
     /// </summary>
+    /// <summary>Line fraction of the sphere copy's revealed edge (follows Progress, letter for letter).</summary>
+    public float SkyProgress => state == State.Complete ? 1f : skyRevealFraction;
+
+    /// <summary>
+    /// Like TryGetLinePoint, on the sphere copy's line (false while there is
+    /// no sphere copy: not on the certificate, or it is off).
+    /// </summary>
+    public bool TryGetSkyLinePoint(float lineFraction, float capFraction, out Vector3 point)
+    {
+        if (signingRoot == null || skyText == null)
+        {
+            point = default;
+            return false;
+        }
+
+        point = skyLineLeft + skyRight * (signingWidth * lineFraction) + skyUp * (textLift + skyCapHeight * capFraction);
+        return true;
+    }
+
     public bool TryGetLinePoint(float lineFraction, float capFraction, out Vector3 point)
     {
         if (signingRoot == null)
@@ -357,6 +410,11 @@ public sealed class ConstellationSigning : MonoBehaviour
 
     private void Awake()
     {
+        if (gameFlow == null)
+        {
+            gameFlow = FindFirstObjectByType<GameFlow>();
+        }
+
         foreach (Object handObject in hands)
         {
             if (handObject is IHand hand)
@@ -388,7 +446,7 @@ public sealed class ConstellationSigning : MonoBehaviour
 
     private void OnDestroy()
     {
-        foreach (Material material in new[] { lineMaterial, areaMaterial, textMaterial, penMaterial })
+        foreach (Material material in new[] { lineMaterial, areaMaterial, textMaterial, skyMaterial, penMaterial })
         {
             if (material != null)
             {
@@ -404,11 +462,14 @@ public sealed class ConstellationSigning : MonoBehaviour
 
     private void OnPresented()
     {
-        if (signingEnabled)
+        if (signingEnabled && !SkipsSigning)
         {
             BeginAttempt();
         }
     }
+
+    /// <summary>True when the current puzzle has no signing (a practice letter).</summary>
+    public bool SkipsSigning => !signInPractice && gameFlow != null && gameFlow.IsPractice;
 
     // ---- Public controls ----
 
@@ -432,6 +493,9 @@ public sealed class ConstellationSigning : MonoBehaviour
         }
 
         onCertificate = false;
+        skyText = null;
+        hasSkyFrame = false;
+        skyRevealFraction = 0f;
 
         signingRoot = null;
         line = null;
@@ -509,6 +573,10 @@ public sealed class ConstellationSigning : MonoBehaviour
             if (!onCertificate)
             {
                 certificate.HideNow();
+            }
+            else if (revealInSphereToo && reveal != null)
+            {
+                hasSkyFrame = reveal.TryGetPresentation(out skyCenter, out skyRight, out skyUp, out skyToward, out skyHalf);
             }
         }
 
@@ -876,34 +944,13 @@ public sealed class ConstellationSigning : MonoBehaviour
             areaBack = NewLine("Area Back", areaMaterial, 4, true);
         }
 
-        // Name text, with its own copy of the font material (clip rect on).
-        var textObject = new GameObject("Signed Name") { layer = 0 };
-        textObject.transform.SetParent(signingRoot.transform, false);
-        nameText = textObject.AddComponent<TextMeshPro>();
-        nameText.font = font;
-        if (textMaterial == null || textMaterial.shader != font.material.shader)
-        {
-            if (textMaterial != null)
-            {
-                Destroy(textMaterial);
-            }
+        // Name text, with its own copy of the name material (clip rect on).
+        nameText = NewNameText("Signed Name", text, ref textMaterial, " (signing)", nameMaterial);
 
-            textMaterial = new Material(font.material) { name = font.name + " (signing)" };
-        }
-
-        textMaterial.CopyPropertiesFromMaterial(font.material);
-        textMaterial.EnableKeyword("UNITY_UI_CLIP_RECT");
-        nameText.fontSharedMaterial = textMaterial;
-        nameText.extraPadding = true;
-        nameText.text = text;
-        nameText.fontSize = 10f;
-        nameText.alignment = TextAlignmentOptions.Baseline;
-        nameText.textWrappingMode = TextWrappingModes.NoWrap;
-        nameText.overflowMode = TextOverflowModes.Overflow;
-        if (textObject.TryGetComponent(out MeshRenderer textRenderer))
+        // The sphere copy: same name and look, revealed in step, no input.
+        if (onCertificate && hasSkyFrame)
         {
-            textRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
-            textRenderer.receiveShadows = false;
+            skyText = NewNameText("Signed Name (Sphere)", text, ref skyMaterial, " (signing, sphere)", sphereNameMaterial);
         }
 
         if (penPrefab != null)
@@ -918,6 +965,42 @@ public sealed class ConstellationSigning : MonoBehaviour
         Layout();
         ApplyLook();
         ApplyWipe();
+    }
+
+    private TextMeshPro NewNameText(string objectName, string text, ref Material material, string suffix, Material look)
+    {
+        Material source = look != null ? look : font.material;
+        var textObject = new GameObject(objectName) { layer = 0 };
+        textObject.transform.SetParent(signingRoot.transform, false);
+        TextMeshPro tmp = textObject.AddComponent<TextMeshPro>();
+        tmp.font = font;
+        if (material == null || material.shader != source.shader)
+        {
+            if (material != null)
+            {
+                Destroy(material);
+            }
+
+            material = new Material(source) { name = source.name + suffix };
+        }
+
+        material.CopyPropertiesFromMaterial(source);
+        material.shaderKeywords = source.shaderKeywords;
+        material.EnableKeyword("UNITY_UI_CLIP_RECT");
+        tmp.fontSharedMaterial = material;
+        tmp.extraPadding = true;
+        tmp.text = text;
+        tmp.fontSize = 10f;
+        tmp.alignment = TextAlignmentOptions.Baseline;
+        tmp.textWrappingMode = TextWrappingModes.NoWrap;
+        tmp.overflowMode = TextOverflowModes.Overflow;
+        if (textObject.TryGetComponent(out MeshRenderer textRenderer))
+        {
+            textRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
+            textRenderer.receiveShadows = false;
+        }
+
+        return tmp;
     }
 
     // The certificate prints its own line; the name is carried by the
@@ -1160,49 +1243,10 @@ public sealed class ConstellationSigning : MonoBehaviour
             return;
         }
 
-        // Fit: capital height maxCapHeight, shrunk to the usable width.
-        nameText.transform.localScale = Vector3.one;
-        Vector2 h = nameText.GetPreferredValues("H");
-        float capInText = h.y * (font.faceInfo.capLine / Mathf.Max(1e-4f, font.faceInfo.lineHeight));
-        float textWidth = nameText.GetPreferredValues(nameText.text).x;
-        float scale = capInText > 0f ? CapHeight / capInText : 0.001f;
-        float usable = Width * textWidthFill;
-        if (textWidth * scale > usable && textWidth > 0f)
-        {
-            scale = usable / textWidth;
-        }
-
-        fittedCapHeight = capInText * scale;
-        nameText.rectTransform.sizeDelta = new Vector2(Mathf.Max(textWidth * 1.2f, 1f), Mathf.Max(h.y * 2f, 1f));
-        nameText.transform.localScale = Vector3.one * scale;
-
-        // Line height in the frame, measured from the pattern's center.
-        float lineHeight = placement == Placement.Below
-            ? -(frameHalf.y + gap + textLift + fittedCapHeight)
-            : frameHalf.y + gap;
-
-        if (placement == Placement.Below && keepBelowDisplay != null)
-        {
-            // Lowest point of the disc along frameUp, relative to frameCenter.
-            Transform display = keepBelowDisplay.transform;
-            Bounds local = keepBelowDisplay.localBounds;
-            float radius = Mathf.Max(local.extents.x * display.lossyScale.x, local.extents.z * display.lossyScale.z);
-            float tilt = Vector3.Dot(display.up, frameUp);
-            float displayBottom = Vector3.Dot(display.position - frameCenter, frameUp)
-                                  - radius * Mathf.Sqrt(Mathf.Max(0f, 1f - tilt * tilt));
-            float blockTop = lineHeight + placementOffset.y + textLift + fittedCapHeight;
-            float limit = displayBottom - gap;
-            if (blockTop > limit)
-            {
-                lineHeight -= blockTop - limit;
-            }
-        }
+        fittedCapHeight = FitName(nameText, Width, CapHeight);
         Vector3 lineCenter = onCertificate
             ? frameCenter
-            : frameCenter +
-              frameUp * (lineHeight + placementOffset.y) +
-              frameRight * placementOffset.x +
-              frameToward * placementOffset.z;
+            : SphereLineCenter(frameCenter, frameRight, frameUp, frameToward, frameHalf, fittedCapHeight);
         lineLeft = lineCenter - frameRight * (Width * 0.5f);
 
         if (line != null)
@@ -1214,6 +1258,15 @@ public sealed class ConstellationSigning : MonoBehaviour
         // Text faces the player, reading along the line (local +X = right).
         nameText.transform.SetPositionAndRotation(lineCenter + frameUp * textLift, Quaternion.LookRotation(-frameToward, frameUp));
 
+        if (skyText != null)
+        {
+            // Exactly where the sphere signature used to be.
+            skyCapHeight = FitName(skyText, signingWidth, maxCapHeight);
+            Vector3 skyLineCenter = SphereLineCenter(skyCenter, skyRight, skyUp, skyToward, skyHalf, skyCapHeight);
+            skyLineLeft = skyLineCenter - skyRight * (signingWidth * 0.5f);
+            skyText.transform.SetPositionAndRotation(skyLineCenter + skyUp * textLift, Quaternion.LookRotation(-skyToward, skyUp));
+        }
+
         if (areaFront != null)
         {
             Vector3 a = lineLeft - frameRight * alongTolerance;
@@ -1224,6 +1277,54 @@ public sealed class ConstellationSigning : MonoBehaviour
             areaFront.SetPositions(new[] { a - v + front, a + v + front, b + v + front, b - v + front });
             areaBack.SetPositions(new[] { a - v + back, a + v + back, b + v + back, b - v + back });
         }
+    }
+
+    // Capital height cap, shrunk to the usable width; returns the fitted cap
+    // height (m). The text must sit under the (unscaled) signing root.
+    private float FitName(TextMeshPro text, float width, float cap)
+    {
+        text.transform.localScale = Vector3.one;
+        Vector2 h = text.GetPreferredValues("H");
+        float capInText = h.y * (font.faceInfo.capLine / Mathf.Max(1e-4f, font.faceInfo.lineHeight));
+        float textWidth = text.GetPreferredValues(text.text).x;
+        float scale = capInText > 0f ? cap / capInText : 0.001f;
+        float usable = width * textWidthFill;
+        if (textWidth * scale > usable && textWidth > 0f)
+        {
+            scale = usable / textWidth;
+        }
+
+        text.rectTransform.sizeDelta = new Vector2(Mathf.Max(textWidth * 1.2f, 1f), Mathf.Max(h.y * 2f, 1f));
+        text.transform.localScale = Vector3.one * scale;
+        return capInText * scale;
+    }
+
+    // The sphere layout: the line under (or over) the presented pattern, kept
+    // below the Earth view display, plus the placement offset.
+    private Vector3 SphereLineCenter(Vector3 center, Vector3 right, Vector3 up, Vector3 toward, Vector2 half, float cap)
+    {
+        float lineHeight = placement == Placement.Below
+            ? -(half.y + gap + textLift + cap)
+            : half.y + gap;
+
+        if (placement == Placement.Below && keepBelowDisplay != null)
+        {
+            // Lowest point of the disc along up, relative to center.
+            Transform display = keepBelowDisplay.transform;
+            Bounds local = keepBelowDisplay.localBounds;
+            float radius = Mathf.Max(local.extents.x * display.lossyScale.x, local.extents.z * display.lossyScale.z);
+            float tilt = Vector3.Dot(display.up, up);
+            float displayBottom = Vector3.Dot(display.position - center, up)
+                                  - radius * Mathf.Sqrt(Mathf.Max(0f, 1f - tilt * tilt));
+            float blockTop = lineHeight + placementOffset.y + textLift + cap;
+            float limit = displayBottom - gap;
+            if (blockTop > limit)
+            {
+                lineHeight -= blockTop - limit;
+            }
+        }
+
+        return center + up * (lineHeight + placementOffset.y) + right * placementOffset.x + toward * placementOffset.z;
     }
 
     // Live Inspector look settings.
@@ -1246,7 +1347,13 @@ public sealed class ConstellationSigning : MonoBehaviour
 
         if (nameText != null)
         {
-            nameText.color = onCertificate && certificate != null ? certificate.InkColor : textColor;
+            // Same face colour as the noticeboard signature, on the certificate and in the sphere.
+            nameText.color = textColor;
+        }
+
+        if (skyText != null)
+        {
+            skyText.color = textColor;
         }
 
         if (penBody != null)
@@ -1272,7 +1379,8 @@ public sealed class ConstellationSigning : MonoBehaviour
         }
     }
 
-    // Clip the name at the revealed edge, in the text's own local space.
+    // Clip the name at the revealed edge, in the text's own local space; the
+    // sphere copy is clipped at the same fraction of its own letters.
     private void ApplyWipe()
     {
         if (nameText == null || textMaterial == null)
@@ -1280,30 +1388,47 @@ public sealed class ConstellationSigning : MonoBehaviour
             return;
         }
 
-        Transform t = nameText.transform;
+        bool complete = state == State.Complete;
+        float edgeLocal = nameText.transform.InverseTransformPoint(lineLeft + frameRight * progress).x;
+        float fraction = Clip(nameText, textMaterial, complete, false, edgeLocal, out _);
+
+        if (skyText != null && skyMaterial != null)
+        {
+            Clip(skyText, skyMaterial, complete, true, fraction, out float skyEdgeLocal);
+            Vector3 skyEdge = skyText.transform.TransformPoint(new Vector3(skyEdgeLocal, 0f, 0f));
+            skyRevealFraction = Mathf.Clamp01(Vector3.Dot(skyEdge - skyLineLeft, skyRight) / Mathf.Max(1e-4f, signingWidth));
+        }
+    }
+
+    // Sets the clip rect. byFraction: value is a fraction of the letters'
+    // width; otherwise a local x. Returns the revealed fraction of the letters.
+    private float Clip(TextMeshPro text, Material material, bool complete, bool byFraction, float value, out float edge)
+    {
+        Transform t = text.transform;
         float scale = Mathf.Max(1e-6f, t.lossyScale.x);
         float softness = wipeSoftness / scale;
 
         // Keep every clip value close to the text: TMP's mobile shader carries
         // the clip maths in 16-bit halves on Quest (max 65504), so "infinitely
         // far" edges saturate there and the clip silently stops working.
-        Bounds bounds = nameText.textBounds;
+        Bounds bounds = text.textBounds;
         if (bounds.size.x <= 0f)
         {
-            nameText.ForceMeshUpdate();
-            bounds = nameText.textBounds;
+            text.ForceMeshUpdate();
+            bounds = text.textBounds;
         }
 
         float pad = Mathf.Max(bounds.size.y, 1f) + softness;
         float left = bounds.min.x - pad;
         float right = bounds.max.x + pad;
-        float edge = state == State.Complete
+        edge = complete
             ? right
-            : Mathf.Clamp(t.InverseTransformPoint(lineLeft + frameRight * progress).x, left, right);
+            : Mathf.Clamp(byFraction ? Mathf.LerpUnclamped(bounds.min.x, bounds.max.x, value) : value, left, right);
 
-        textMaterial.SetVector(ClipRectId, new Vector4(left, bounds.min.y - pad, edge, bounds.max.y + pad));
-        textMaterial.SetFloat(MaskSoftnessXId, softness);
-        textMaterial.SetFloat(MaskSoftnessYId, 0f);
+        material.SetVector(ClipRectId, new Vector4(left, bounds.min.y - pad, edge, bounds.max.y + pad));
+        material.SetFloat(MaskSoftnessXId, softness);
+        material.SetFloat(MaskSoftnessYId, 0f);
+        return bounds.size.x > 0f ? Mathf.Clamp01((edge - bounds.min.x) / bounds.size.x) : 0f;
     }
 
     private void OnDrawGizmosSelected()

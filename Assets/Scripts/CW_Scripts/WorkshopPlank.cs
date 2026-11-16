@@ -57,8 +57,10 @@ public sealed class WorkshopPlank : MonoBehaviour
         // Refit only when which buttons are active, or where the layout put them, changes.
         // (The layout group runs after LateUpdate, so positions settle a frame later.)
         int signature = 17;
-        foreach (RectTransform child in row)
+        for (int i = 0; i < row.childCount; i++)
         {
+            // Indexed, not foreach: a Transform enumerator allocates every frame.
+            var child = (RectTransform)row.GetChild(i);
             signature = signature * 31 + (child.gameObject.activeSelf ? 1 : 0);
             signature = signature * 31 + Mathf.RoundToInt(child.rect.width);
             signature = signature * 31 + Mathf.RoundToInt(child.anchoredPosition.x * 4f);

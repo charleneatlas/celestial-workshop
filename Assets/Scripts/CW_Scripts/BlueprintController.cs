@@ -80,7 +80,7 @@ public class BlueprintController : MonoBehaviour
 
     [Header("Debug")]
     [SerializeField]
-    private bool showDebugLogs = true;
+    private bool showDebugLogs = false;
 
     private BlueprintStar currentStar;
 
@@ -308,10 +308,14 @@ public class BlueprintController : MonoBehaviour
         distanceLabel.transform.position = chart.TransformPoint(local);
     }
 
+    private float styledLensBlend = -1f;
+
     private void LateUpdate()
     {
-        // Keep the colours right while the chart docks or undocks mid-poke.
-        if (distanceLabel != null && distanceLabel.gameObject.activeSelf && chartLayout != null)
+        // Keep the colours right while the chart docks or undocks mid-poke
+        // (only when the blend actually moved; restyling touches the material).
+        if (distanceLabel != null && distanceLabel.gameObject.activeSelf && chartLayout != null &&
+            !Mathf.Approximately(chartLayout.LensBlend, styledLensBlend))
         {
             StyleDistanceLabel();
         }
@@ -340,6 +344,7 @@ public class BlueprintController : MonoBehaviour
         }
 
         float lens = chartLayout != null ? chartLayout.LensBlend : 0f;
+        styledLensBlend = lens;
         distanceMaterial.SetFloat(ShaderUtilities.ID_FaceDilate, distanceTextWeight);
         distanceMaterial.SetFloat(ShaderUtilities.ID_UnderlayDilate, distanceHaloSize);
         distanceMaterial.SetFloat(ShaderUtilities.ID_UnderlaySoftness, Mathf.Lerp(0.3f, 0.8f, distanceHaloSize));

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
 
@@ -80,6 +81,8 @@ public sealed class EarthViewCamera : MonoBehaviour
     private float localStarReach;
     private int localStarReachCount = -1;
     private object localStarReachSource;
+    private readonly System.Collections.Generic.List<GeneratedConstellationStar> starBuffer =
+        new System.Collections.Generic.List<GeneratedConstellationStar>();
 
     [Tooltip("Circle framing without auto-fit: radius of the visible circle in artboard pixels, around the artboard's center. Must reach the farthest star.")]
     [SerializeField]
@@ -359,15 +362,16 @@ public sealed class EarthViewCamera : MonoBehaviour
 
     private void RefreshLocalStarReach()
     {
-        GeneratedConstellationStar[] stars =
-            skyConstellationPivot.GetComponentsInChildren<GeneratedConstellationStar>(true);
+        // Called every frame: fill a reused list (no allocation).
+        List<GeneratedConstellationStar> stars = starBuffer;
+        skyConstellationPivot.GetComponentsInChildren(true, stars);
         // A new constellation swaps the generator's star list (or its length).
-        if (stars.Length == localStarReachCount && ReferenceEquals(constellationGenerator.stars, localStarReachSource))
+        if (stars.Count == localStarReachCount && ReferenceEquals(constellationGenerator.stars, localStarReachSource))
         {
             return;
         }
 
-        localStarReachCount = stars.Length;
+        localStarReachCount = stars.Count;
         localStarReachSource = constellationGenerator.stars;
         localStarReach = 0f;
         foreach (GeneratedConstellationStar star in stars)

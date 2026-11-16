@@ -293,9 +293,13 @@ namespace CW.Guidance
             float parentScale = Mathf.Max(1e-4f, transform.lossyScale.x);
             text.transform.localScale = Vector3.one * (worldPerUnit * pop / parentScale);
 
-            float worldWidth = 2f * viewDistance * Mathf.Tan(0.5f * maxWidthDegrees * Mathf.Deg2Rad);
-            float width = worldWidth / worldPerUnit;
-            if (lastWidth < 0f || Mathf.Abs(width - lastWidth) > lastWidth * 0.02f)
+            // Wrap width in text units from the unclamped size rule, so it never
+            // depends on the current distance: once the cap height is clamped
+            // (close targets like the workstation) a distance-based width
+            // changed as the head moved and words jumped between lines.
+            float width = 2f * referenceDistance * Mathf.Tan(0.5f * maxWidthDegrees * Mathf.Deg2Rad) *
+                          capInText / Mathf.Max(1e-4f, capHeight);
+            if (lastWidth < 0f || !Mathf.Approximately(width, lastWidth))
             {
                 lastWidth = width;
                 text.rectTransform.sizeDelta = new Vector2(width, 20f);

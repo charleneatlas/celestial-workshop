@@ -67,10 +67,20 @@ public sealed class GameFlow : MonoBehaviour
     [SerializeField]
     private Transform[] titleHiddenRendererRoots = new Transform[0];
 
+    [Tooltip("Disabled at the Title stage only, re-enabled for every other stage: work nothing shows at the title (e.g. the Earth View Camera, which renders the hidden globe's display every frame).")]
+    [SerializeField]
+    private Behaviour[] titleDisabledBehaviours = new Behaviour[0];
+
     public Stage Current { get; private set; } = Stage.Puzzle;
 
     /// <summary>True while the loaded puzzle is a practice letter rather than the main constellation.</summary>
     public bool IsPractice { get; private set; }
+
+    /// <summary>
+    /// At the Title stage: true for the practice-selection title (the letters
+    /// only, menu row hidden), false for the full title with its menu.
+    /// </summary>
+    public bool TitleLettersOnly { get; private set; }
 
     public event Action<Stage> StageChanged;
 
@@ -273,6 +283,18 @@ public sealed class GameFlow : MonoBehaviour
     [ContextMenu("Return To Title")]
     public void ReturnToTitle()
     {
+        TitleLettersOnly = false;
+        EnterSelection(Stage.Title, false);
+    }
+
+    /// <summary>
+    /// After a practice letter ("Try Another Letter"): the same title, letters
+    /// only (no menu row), to pick up and place another letter.
+    /// </summary>
+    [ContextMenu("Return To Practice Selection")]
+    public void ReturnToPracticeSelection()
+    {
+        TitleLettersOnly = true;
         EnterSelection(Stage.Title, false);
     }
 
@@ -291,6 +313,11 @@ public sealed class GameFlow : MonoBehaviour
         }
 
         pendingOpenPack = openPack;
+        if (stage != Stage.Title)
+        {
+            TitleLettersOnly = false;
+        }
+
         SetStage(stage);
     }
 
@@ -338,6 +365,23 @@ public sealed class GameFlow : MonoBehaviour
         SetActive(mainOnlyObjects, puzzle && !IsPractice);
         SetPuzzleRenderersVisible(puzzle);
         SetRenderersVisible(titleHiddenRendererRoots, titleHiddenRenderers, Current != Stage.Title);
+        SetEnabled(titleDisabledBehaviours, Current != Stage.Title);
+    }
+
+    private static void SetEnabled(Behaviour[] behaviours, bool enabled)
+    {
+        if (behaviours == null)
+        {
+            return;
+        }
+
+        foreach (Behaviour b in behaviours)
+        {
+            if (b != null && b.enabled != enabled)
+            {
+                b.enabled = enabled;
+            }
+        }
     }
 
     private static void SetActive(GameObject[] objects, bool active)
