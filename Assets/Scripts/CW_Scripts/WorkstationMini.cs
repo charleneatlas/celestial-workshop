@@ -72,6 +72,14 @@ public sealed class WorkstationMini : MonoBehaviour
     [SerializeField]
     private ConstellationSigning signing;
 
+    [Tooltip("The ring shows once a constellation box is opened. Found automatically if empty.")]
+    [SerializeField]
+    private BoxSelection boxes;
+
+    [Tooltip("Found automatically if empty.")]
+    [SerializeField]
+    private GameFlow gameFlow;
+
     [Header("Placement (relative to the head at placement)")]
     [Tooltip("Horizontal distance from the eyes toward the globe (m). About 0.35-0.45 keeps the elbows bent.")]
     [SerializeField]
@@ -139,7 +147,7 @@ public sealed class WorkstationMini : MonoBehaviour
 
     [Header("After the solve")]
     [SerializeField]
-    private VanishMoment vanishOn = VanishMoment.Signed;
+    private VanishMoment vanishOn = VanishMoment.Stamp;
 
     [SerializeField]
     [Min(0f)]
@@ -161,6 +169,8 @@ public sealed class WorkstationMini : MonoBehaviour
     private Coroutine vanishRoutine;
     private SkyStamp3DVFX stamp;
     private Mesh markerMesh;
+    private Renderer markerRenderer;
+    private bool markerArmed;
     private Transform[] miniStars = new Transform[0];
     private Transform[] skyStars = new Transform[0];
 
@@ -204,7 +214,24 @@ public sealed class WorkstationMini : MonoBehaviour
             placement = FindFirstObjectByType<WorkshopPlacement>();
         }
 
+        if (boxes == null)
+        {
+            boxes = FindFirstObjectByType<BoxSelection>(FindObjectsInactive.Include);
+        }
+
+        if (gameFlow == null)
+        {
+            gameFlow = FindFirstObjectByType<GameFlow>();
+        }
+
         rig = viewer != null ? viewer.GetComponentInParent<OVRCameraRig>() : null;
+
+        // Hidden from the first frame; UpdateMarkerVisibility shows it once a box is opened.
+        markerRenderer = marker != null ? marker.GetComponent<Renderer>() : null;
+        if (markerRenderer != null)
+        {
+            markerRenderer.enabled = false;
+        }
     }
 
     private void OnEnable()
@@ -351,6 +378,7 @@ public sealed class WorkstationMini : MonoBehaviour
 
     private void LateUpdate()
     {
+        UpdateMarkerVisibility();
         if (!IsReady)
         {
             return;
@@ -593,6 +621,34 @@ public sealed class WorkstationMini : MonoBehaviour
     }
 
     private string markerKey;
+
+    // The ring appears once a constellation box is opened, stays through the
+    // puzzle started from it, and goes with the mini (vanish) or on leaving
+    // for the title / closed boxes / noticeboard. Title-letter practice never shows it.
+    private void UpdateMarkerVisibility()
+    {
+        if (markerRenderer == null)
+        {
+            return;
+        }
+
+        BoxSelection.State box = boxes != null ? boxes.Current : BoxSelection.State.Hidden;
+        bool selecting = box == BoxSelection.State.PackOpen || box == BoxSelection.State.Launching;
+        if (selecting)
+        {
+            markerArmed = true;
+        }
+        else if (gameFlow == null || gameFlow.Current != GameFlow.Stage.Puzzle || gameFlow.IsPractice)
+        {
+            markerArmed = false;
+        }
+
+        bool show = IsReady && markerArmed && !vanished;
+        if (markerRenderer.enabled != show)
+        {
+            markerRenderer.enabled = show;
+        }
+    }
 
     private void UpdateMarker()
     {

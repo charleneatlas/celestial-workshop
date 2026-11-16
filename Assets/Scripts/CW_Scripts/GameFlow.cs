@@ -105,14 +105,17 @@ public sealed class GameFlow : MonoBehaviour
         }
     }
 
-    private System.Collections.IEnumerator Start()
+    private void LateUpdate()
     {
         // The constellations are generated in ConstellationSetup.Start, and the
-        // displays initialise in their own Awake/Start: apply the title's
-        // visibility once everything exists.
-        yield return null;
-        visibilityReady = true;
-        ApplyVisibility();
+        // displays initialise in their own Awake/Start: apply the stage's
+        // visibility once everything exists. The end of the first frame (after
+        // every Start, before it renders), so the puzzle never flashes up.
+        if (!visibilityReady)
+        {
+            visibilityReady = true;
+            ApplyVisibility();
+        }
     }
 
     private void OnEnable()

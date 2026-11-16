@@ -399,6 +399,9 @@ public sealed class VolumePinchRotation : MonoBehaviour
     private bool lastPinchMode;
     private ControlCenterMode lastControlCenter;
 
+    // Gimbal renderers kept invisible while the gimbal waits (active) for placement.
+    private readonly List<Renderer> veiledGimbalRenderers = new List<Renderer>();
+
     private void Start()
     {
         foreach (Object handObject in hands)
@@ -535,13 +538,59 @@ public sealed class VolumePinchRotation : MonoBehaviour
     {
         // ConstellationSetup.HandleReset turns the gimbal back on, so keep it off.
         // Wait for placement: NearFieldSkyProxy measures the rings' active renderers.
-        if (pinchMode && gimbalRoot != null && gimbalRoot.activeSelf &&
-            (nearFieldSkyProxy == null || nearFieldSkyProxy.IsPlaced))
+        if (pinchMode && gimbalRoot != null && gimbalRoot.activeSelf)
         {
-            gimbalRoot.SetActive(false);
+            if (nearFieldSkyProxy == null || nearFieldSkyProxy.IsPlaced)
+            {
+                gimbalRoot.SetActive(false);
+                UnveilGimbal();
+            }
+            else
+            {
+                // Until then it stays active (measured by bounds, which disabled
+                // renderers still report) but unseen, so it doesn't flash up at launch.
+                VeilGimbal();
+            }
+        }
+        else
+        {
+            UnveilGimbal();
         }
 
         ApplyGuides();
+    }
+
+    private void VeilGimbal()
+    {
+        foreach (Renderer gimbalRenderer in gimbalRoot.GetComponentsInChildren<Renderer>())
+        {
+            if (gimbalRenderer.enabled)
+            {
+                gimbalRenderer.enabled = false;
+                if (!veiledGimbalRenderers.Contains(gimbalRenderer))
+                {
+                    veiledGimbalRenderers.Add(gimbalRenderer);
+                }
+            }
+        }
+    }
+
+    private void UnveilGimbal()
+    {
+        if (veiledGimbalRenderers.Count == 0)
+        {
+            return;
+        }
+
+        foreach (Renderer gimbalRenderer in veiledGimbalRenderers)
+        {
+            if (gimbalRenderer != null)
+            {
+                gimbalRenderer.enabled = true;
+            }
+        }
+
+        veiledGimbalRenderers.Clear();
     }
 
     private void TryBeginPinch()
