@@ -35,6 +35,8 @@ namespace CW.Guidance
         public float radiusPadding = 1.12f;
         public float minRadius = 0.025f;
         public float maxRadius = 0.5f;
+        [Tooltip("The ring sits this far in front of the target's centre, toward the viewer, as a fraction of its radius (its apparent size is kept). Keeps it from sinking into the target and nearby surfaces while still depth-testing normally.")]
+        [Range(0f, 1.5f)] public float towardViewer = 1.2f;
 
         [Header("Breathing")]
         public float breathePeriod = 1.8f;
@@ -216,17 +218,25 @@ namespace CW.Guidance
                 : Mathf.Clamp(bounds.extents.magnitude * radiusPadding, minRadius, maxRadius);
 
             Transform ringTransform = ring.transform;
-            ringTransform.position = bounds.center;
+            Vector3 center = bounds.center;
+            float apparent = 1f;
             if (eye != null)
             {
                 Vector3 away = bounds.center - eye.position;
-                if (away.sqrMagnitude > 1e-8f)
+                float distance = away.magnitude;
+                if (distance > 1e-4f)
                 {
                     ringTransform.rotation = Quaternion.LookRotation(away, eye.up);
+
+                    // Slide toward the viewer, shrinking to keep the same apparent size.
+                    float shift = Mathf.Min(radius * towardViewer, distance * 0.5f);
+                    center -= away / distance * shift;
+                    apparent = (distance - shift) / distance;
                 }
             }
 
-            float halfSize = radius / RingAt * scale;
+            ringTransform.position = center;
+            float halfSize = radius / RingAt * scale * apparent;
             Vector3 parentScale = transform.lossyScale;
             ringTransform.localScale = new Vector3(
                 halfSize / Mathf.Max(1e-4f, Mathf.Abs(parentScale.x)),

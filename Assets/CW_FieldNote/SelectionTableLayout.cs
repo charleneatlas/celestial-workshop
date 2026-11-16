@@ -9,7 +9,9 @@ using UnityEngine;
 /// Edit the values here and use the context menu "Apply Layout" (Build
 /// Selection Table also applies it). Nothing runs at play time: the layout is
 /// baked into the transforms, and the whole table follows the workshop's
-/// placement (Recenter, Raise / Lower) because it lives under WORKSHOP.
+/// placement (Recenter, Raise / Lower). The whole box selection is held at the
+/// placement ring by a WorkstationAnchor, with the ring at about
+/// (0, 0.009, -0.365) here: keep ~11 cm clear around that point.
 /// </summary>
 [DisallowMultipleComponent]
 public sealed class SelectionTableLayout : MonoBehaviour
@@ -50,6 +52,10 @@ public sealed class SelectionTableLayout : MonoBehaviour
     [Tooltip("How far the far edge is propped up off the table, degrees.")]
     [Range(0f, 60f)]
     public float noteTilt = 22f;
+
+    [Tooltip("Turn about Y, degrees (positive turns the sheet's front toward the player's left).")]
+    [Range(-45f, 45f)]
+    public float noteYaw;
 
     [Header("Field Note (open, for reading)")]
     [Tooltip("The open sheet (FieldNoteReader's board).")]
@@ -95,7 +101,7 @@ public sealed class SelectionTableLayout : MonoBehaviour
 
         if (foldedNote != null)
         {
-            Quaternion r = Quaternion.Euler(90f - noteTilt, 0f, 0f);
+            Quaternion r = Quaternion.Euler(0f, noteYaw, 0f) * Quaternion.Euler(90f - noteTilt, 0f, 0f);
             foldedNote.localRotation = r;
             foldedNote.localPosition = notePosition + r * new Vector3(0f, noteHeight * 0.5f, 0f);
         }

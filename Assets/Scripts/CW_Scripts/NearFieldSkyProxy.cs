@@ -38,6 +38,11 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
     private List<Transform> skyRoots = new List<Transform>();
 
     [Header("Placement")]
+    [Tooltip("Raises (or lowers) the globe's presentation above its authored position, metres. Everything inside moves with it (sky proxy, observer, Earth camera, diorama), so the projection and puzzle mapping are unchanged. Applied when the globe is placed at startup.")]
+    [SerializeField]
+    [Range(-0.3f, 0.4f)]
+    private float presentationHeightOffset = 0.03f;
+
     [Tooltip("Off: keep the volume where it was placed in the scene. On: place it relative to the head.")]
     [SerializeField]
     private bool placeInFrontOfHead;
@@ -330,7 +335,10 @@ public sealed class NearFieldSkyProxy : MonoBehaviour
         Transform eye = viewer.transform;
         Vector3 eyePosition = tracked ? eye.position : rigHomePosition + Vector3.up * fallbackEyeHeight;
 
-        Vector3 center = authoredCenter;
+        // The presentation offset lifts the whole globe (volume, sky proxy,
+        // observer, Earth camera, diorama) together, so the projection is
+        // unchanged; only where the globe sits relative to the workshop moves.
+        Vector3 center = authoredCenter + Vector3.up * presentationHeightOffset;
         if (placeInFrontOfHead && tracked)
         {
             Vector3 forward = Vector3.ProjectOnPlane(eye.forward, Vector3.up);

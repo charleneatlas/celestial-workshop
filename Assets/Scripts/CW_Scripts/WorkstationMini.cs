@@ -191,6 +191,15 @@ public sealed class WorkstationMini : MonoBehaviour
     /// <summary>World reach of the mini (m).</summary>
     public float Reach => miniReach;
 
+    /// <summary>Raised after every placement (startup, rig moved, manual), once the workstation's pose is final.</summary>
+    public event System.Action Placed;
+
+    /// <summary>World centre of the placement ring (it sits Marker Drop x reach below the mini's centre, in the workstation's frame).</summary>
+    public Vector3 RingCenter => transform.position + transform.rotation * (Vector3.down * (miniReach * markerDrop));
+
+    /// <summary>Outer radius of the placement ring (m).</summary>
+    public float RingRadius => markerRadius + markerWidth * 0.5f;
+
     /// <summary>A rotation pinch starts within this distance of <see cref="Center"/>.</summary>
     public float EntryRadius => miniReach * entryRadiusFactor;
 
@@ -406,6 +415,7 @@ public sealed class WorkstationMini : MonoBehaviour
         }
 
         ApplyMiniPose();
+        Placed?.Invoke();
     }
 
     private void LateUpdate()
@@ -665,8 +675,10 @@ public sealed class WorkstationMini : MonoBehaviour
             return;
         }
 
+        // The ring is part of the selection table's layout: it shows as soon as
+        // the table does (its dedicated slot), not only once a box is opened.
         BoxSelection.State box = boxes != null ? boxes.Current : BoxSelection.State.Hidden;
-        bool selecting = box == BoxSelection.State.PackOpen || box == BoxSelection.State.Launching;
+        bool selecting = box != BoxSelection.State.Hidden;
         if (selecting || TitleLetterHeld())
         {
             markerArmed = true;

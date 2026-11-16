@@ -8,7 +8,11 @@ using UnityEngine.XR;
 /// The one thing that puts the workshop in front of the player (formerly
 /// DeskAlign). With Floor Level on OpenXR the app can't recenter itself, so it
 /// moves the rig so the headset lands on the rig's authored pose, facing its
-/// forward, plus the player's height offset.
+/// forward, plus the player's height offset. With Align Eye Height, the head
+/// also lands at the authored eye height, so the workshop sits the same way
+/// relative to the eyes for every player and seat (Floor Level alone left it
+/// floor-relative: a seated eye at 1.4 m saw the globe and table 0.2 m lower
+/// than authored, while the head-relative workstation stayed put).
 ///
 /// When it aligns:
 /// - at startup, once the headset is worn and reporting a real pose (or after
@@ -47,6 +51,19 @@ public sealed class WorkshopPlacement : MonoBehaviour
     private float settleTime = 0.3f;
 
     [Header("Height")]
+    [Tooltip("Also align the eye height: the head lands at Design Eye Height above the rig's authored origin (plus the height offset). Only with a real head pose; otherwise the floor stays as tracked.")]
+    [SerializeField]
+    private bool alignEyeHeight = true;
+
+    [Tooltip("Eye height (m above the rig's authored origin) the workshop is laid out for. 1.2 = the fallback eye every system uses without a headset, so the Editor layout and the headset match.")]
+    [SerializeField]
+    [Range(0.8f, 1.8f)]
+    private float designEyeHeight = 1.2f;
+
+    [Tooltip("Head heights outside this range (m above the tracked floor) are treated as bad tracking: the floor stays as tracked.")]
+    [SerializeField]
+    private Vector2 plausibleHeadHeight = new Vector2(0.5f, 2.3f);
+
     [Tooltip("Largest height offset the player can set, up or down (m).")]
     [SerializeField]
     [Min(0f)]
@@ -76,6 +93,7 @@ public sealed class WorkshopPlacement : MonoBehaviour
     private Coroutine pendingAlign;
     private bool alignedWhileWorn;
     private float heightOffset;
+    private float eyeLift;   // vertical rig shift that put the eye at Design Eye Height on the last align
 
     /// <summary>True once the first alignment has happened (worn, or by timeout).</summary>
     public bool IsAligned { get; private set; }
@@ -299,7 +317,7 @@ public sealed class WorkshopPlacement : MonoBehaviour
             {
                 // Glide toward the pose that would put the workshop in front of
                 // the head right now.
-                AlignedPose(out Vector3 targetPosition, out Quaternion targetRotation, out _, out _);
+                AlignedPose(out Vector3 targetPosition, out Quaternion targetRotation, out _, out _, out _, out _);
                 float k = 1f - Mathf.Exp(-followSharpness * Time.unscaledDeltaTime);
                 Pose before = new Pose(rigTransform.position, rigTransform.rotation);
                 rigTransform.SetPositionAndRotation(
@@ -357,19 +375,20 @@ public sealed class WorkshopPlacement : MonoBehaviour
     {
         Transform rigTransform = rig.transform;
         Pose before = new Pose(rigTransform.position, rigTransform.rotation);
-        AlignedPose(out Vector3 position, out Quaternion rotation, out float yawDelta, out float slide);
+        AlignedPose(out Vector3 position, out Quaternion rotation, out float yawDelta, out float slide, out float lift, out float headHeight);
         rigTransform.SetPositionAndRotation(position, rotation);
+        eyeLift = lift;
 
         IsAligned = true;
         Pose after = new Pose(rigTransform.position, rigTransform.rotation);
-        Debug.Log($"WorkshopPlacement: aligned ({reason}; t {Time.realtimeSinceStartup:0.0} s, yaw {yawDelta:F1}°, moved {slide:F2} m, height {heightOffset:+0.00;-0.00;0.00} m)");
+        Debug.Log($"WorkshopPlacement: aligned ({reason}; t {Time.realtimeSinceStartup:0.0} s, yaw {yawDelta:F1}°, moved {slide:F2} m, height {heightOffset:+0.00;-0.00;0.00} m, head {headHeight:0.00} m above the floor, eye lift {lift:+0.00;-0.00;0.00} m)");
         RigMoved?.Invoke(before, after);
     }
 
     // The rig pose that puts the head on the authored home pose, facing its
     // forward (yaw only), plus the height offset. Computed from the head's pose
     // relative to the rig, so it doesn't move anything.
-    private void AlignedPose(out Vector3 position, out Quaternion rotation, out float yawDelta, out float slide)
+    private void AlignedPose(out Vector3 position, out Quaternion rotation, out float yawDelta, out float slide, out float lift, out float headHeight)
     {
         Transform rigTransform = rig.transform;
         Transform head = rig.centerEyeAnchor;
@@ -393,7 +412,19 @@ public sealed class WorkshopPlacement : MonoBehaviour
         Vector3 offset = homePosition - headWorld;
         offset.y = 0f;
         slide = offset.magnitude;
-        position = homePosition + offset - Vector3.up * heightOffset;
+
+        // Eye height: lift (or lower) the rig so the eye sits at the design
+        // height, whatever the player's real seat. Without a real pose the head
+        // is at the rig origin, so the tracked floor stays.
+        headHeight = headLocal.y;
+        lift = 0f;
+        if (alignEyeHeight && HasRealHeadPose() &&
+            headHeight >= plausibleHeadHeight.x && headHeight <= plausibleHeadHeight.y)
+        {
+            lift = designEyeHeight - headHeight;
+        }
+
+        position = homePosition + offset + Vector3.up * (lift - heightOffset);
     }
 
     // Height change only: move the rig vertically, keep everything else.
@@ -402,7 +433,7 @@ public sealed class WorkshopPlacement : MonoBehaviour
         Transform rigTransform = rig.transform;
         Pose before = new Pose(rigTransform.position, rigTransform.rotation);
         Vector3 p = rigTransform.position;
-        p.y = homePosition.y - heightOffset;
+        p.y = homePosition.y + eyeLift - heightOffset;
         rigTransform.position = p;
         Pose after = new Pose(rigTransform.position, rigTransform.rotation);
         Debug.Log($"WorkshopPlacement: {reason}");
