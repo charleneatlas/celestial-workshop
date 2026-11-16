@@ -80,6 +80,10 @@ public sealed class WorkstationMini : MonoBehaviour
     [SerializeField]
     private GameFlow gameFlow;
 
+    [Tooltip("The ring also shows while a title letter is held (practice is placed here too). Found automatically if empty.")]
+    [SerializeField]
+    private TitleShelf titleShelf;
+
     [Tooltip("The rotation axes at the mini follow this camera's axes in the sky. Found automatically if empty.")]
     [SerializeField]
     private Transform earthViewCamera;
@@ -239,6 +243,11 @@ public sealed class WorkstationMini : MonoBehaviour
         if (gameFlow == null)
         {
             gameFlow = FindFirstObjectByType<GameFlow>();
+        }
+
+        if (titleShelf == null)
+        {
+            titleShelf = FindFirstObjectByType<TitleShelf>(FindObjectsInactive.Include);
         }
 
         if (earthViewCamera == null)
@@ -645,9 +654,10 @@ public sealed class WorkstationMini : MonoBehaviour
 
     private string markerKey;
 
-    // The ring appears once a constellation box is opened, stays through the
-    // puzzle started from it, and goes with the mini (vanish) or on leaving
-    // for the title / closed boxes / noticeboard. Title-letter practice never shows it.
+    // The ring appears once a constellation box is opened, or while a title
+    // letter is held, stays through the puzzle (main or practice) started from
+    // it, and goes with the mini (vanish) or on leaving for the title / closed
+    // boxes / noticeboard.
     private void UpdateMarkerVisibility()
     {
         if (markerRenderer == null)
@@ -657,11 +667,11 @@ public sealed class WorkstationMini : MonoBehaviour
 
         BoxSelection.State box = boxes != null ? boxes.Current : BoxSelection.State.Hidden;
         bool selecting = box == BoxSelection.State.PackOpen || box == BoxSelection.State.Launching;
-        if (selecting)
+        if (selecting || TitleLetterHeld())
         {
             markerArmed = true;
         }
-        else if (gameFlow == null || gameFlow.Current != GameFlow.Stage.Puzzle || gameFlow.IsPractice)
+        else if (gameFlow == null || gameFlow.Current != GameFlow.Stage.Puzzle)
         {
             markerArmed = false;
         }
@@ -671,6 +681,24 @@ public sealed class WorkstationMini : MonoBehaviour
         {
             markerRenderer.enabled = show;
         }
+    }
+
+    private bool TitleLetterHeld()
+    {
+        if (titleShelf == null || !titleShelf.IsShown || gameFlow == null || gameFlow.Current != GameFlow.Stage.Title)
+        {
+            return false;
+        }
+
+        foreach (TitleLetterMini letter in titleShelf.Letters)
+        {
+            if (letter != null && letter.IsGrabbed)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void UpdateMarker()

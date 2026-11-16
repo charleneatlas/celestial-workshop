@@ -131,6 +131,11 @@ public sealed class ConstellationSigning : MonoBehaviour
     [SerializeField]
     private Shader lineShader;
 
+    [Header("Guild Certificate")]
+    [Tooltip("When set (and it accepts the current puzzle), the name is signed on this certificate at the workstation instead of under the constellation in the sphere. Same pen, gesture and thresholds.")]
+    [SerializeField]
+    private GuildCertificate certificate;
+
     [Header("Pen")]
     [Tooltip("Pen to spawn (tip at its origin, or at a child named \"Tip\"). Empty = a generated cylinder using the placeholder size and color below.")]
     [SerializeField]
@@ -264,10 +269,18 @@ public sealed class ConstellationSigning : MonoBehaviour
     public event System.Action Signed;
 
     public State CurrentState => state;
-    public float Progress => signingWidth > 0f ? progress / signingWidth : 0f;
+    /// <summary>True while this attempt is signed on the Guild Certificate.</summary>
+    public bool IsOnCertificate => onCertificate;
+
+    // Line length and name size for this attempt (the certificate's, or the sphere layout's).
+    private float Width => onCertificate ? certificateWidth : signingWidth;
+    private float CapHeight => onCertificate ? certificateCapHeight : maxCapHeight;
+
+    public float Progress => Width > 0f ? progress / Width : 0f;
     public bool IsComplete => state == State.Complete;
 
     private const float HandSwitchHysteresis = 0.05f;
+    private const int CertificateTextSortingOrder = 5;
     private static readonly int BaseColorId = Shader.PropertyToID("_BaseColor");
     private static readonly int DashFractionId = Shader.PropertyToID("_DashFraction");
     private static readonly int ClipRectId = Shader.PropertyToID("_ClipRect");
@@ -290,6 +303,9 @@ public sealed class ConstellationSigning : MonoBehaviour
     private Vector3 frameUp;
     private Vector3 frameToward;
     private Vector2 frameHalf;
+    private bool onCertificate;
+    private float certificateWidth;
+    private float certificateCapHeight;
     private Vector3 lineLeft;
     private float fittedCapHeight;
     private bool layoutDirty;
@@ -335,7 +351,7 @@ public sealed class ConstellationSigning : MonoBehaviour
             return false;
         }
 
-        point = lineLeft + frameRight * (signingWidth * lineFraction) + frameUp * (textLift + fittedCapHeight * capFraction);
+        point = lineLeft + frameRight * (Width * lineFraction) + frameUp * (textLift + fittedCapHeight * capFraction);
         return true;
     }
 
@@ -405,10 +421,17 @@ public sealed class ConstellationSigning : MonoBehaviour
             autoSign = null;
         }
 
+        if (nameText != null && signingRoot != null && !nameText.transform.IsChildOf(signingRoot.transform))
+        {
+            Destroy(nameText.gameObject);
+        }
+
         if (signingRoot != null)
         {
             Destroy(signingRoot);
         }
+
+        onCertificate = false;
 
         signingRoot = null;
         line = null;
@@ -477,8 +500,20 @@ public sealed class ConstellationSigning : MonoBehaviour
     private void BeginAttempt()
     {
         ClearSigning();
-        if (reveal == null ||
-            !reveal.TryGetPresentation(out frameCenter, out frameRight, out frameUp, out frameToward, out frameHalf))
+        if (certificate != null && certificate.ShouldUse)
+        {
+            certificate.Present();
+            onCertificate = certificate.TryGetSigningFrame(out frameCenter, out frameRight, out frameUp, out frameToward,
+                out certificateWidth, out certificateCapHeight);
+            frameHalf = Vector2.zero;
+            if (!onCertificate)
+            {
+                certificate.HideNow();
+            }
+        }
+
+        if (!onCertificate && (reveal == null ||
+            !reveal.TryGetPresentation(out frameCenter, out frameRight, out frameUp, out frameToward, out frameHalf)))
         {
             Debug.LogWarning("ConstellationSigning: no held presentation to sign under.", this);
             return;
@@ -487,11 +522,21 @@ public sealed class ConstellationSigning : MonoBehaviour
         string text = SignatureText();
         if (string.IsNullOrEmpty(text) || font == null)
         {
+            if (onCertificate)
+            {
+                certificate.HideNow();
+            }
+
             Debug.LogWarning("ConstellationSigning: no name or no font; signing skipped.", this);
             return;
         }
 
         BuildVisuals(text);
+        if (onCertificate)
+        {
+            AttachToCertificate();
+        }
+
         state = State.Ready;
         if (logEvents)
         {
@@ -518,7 +563,7 @@ public sealed class ConstellationSigning : MonoBehaviour
         while (state == State.Signing)
         {
             elapsed += Time.deltaTime;
-            progress = Mathf.Lerp(start, signingWidth, Mathf.Clamp01(elapsed / duration));
+            progress = Mathf.Lerp(start, Width, Mathf.Clamp01(elapsed / duration));
             if (CheckCompletion())
             {
                 break;
@@ -548,7 +593,11 @@ public sealed class ConstellationSigning : MonoBehaviour
         if (layoutDirty)
         {
             layoutDirty = false;
-            Layout();
+            // On the certificate the name is parented to it (laid out once, at build).
+            if (!onCertificate)
+            {
+                Layout();
+            }
         }
 
         ApplyLook();
@@ -573,7 +622,7 @@ public sealed class ConstellationSigning : MonoBehaviour
             PoseSigningPen(tracked ? activeHand : null, tip);
             if (tracked && InsideArea(TipOf(tip), out float along))
             {
-                float target = Mathf.Clamp(along, 0f, signingWidth);
+                float target = Mathf.Clamp(along, 0f, Width);
                 progress = Mathf.Max(progress, Mathf.Min(target, progress + maxAdvanceSpeed * dt));
                 CheckCompletion();
             }
@@ -658,12 +707,12 @@ public sealed class ConstellationSigning : MonoBehaviour
 
     private bool CheckCompletion()
     {
-        if (state == State.Complete || progress < completionThreshold * signingWidth)
+        if (state == State.Complete || progress < completionThreshold * Width)
         {
             return false;
         }
 
-        progress = signingWidth;
+        progress = Width;
         state = State.Complete;
         activeHand = null;
         if (line != null)
@@ -702,7 +751,7 @@ public sealed class ConstellationSigning : MonoBehaviour
         along = Vector3.Dot(offset, frameRight);
         float height = Vector3.Dot(offset, frameUp);
         float depth = Vector3.Dot(offset, frameToward);
-        return along >= -alongTolerance && along <= signingWidth + alongTolerance &&
+        return along >= -alongTolerance && along <= Width + alongTolerance &&
                Mathf.Abs(height) <= verticalTolerance &&
                depth <= depthTowardPlayer && depth >= -depthBehind;
     }
@@ -869,6 +918,28 @@ public sealed class ConstellationSigning : MonoBehaviour
         Layout();
         ApplyLook();
         ApplyWipe();
+    }
+
+    // The certificate prints its own line; the name is carried by the
+    // certificate (so it leaves with it) and drawn over the parchment.
+    private void AttachToCertificate()
+    {
+        if (line != null)
+        {
+            line.gameObject.SetActive(false);
+        }
+
+        if (nameText != null)
+        {
+            if (nameText.TryGetComponent(out MeshRenderer textRenderer))
+            {
+                textRenderer.sortingOrder = CertificateTextSortingOrder;
+            }
+
+            nameText.transform.SetParent(certificate.NameLine, true);
+        }
+
+        certificate.BeginAppear();
     }
 
     private void BuildPrefabPen()
@@ -1094,8 +1165,8 @@ public sealed class ConstellationSigning : MonoBehaviour
         Vector2 h = nameText.GetPreferredValues("H");
         float capInText = h.y * (font.faceInfo.capLine / Mathf.Max(1e-4f, font.faceInfo.lineHeight));
         float textWidth = nameText.GetPreferredValues(nameText.text).x;
-        float scale = capInText > 0f ? maxCapHeight / capInText : 0.001f;
-        float usable = signingWidth * textWidthFill;
+        float scale = capInText > 0f ? CapHeight / capInText : 0.001f;
+        float usable = Width * textWidthFill;
         if (textWidth * scale > usable && textWidth > 0f)
         {
             scale = usable / textWidth;
@@ -1126,16 +1197,18 @@ public sealed class ConstellationSigning : MonoBehaviour
                 lineHeight -= blockTop - limit;
             }
         }
-        Vector3 lineCenter = frameCenter +
-                             frameUp * (lineHeight + placementOffset.y) +
-                             frameRight * placementOffset.x +
-                             frameToward * placementOffset.z;
-        lineLeft = lineCenter - frameRight * (signingWidth * 0.5f);
+        Vector3 lineCenter = onCertificate
+            ? frameCenter
+            : frameCenter +
+              frameUp * (lineHeight + placementOffset.y) +
+              frameRight * placementOffset.x +
+              frameToward * placementOffset.z;
+        lineLeft = lineCenter - frameRight * (Width * 0.5f);
 
         if (line != null)
         {
             line.SetPosition(0, lineLeft);
-            line.SetPosition(1, lineLeft + frameRight * signingWidth);
+            line.SetPosition(1, lineLeft + frameRight * Width);
         }
 
         // Text faces the player, reading along the line (local +X = right).
@@ -1144,7 +1217,7 @@ public sealed class ConstellationSigning : MonoBehaviour
         if (areaFront != null)
         {
             Vector3 a = lineLeft - frameRight * alongTolerance;
-            Vector3 b = lineLeft + frameRight * (signingWidth + alongTolerance);
+            Vector3 b = lineLeft + frameRight * (Width + alongTolerance);
             Vector3 v = frameUp * verticalTolerance;
             Vector3 front = frameToward * depthTowardPlayer;
             Vector3 back = -frameToward * depthBehind;
@@ -1173,7 +1246,7 @@ public sealed class ConstellationSigning : MonoBehaviour
 
         if (nameText != null)
         {
-            nameText.color = textColor;
+            nameText.color = onCertificate && certificate != null ? certificate.InkColor : textColor;
         }
 
         if (penBody != null)
@@ -1241,9 +1314,9 @@ public sealed class ConstellationSigning : MonoBehaviour
         }
 
         Gizmos.color = new Color(0.4f, 1f, 0.6f, 0.8f);
-        Vector3 center = lineLeft + frameRight * (signingWidth * 0.5f) + frameToward * ((depthTowardPlayer - depthBehind) * 0.5f);
+        Vector3 center = lineLeft + frameRight * (Width * 0.5f) + frameToward * ((depthTowardPlayer - depthBehind) * 0.5f);
         Gizmos.matrix = Matrix4x4.TRS(center, Quaternion.LookRotation(-frameToward, frameUp), Vector3.one);
-        Gizmos.DrawWireCube(Vector3.zero, new Vector3(signingWidth + 2f * alongTolerance, 2f * verticalTolerance, depthTowardPlayer + depthBehind));
+        Gizmos.DrawWireCube(Vector3.zero, new Vector3(Width + 2f * alongTolerance, 2f * verticalTolerance, depthTowardPlayer + depthBehind));
         Gizmos.matrix = Matrix4x4.identity;
         Gizmos.color = new Color(1f, 0.8f, 0.3f, 0.9f);
         Gizmos.DrawWireSphere(lineLeft + frameRight * progress, startResumeTolerance);

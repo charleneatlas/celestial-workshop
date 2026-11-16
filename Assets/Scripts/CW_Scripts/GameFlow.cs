@@ -9,7 +9,8 @@ using UnityEngine;
 ///   Boxes  -> (sculpture placed) -> Puzzle (a real constellation)
 /// At the title and box selection the globe holds no puzzle (display dark,
 /// rotation and solving off, via ConstellationIntro's hold) and the puzzle
-/// visuals are hidden. The solve, stamp, signing and menu flow is unchanged;
+/// visuals are hidden. At the title the globe itself is hidden too
+/// (Title Hidden Renderer Roots). The solve, stamp, signing and menu flow is unchanged;
 /// PostPuzzleMenu asks this to move on.
 /// </summary>
 public sealed class GameFlow : MonoBehaviour
@@ -62,6 +63,10 @@ public sealed class GameFlow : MonoBehaviour
     [SerializeField]
     private GameObject[] mainOnlyObjects = new GameObject[0];
 
+    [Tooltip("Renderers under these are hidden at the Title stage only (the globe: mask, rim and Earth view display), so the title stands on its own close to the player. Objects stay active.")]
+    [SerializeField]
+    private Transform[] titleHiddenRendererRoots = new Transform[0];
+
     public Stage Current { get; private set; } = Stage.Puzzle;
 
     /// <summary>True while the loaded puzzle is a practice letter rather than the main constellation.</summary>
@@ -76,6 +81,7 @@ public sealed class GameFlow : MonoBehaviour
 
     // Renderers this hid at the title (only these are re-enabled).
     private readonly List<Renderer> hiddenRenderers = new List<Renderer>();
+    private readonly List<Renderer> titleHiddenRenderers = new List<Renderer>();
     private readonly List<Renderer> rendererScratch = new List<Renderer>();
     private bool visibilityReady;
     private bool pendingOpenPack;
@@ -331,6 +337,7 @@ public sealed class GameFlow : MonoBehaviour
         SetActive(puzzleObjects, puzzle);
         SetActive(mainOnlyObjects, puzzle && !IsPractice);
         SetPuzzleRenderersVisible(puzzle);
+        SetRenderersVisible(titleHiddenRendererRoots, titleHiddenRenderers, Current != Stage.Title);
     }
 
     private static void SetActive(GameObject[] objects, bool active)
@@ -351,9 +358,16 @@ public sealed class GameFlow : MonoBehaviour
 
     private void SetPuzzleRenderersVisible(bool visible)
     {
+        SetRenderersVisible(puzzleRendererRoots, hiddenRenderers, visible);
+    }
+
+    // Hides the enabled renderers under roots (remembering them in hidden), or
+    // re-enables only the ones this hid.
+    private void SetRenderersVisible(Transform[] roots, List<Renderer> hidden, bool visible)
+    {
         if (visible)
         {
-            foreach (Renderer r in hiddenRenderers)
+            foreach (Renderer r in hidden)
             {
                 if (r != null)
                 {
@@ -361,16 +375,16 @@ public sealed class GameFlow : MonoBehaviour
                 }
             }
 
-            hiddenRenderers.Clear();
+            hidden.Clear();
             return;
         }
 
-        if (puzzleRendererRoots == null)
+        if (roots == null)
         {
             return;
         }
 
-        foreach (Transform root in puzzleRendererRoots)
+        foreach (Transform root in roots)
         {
             if (root == null)
             {
@@ -383,7 +397,7 @@ public sealed class GameFlow : MonoBehaviour
                 if (r.enabled)
                 {
                     r.enabled = false;
-                    hiddenRenderers.Add(r);
+                    hidden.Add(r);
                 }
             }
         }

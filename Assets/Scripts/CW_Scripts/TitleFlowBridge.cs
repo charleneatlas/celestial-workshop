@@ -2,12 +2,27 @@ using UnityEngine;
 
 /// <summary>
 /// Connects the constellation title (TitleShelf) to GameFlow: Start opens the
-/// constellation boxes, a letter dropped in the globe becomes a practice puzzle. Shows
-/// the title only at the Title stage and floats it above the globe, facing the
-/// player, once the sky volume has been placed.
+/// constellation boxes, a letter placed at the workstation (or in the globe,
+/// without one) becomes a practice puzzle. Shows the title only at the Title
+/// stage and places it once the sky volume has been placed.
+///
+/// Layout Near Player (default): the title and its menu row, as one piece,
+/// sit within comfortable seated reach in front of the head, along the line
+/// toward the globe (which GameFlow hides at the title). Sampled when the
+/// title is shown and after recenter / height changes, never every frame.
+/// Above Globe: the original layout, floating over the globe.
 /// </summary>
 public sealed class TitleFlowBridge : MonoBehaviour
 {
+    public enum TitleLayout
+    {
+        [Tooltip("Close to the player at a comfortable seated height; the globe is hidden at the title.")]
+        NearPlayer,
+
+        [Tooltip("The original layout: floating above the globe.")]
+        AboveGlobe
+    }
+
     [SerializeField]
     private GameFlow gameFlow;
 
@@ -29,6 +44,48 @@ public sealed class TitleFlowBridge : MonoBehaviour
     [SerializeField]
     private SphereDropZone dropZone;
 
+    [Tooltip("Where title letters are placed to start a practice puzzle (the workstation's drop zone). Empty = the sphere's drop zone.")]
+    [SerializeField]
+    private SphereDropZone letterDropZone;
+
+    [SerializeField]
+    private TitleLayout layout = TitleLayout.NearPlayer;
+
+    [Header("Near Player layout (relative to the head when placed)")]
+    [Tooltip("Horizontal distance from the eyes to the title's center, toward the globe (m).")]
+    [SerializeField]
+    [Range(0.25f, 0.9f)]
+    private float titleForward = 0.5f;
+
+    [Tooltip("How far below eye height the title's center sits (m). The menu row hangs below it.")]
+    [SerializeField]
+    [Range(-0.2f, 0.5f)]
+    private float titleBelowEyes = 0.08f;
+
+    [Tooltip("Sideways offset (m, + = right).")]
+    [SerializeField]
+    [Range(-0.4f, 0.4f)]
+    private float titleLateral;
+
+    [Tooltip("Scale of the whole title and its menu row (1 = as authored for the old, farther layout).")]
+    [SerializeField]
+    [Range(0.4f, 1.5f)]
+    private float titleScale = 0.8f;
+
+    [Tooltip("Turn the title to face the eyes (tilted back when it sits below them). Off = upright.")]
+    [SerializeField]
+    private bool faceEyes = true;
+
+    [Tooltip("Extra tilt (degrees): positive turns the face further up.")]
+    [SerializeField]
+    [Range(-30f, 30f)]
+    private float titleTilt;
+
+    [Tooltip("Eye height above the rig when the head isn't tracked (Editor without a headset).")]
+    [SerializeField]
+    private float fallbackEyeHeight = 1.2f;
+
+    [Header("Above Globe layout")]
     [Tooltip("Gap between the top of the sphere and the title's center (metres).")]
     [SerializeField]
     private float heightAboveVolume = 0.1f;
@@ -99,9 +156,10 @@ public sealed class TitleFlowBridge : MonoBehaviour
 
     private System.Collections.IEnumerator Start()
     {
-        if (shelf != null && dropZone != null)
+        SphereDropZone letters = letterDropZone != null ? letterDropZone : dropZone;
+        if (shelf != null && letters != null)
         {
-            shelf.SetDropZones(dropZone);
+            shelf.SetDropZones(letters);
         }
 
         // GameFlow sets its stage in Awake, before this subscribed; and the
@@ -168,11 +226,16 @@ public sealed class TitleFlowBridge : MonoBehaviour
             LetterConstellation.Build(letter, seed));
     }
 
-    // Above the globe, nudged toward the player, +Z pointing away from them
-    // (the shelf reads correctly that way).
+    // +Z pointing away from the player (the shelf reads correctly that way).
     [ContextMenu("Place Title")]
     private void PlaceTitle()
     {
+        if (layout == TitleLayout.NearPlayer)
+        {
+            PlaceNearPlayer();
+            return;
+        }
+
         if (volume == null || viewer == null)
         {
             return;
@@ -191,5 +254,36 @@ public sealed class TitleFlowBridge : MonoBehaviour
 
         shelf.transform.SetPositionAndRotation(position, rotation);
         placed = true;
+    }
+
+    // In front of the head along the line toward the globe, like the workstation.
+    private void PlaceNearPlayer()
+    {
+        if (shelf == null)
+        {
+            return;
+        }
+
+        OVRCameraRig rig = viewer != null ? viewer.GetComponentInParent<OVRCameraRig>() : null;
+        bool tracked = OVRManager.tracker != null && OVRManager.tracker.isPositionTracked;
+        Vector3 eye = viewer != null && (tracked || rig == null)
+            ? viewer.transform.position
+            : (rig != null ? rig.transform.position : transform.position) + Vector3.up * fallbackEyeHeight;
+
+        Vector3 forward = volume != null
+            ? Vector3.ProjectOnPlane(volume.transform.position - eye, Vector3.up)
+            : Vector3.ProjectOnPlane(viewer != null ? viewer.transform.forward : Vector3.forward, Vector3.up);
+        forward = forward.sqrMagnitude > 1e-6f ? forward.normalized : Vector3.forward;
+        Vector3 right = Vector3.Cross(Vector3.up, forward);
+
+        Vector3 position = eye + forward * titleForward + right * titleLateral + Vector3.down * titleBelowEyes;
+        Vector3 away = faceEyes ? (position - eye).normalized : forward;
+        Quaternion rotation = Quaternion.LookRotation(away, Vector3.up) * Quaternion.Euler(titleTilt, 0f, 0f);
+
+        shelf.transform.SetPositionAndRotation(position, rotation);
+        shelf.transform.localScale = Vector3.one * titleScale;
+        placed = true;
+        Debug.Log($"TitleFlowBridge: title placed {Vector3.Distance(eye, position):F2} m from the eyes, " +
+                  $"{titleBelowEyes:F2} m below them (head {(tracked ? "tracked" : "NOT tracked, fallback eye")}).", this);
     }
 }
