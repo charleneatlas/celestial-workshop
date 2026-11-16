@@ -92,6 +92,8 @@ public static class SelectionTableBuilder
         var rowRoot = (GameObject)sso.FindProperty("backToTitleButtonRoot").objectReferenceValue;
         if (rowRoot == null) return "BoxSelection has no Back To Title Button Root";
 
+        placedTexts.Clear();
+
         // 1. Art and materials.
         string art = regenerateArt ? GenerateArt() : "art kept";
         var m = Materials();
@@ -128,6 +130,7 @@ public static class SelectionTableBuilder
         ConfigureBoxInstances(selection);
         var layout = EnsureLayout(selection, folded, readingBoard);
         layout.Apply();
+        report.Add(ReassertTexts());
 
         EditorSceneManager.MarkSceneDirty(sel.gameObject.scene);
         if (save) EditorSceneManager.SaveScene(sel.gameObject.scene);
@@ -244,7 +247,7 @@ public static class SelectionTableBuilder
             fit.SetParent(root.transform, false);
 
             var plate = Quad(fit, "Nameplate", m["Plate"], new Vector2(0f, PlateY), new Vector2(PlateW, PlateH), SortInk, face - 0.003f);
-            label.localPosition = new Vector3(0f, PlateY, face - 0.006f);
+            ((RectTransform)label).anchoredPosition3D = new Vector3(0f, PlateY, face - 0.006f);
             var tmp = label.GetComponent<TMP_Text>();
             tmp.fontStyle = FontStyles.Bold;
             tmp.rectTransform.sizeDelta = new Vector2(PlateW - 0.05f, PlateH);
@@ -257,7 +260,7 @@ public static class SelectionTableBuilder
             tmp.GetComponent<MeshRenderer>().sortingOrder = SortText;
             if (status != null)
             {
-                status.localPosition = new Vector3(0f, PlateY - PlateH * 0.5f - 0.024f, face - 0.006f);
+                ((RectTransform)status).anchoredPosition3D = new Vector3(0f, PlateY - PlateH * 0.5f - 0.024f, face - 0.006f);
             }
 
             // Corner fittings on the base's front corners (the texture is a
@@ -643,6 +646,26 @@ public static class SelectionTableBuilder
         return mr;
     }
 
+    // Every text the build placed, with where it belongs. Once (after new glyphs
+    // entered the dynamic font atlases) some came out at the origin, so the
+    // build re-asserts them at the end and reports any that had moved.
+    static readonly List<(TextMeshPro text, Vector3 pos)> placedTexts = new List<(TextMeshPro, Vector3)>();
+
+    static string ReassertTexts()
+    {
+        int moved = 0;
+        foreach (var (text, pos) in placedTexts)
+        {
+            if (text == null) continue;
+            if ((text.rectTransform.anchoredPosition3D - pos).sqrMagnitude > 1e-8f) moved++;
+            text.rectTransform.anchoredPosition3D = pos;
+            EditorUtility.SetDirty(text.rectTransform);
+        }
+
+        placedTexts.Clear();
+        return moved == 0 ? "texts in place" : $"{moved} text(s) had moved and were put back";
+    }
+
     // Same sizing rule as the noticeboard and Credits: cap = cap height in metres.
     static TextMeshPro Text(Transform parent, string name, string text, string fontPath, float cap, Color color,
         TextAlignmentOptions align, Vector2 pos, float width, float maxWidth = 0f)
@@ -671,7 +694,10 @@ public static class SelectionTableBuilder
             if (w > maxWidth) tmp.fontSize *= maxWidth / w;
         }
 
-        tmp.transform.localPosition = new Vector3(pos.x, pos.y, -0.0012f);
+        // anchoredPosition3D, not transform.localPosition: on a freshly added
+        // TMP RectTransform the latter showed in the Editor but saved as 0.
+        tmp.rectTransform.anchoredPosition3D = new Vector3(pos.x, pos.y, -0.0012f);
+        placedTexts.Add((tmp, tmp.rectTransform.anchoredPosition3D));
         var mr = tmp.GetComponent<MeshRenderer>();
         mr.sortingOrder = SortText;
         mr.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;

@@ -97,6 +97,8 @@ public static class SelectionTableSelfTest
                     Check(table.gameObject.activeInHierarchy && note.gameObject.activeInHierarchy, "table and folded note shown");
                     Check(row.activeInHierarchy && openBtn.gameObject.activeInHierarchy, "box row with Field Note button shown");
                     Check(!board.activeSelf && !reader.IsOpen, "reader closed at start");
+                    Check(note.Find("Title").localPosition.y > 0.01f && note.Find("Subtitle").localPosition.y < -0.02f, "folded note title and subtitle in place");
+                    Check(board.transform.Find("Title").localPosition.y > 0.08f && board.transform.Find("Invitation").localPosition.y < -0.08f, "open sheet title and invitation in place");
                     foreach (var b in boxes)
                     {
                         if (!b.IsAvailable)
@@ -115,6 +117,18 @@ public static class SelectionTableSelfTest
                     Check(!row.activeSelf, "box row steps aside while reading");
                     Check(sel.Current == BoxSelection.State.Closed && boxes.TrueForAll(b => b.gameObject.activeInHierarchy), "boxes untouched while reading");
                     Check(board.transform.localScale.x > 0.99f, $"sheet settled to full size ({board.transform.localScale.x:F3})");
+                    {
+                        // The Back button's wood plank sits behind the button (refitted at runtime).
+                        var plank = backBtn.GetComponentInParent<Canvas>().transform.Find("Workshop Plank") as RectTransform;
+                        var corners = new Vector3[4];
+                        plank.GetWorldCorners(corners);
+                        Vector3 plankCentre = (corners[0] + corners[2]) * 0.5f;
+                        ((RectTransform)backBtn.transform).GetWorldCorners(corners);
+                        Vector3 buttonCentre = (corners[0] + corners[2]) * 0.5f;
+                        float off = board.transform.InverseTransformVector(plankCentre - buttonCentre).x;
+                        Check(Mathf.Abs(off) < 0.01f, $"Back button plank centred behind it ({off * 100f:F1} cm)");
+                    }
+
                     backBtn.Press();
                     break;
                 case 3:
