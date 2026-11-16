@@ -38,6 +38,13 @@ namespace CW.Guidance
         public Color backingColor = new Color(0.01f, 0.02f, 0.05f, 0.75f);
         [Range(0f, 1f)] public float backingSize = 0.6f;
 
+        [Tooltip("Draw the hint on top of the scene (TextMeshPro overlay shader: no depth test, overlay queue), so table content such as box nameplates or the folded Field Note can't hide it. It's interface text placed in the gaze cone, so it never sits inside anything meant to block it.")]
+        public bool drawOnTop = true;
+        [Tooltip("Material using TextMeshPro/Mobile/Distance Field Overlay with Underlay on. Only its shader is used; referencing it keeps that shader variant (with the backing) in builds.")]
+        public Material onTopMaterial;
+        [Tooltip("Renderer sorting order while drawing on top. Transparent objects sort by this before render queue, and the noticeboard-style art (box nameplates, Field Note) uses 0-7, so keep it above that.")]
+        public int onTopSortingOrder = 100;
+
         [Header("Size (metres / degrees)")]
         [Tooltip("Cap height at referenceDistance. 14 mm at 0.65 m is about 1.23 degrees.")]
         public float capHeight = 0.014f;
@@ -420,6 +427,13 @@ namespace CW.Guidance
                 {
                     // Our own copy: the font asset's material stays untouched.
                     material = new Material(useFont.material) { name = useFont.name + " (hint)", hideFlags = HideFlags.DontSave };
+                    if (drawOnTop && onTopMaterial != null && onTopMaterial.shader != null)
+                    {
+                        material.shader = onTopMaterial.shader;
+                        material.renderQueue = onTopMaterial.renderQueue;   // overlay: after the scene
+                        text.sortingOrder = onTopSortingOrder;               // sorting order outranks the queue
+                    }
+
                     material.SetFloat(ShaderUtilities.ID_FaceDilate, faceDilate);
                     if (backing)
                     {

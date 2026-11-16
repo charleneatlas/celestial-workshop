@@ -5,8 +5,10 @@ using UnityEngine;
 /// <summary>
 /// Drives the one-at-a-time guidance cues from game events. Step ids match the
 /// GuidanceDirector's step list (see Assets/CW_Guidance/GuidanceCopy.md):
-/// title-letter, title-start, boxes-open, boxes-place, rotate, chart, match,
-/// sign, menu. The box steps (like the title ones) show on every visit.
+/// title-letter, title-start, boxes-open, boxes-place, place-model, rotate,
+/// chart, match, sign, menu. boxes-place ("choose a model") completes when a
+/// sculpture is picked up, then place-model ("place it at the workstation")
+/// shows until it is placed; putting the sculpture back brings boxes-place back. The box steps (like the title ones) show on every visit.
 /// The two title steps alternate for as long as the title is up (every
 /// return to the title restarts them); the puzzle steps are onlyOnce in the
 /// director, so after the first puzzle they stay quiet.
@@ -77,8 +79,17 @@ public sealed class GuidanceHooks : MonoBehaviour
         }
     }
 
+    [Tooltip("After a sculpture is let go without being placed, wait this long (s) before asking to choose a model again.")]
+    [SerializeField]
+    [Min(0f)]
+    private float releasedGrace = 0.6f;
+
+    private float releasedAt = -1f;
+
     private void LateUpdate()
     {
+        UpdateBoxPickup();
+
         // The Recenter prompt floats in the same place as the hints; let it speak alone.
         if (director != null && director.label != null)
         {
@@ -271,6 +282,44 @@ public sealed class GuidanceHooks : MonoBehaviour
         }
     }
 
+    // Pack open: picking up a sculpture moves "choose a model" on to "place it
+    // at the workstation"; letting go without placing it goes back.
+    private void UpdateBoxPickup()
+    {
+        if (director == null || boxSelection == null || boxSelection.Current != BoxSelection.State.PackOpen)
+        {
+            releasedAt = -1f;
+            return;
+        }
+
+        if (boxSelection.IsSculptureHeld)
+        {
+            releasedAt = -1f;
+            director.Complete("boxes-place");
+            if (!director.IsActive("place-model"))
+            {
+                // Also on later visits where "choose" was already used up
+                // (onlyOnce): ignored once place-model itself is done.
+                director.Show("place-model");
+            }
+
+            return;
+        }
+
+        if (director.IsActive("place-model"))
+        {
+            if (releasedAt < 0f)
+            {
+                releasedAt = Time.time;
+            }
+            else if (Time.time - releasedAt >= releasedGrace)
+            {
+                releasedAt = -1f;
+                director.Show("boxes-place");
+            }
+        }
+    }
+
     private void OnBoxStateChanged(BoxSelection.State state)
     {
         if (director == null)
@@ -290,9 +339,21 @@ public sealed class GuidanceHooks : MonoBehaviour
                 director.Show("boxes-place");
                 break;
 
+            case BoxSelection.State.Launching:
+                // A sculpture was accepted: the placement hint is done (both
+                // are onlyOnce-friendly: they're only recorded when it happens).
+                if (!director.Complete("place-model") && !director.Complete("boxes-place") &&
+                    director.IsActive("boxes-open"))
+                {
+                    director.Clear();
+                }
+
+                break;
+
             default:
-                if (!director.Complete("boxes-place") &&
-                    (director.IsActive("boxes-open") || director.IsActive("boxes-place")))
+                // Left the boxes without placing anything: hide the box hints
+                // without completing them, so they come back next time.
+                if (director.IsActive("boxes-open") || director.IsActive("boxes-place") || director.IsActive("place-model"))
                 {
                     director.Clear();
                 }

@@ -66,6 +66,23 @@ public sealed class BoxSelection : MonoBehaviour
 
     public State Current { get; private set; } = State.Hidden;
 
+    /// <summary>True while the player holds one of the Starter Pack sculptures.</summary>
+    public bool IsSculptureHeld
+    {
+        get
+        {
+            foreach (TitleLetterMini sculpture in sculptures)
+            {
+                if (sculpture != null && sculpture.IsGrabbed)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
     /// <summary>Raised on every state change (guidance listens).</summary>
     public event Action<State> StateChanged;
 

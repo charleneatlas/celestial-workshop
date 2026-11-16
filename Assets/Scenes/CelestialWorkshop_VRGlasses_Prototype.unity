@@ -116591,6 +116591,7 @@ MonoBehaviour:
   practiceMenuText: Try another letter, or enter the workshop
   postPuzzleMenu: {fileID: 1589548318}
   placement: {fileID: 0}
+  releasedGrace: 0.6
 --- !u!1 &778327428
 GameObject:
   m_ObjectHideFlags: 0
@@ -145839,7 +145840,7 @@ PrefabInstance:
       objectReference: {fileID: 828061963}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.size
-      value: 9
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[0].id
@@ -145859,59 +145860,67 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[4].id
-      value: rotate
+      value: place-model
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[5].id
-      value: chart
+      value: rotate
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[6].id
-      value: match
+      value: chart
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[7].id
-      value: sign
+      value: match
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[8].id
+      value: sign
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
+      propertyPath: steps.Array.data[9].id
       value: menu
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[0].text
-      value: Pick up a letter to practice.
+      value: Pick up a letter to practice
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[1].text
-      value: Press Start to explore constellations.
+      value: Press Start to craft the night sky
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[2].text
-      value: Open Starter Pack to choose a constellation.
+      value: Open Starter Pack
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[3].text
-      value: Place a constellation at your workstation.
+      value: Choose a wooden model.
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[4].text
-      value: Pinch the small constellation and turn it.
+      value: Place at your workstation.
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[5].text
-      value: Touch a star on your chart to find it in the sky.
+      value: Pinch and turn the wooden model
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[6].text
-      value: Match the stars to your chart
+      value: Touch a star on your sketch to find it in the model and sky
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[7].text
-      value: Draw along the line to sign
+      value: Turn the model until the sky matches your sketch
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[8].text
-      value: Choose another sky
+      value: Swipe along the line to sign
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
+      propertyPath: steps.Array.data[9].text
+      value: Craft another constellation
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[0].target
@@ -145928,7 +145937,7 @@ PrefabInstance:
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[3].target
       value: 
-      objectReference: {fileID: 2106688611}
+      objectReference: {fileID: 142558941}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[4].target
       value: 
@@ -145936,17 +145945,21 @@ PrefabInstance:
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[5].target
       value: 
-      objectReference: {fileID: 330823356}
+      objectReference: {fileID: 2106688611}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[6].target
       value: 
-      objectReference: {fileID: 278888492}
+      objectReference: {fileID: 330823356}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[7].target
       value: 
-      objectReference: {fileID: 599989382}
+      objectReference: {fileID: 278888492}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[8].target
+      value: 
+      objectReference: {fileID: 599989382}
+    - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
+      propertyPath: steps.Array.data[9].target
       value: 
       objectReference: {fileID: 1532924648}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
@@ -145963,7 +145976,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[3].onlyOnce
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[4].onlyOnce
@@ -145983,6 +145996,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[8].onlyOnce
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
+      propertyPath: steps.Array.data[9].onlyOnce
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
@@ -146012,7 +146029,7 @@ PrefabInstance:
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[3].pulseAround
       value: 
-      objectReference: {fileID: 1240907433}
+      objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[3].pulseRadius
       value: 0.11
@@ -146024,14 +146041,22 @@ PrefabInstance:
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[4].pulseAround
       value: 
-      objectReference: {fileID: 150452312}
+      objectReference: {fileID: 1240907433}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[4].pulseRadius
-      value: 0.12
+      value: 0.11
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[4].pulseTarget
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
+      propertyPath: steps.Array.data[5].pulseAround
+      value: 
+      objectReference: {fileID: 150452312}
+    - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
+      propertyPath: steps.Array.data[5].pulseRadius
+      value: 0.12
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[5].pulseTarget
@@ -146039,10 +146064,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[6].pulseTarget
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[8].pulseTarget
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
+      propertyPath: steps.Array.data[9].pulseTarget
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
@@ -146075,10 +146104,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[7].labelOffset.y
-      value: 0.03
+      value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
       propertyPath: steps.Array.data[8].labelOffset.y
+      value: 0.03
+      objectReference: {fileID: 0}
+    - target: {fileID: 2265483753547312092, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
+      propertyPath: steps.Array.data[9].labelOffset.y
       value: 0.05
       objectReference: {fileID: 0}
     - target: {fileID: 3548789971673071389, guid: 0aeb6f976a8bb1b4689a6a50d444ae65, type: 3}
@@ -216547,7 +216580,7 @@ Transform:
   m_GameObject: {fileID: 1690456127}
   serializedVersion: 2
   m_LocalRotation: {x: -0.12186935, y: 0, z: 0, w: 0.99254614}
-  m_LocalPosition: {x: 0, y: 0.46, z: -0.25}
+  m_LocalPosition: {x: 0, y: 0.35, z: -0.25}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

@@ -51,6 +51,7 @@ MonoBehaviour:
   radiusPadding: 1.12
   minRadius: 0.025
   maxRadius: 0.5
+  towardViewer: 1.2
   breathePeriod: 1.8
   breatheScale: 0.06
   breatheDim: 0.5
@@ -163,6 +164,8 @@ MonoBehaviour:
   backing: 1
   backingColor: {r: 0.01, g: 0.02, b: 0.05, a: 0.75}
   backingSize: 0.6
+  drawOnTop: 1
+  onTopMaterial: {fileID: 2100000, guid: 3e4b9d9a8eb39e640ad65346d8e4f5cb, type: 2}
   capHeight: 0.014
   referenceDistance: 0.65
   minCapHeight: 0.01
@@ -175,6 +178,8 @@ MonoBehaviour:
   fallbackPitchDown: 8
   followSmoothTime: 0.2
   yawSharpness: 8
+  keepClearOf: []
+  keepClearMarginDegrees: 1.5
   fadeInSeconds: 0.35
   fadeOutSeconds: 0.3
   completedHoldSeconds: 0.6
