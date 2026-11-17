@@ -1,0 +1,182 @@
+From 6f1e5aff8dcde18a29630e8640e9e55728e6002d Mon Sep 17 00:00:00 2001
+From: Charlene Atlas <drummershoujo@gmail.com>
+Date: Tue, 17 Nov 2026 01:08:23 -0800
+Subject: [PATCH 1/2] Mark both coincident stars when a chart dot is poked
+ (E3/E5, O1/O7)
+
+Letters that revisit a point (E and O in the title; B, D, Q, Y too)
+generate two coincident star spheres there under different names, but
+the Star Chart shows one dot per point named after the first star. Only
+that star was marked, so its unmarked twin hid the mark: in the sky the
+twin's SkyStarTwinkle glow (3.5x size, whitish core, additive) washed
+the yellow out since ec2b884; on the wooden mini the two spheres
+depth-fight.
+
+ConstellationSetup.BuildStarLookup now maps every name at a shared
+point to all the generated stars there (mini and sky), using
+ConstellationStarKeys.PositionKey, the same rounded affinity-px key
+StarChartLayout uses for its dots. Marking and unmarking go through the
+same list, so nothing stays marked. Star generation, the chart, the
+materials and the scene are unchanged.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+---
+ .../Scripts/CW_Scripts/ConstellationSetup.cs  |   7 ++
+ .../CW_Scripts/ConstellationStarKeys.cs       | 117 ++++++++++++++++++
+ .../CW_Scripts/ConstellationStarKeys.cs.meta  |   2 +
+ 3 files changed, 126 insertions(+)
+ create mode 100644 Assets/Scripts/CW_Scripts/ConstellationStarKeys.cs
+ create mode 100644 Assets/Scripts/CW_Scripts/ConstellationStarKeys.cs.meta
+
+diff --git a/Assets/Scripts/CW_Scripts/ConstellationSetup.cs b/Assets/Scripts/CW_Scripts/ConstellationSetup.cs
+index 23ead74..4d51477 100644
+--- a/Assets/Scripts/CW_Scripts/ConstellationSetup.cs
++++ b/Assets/Scripts/CW_Scripts/ConstellationSetup.cs
+@@ -718,6 +718,13 @@ public sealed class ConstellationSetup : MonoBehaviour
+ 
+         RegisterGeneratedStars(miniGeneratedRoot);
+         RegisterGeneratedStars(skyGeneratedRoot);
++
++        // A revisited point (E3/E5, O1/O7) has two coincident spheres but one
++        // chart dot; marking the dot must mark both, or the twin hides the mark.
++        ConstellationStarKeys.MergeCoLocated(
++            generatedStarsById,
++            constellationGenerator.stars
++        );
+     }
+ 
+     private void RegisterGeneratedStars(GameObject generatedRoot)
+diff --git a/Assets/Scripts/CW_Scripts/ConstellationStarKeys.cs b/Assets/Scripts/CW_Scripts/ConstellationStarKeys.cs
+new file mode 100644
+index 0000000..10cc0ac
+--- /dev/null
++++ b/Assets/Scripts/CW_Scripts/ConstellationStarKeys.cs
+@@ -0,0 +1,117 @@
++using System;
++using System.Collections.Generic;
++using UnityEngine;
++
++/// <summary>
++/// Which stars of a star set share one point on the artboard.
++///
++/// Letters that revisit a point (E, O, and B, D, Q, Y) generate two star
++/// spheres there under different names (E3 and E5, O1 and O7). The Star Chart
++/// shows one dot per point, named after the first star there
++/// (StarChartLayout.EnsureGeneratedTargets), so marking that dot must mark
++/// every sphere at the point, or the unmarked twin hides the mark.
++///
++/// PositionKey must stay identical to the key StarChartLayout uses for its
++/// dots (affinity px, Mathf.RoundToInt per axis), so the two always agree.
++/// </summary>
++public static class ConstellationStarKeys
++{
++    /// <summary>The Star Chart's one-dot-per-point key (see StarChartLayout.EnsureGeneratedTargets).</summary>
++    public static Vector2Int PositionKey(Vector2 affinityPosition)
++    {
++        return new Vector2Int(
++            Mathf.RoundToInt(affinityPosition.x),
++            Mathf.RoundToInt(affinityPosition.y));
++    }
++
++    /// <summary>
++    /// The star names at each point that has more than one, in star-list
++    /// order (the first is the name the chart dot uses). Names are compared
++    /// case-insensitively, like the star lookup.
++    /// </summary>
++    public static List<List<string>> CoLocatedNameGroups(IReadOnlyList<ConstellationGenerator.StarData> stars)
++    {
++        var groups = new List<List<string>>();
++        if (stars == null)
++        {
++            return groups;
++        }
++
++        var byKey = new Dictionary<Vector2Int, List<string>>();
++        var order = new List<Vector2Int>();
++        foreach (ConstellationGenerator.StarData star in stars)
++        {
++            if (star == null || string.IsNullOrEmpty(star.starName))
++            {
++                continue;
++            }
++
++            Vector2Int key = PositionKey(star.affinityPosition);
++            if (!byKey.TryGetValue(key, out List<string> names))
++            {
++                names = new List<string>();
++                byKey.Add(key, names);
++                order.Add(key);
++            }
++
++            if (!names.Exists(n => string.Equals(n, star.starName, StringComparison.OrdinalIgnoreCase)))
++            {
++                names.Add(star.starName);
++            }
++        }
++
++        foreach (Vector2Int key in order)
++        {
++            if (byKey[key].Count > 1)
++            {
++                groups.Add(byKey[key]);
++            }
++        }
++
++        return groups;
++    }
++
++    /// <summary>
++    /// After stars were registered by their own id: every name at a shared
++    /// point now maps to all the generated stars at that point (mini and sky).
++    /// </summary>
++    public static void MergeCoLocated(
++        Dictionary<string, List<GeneratedConstellationStar>> starsById,
++        IReadOnlyList<ConstellationGenerator.StarData> stars)
++    {
++        if (starsById == null)
++        {
++            return;
++        }
++
++        foreach (List<string> names in CoLocatedNameGroups(stars))
++        {
++            var all = new List<GeneratedConstellationStar>();
++            foreach (string name in names)
++            {
++                if (!starsById.TryGetValue(name, out List<GeneratedConstellationStar> matching))
++                {
++                    continue;
++                }
++
++                foreach (GeneratedConstellationStar star in matching)
++                {
++                    if (!all.Contains(star))
++                    {
++                        all.Add(star);
++                    }
++                }
++            }
++
++            if (all.Count == 0)
++            {
++                continue;
++            }
++
++            foreach (string name in names)
++            {
++                starsById[name] = all;
++            }
++        }
++    }
++}
+diff --git a/Assets/Scripts/CW_Scripts/ConstellationStarKeys.cs.meta b/Assets/Scripts/CW_Scripts/ConstellationStarKeys.cs.meta
+new file mode 100644
+index 0000000..a11efb7
+--- /dev/null
++++ b/Assets/Scripts/CW_Scripts/ConstellationStarKeys.cs.meta
+@@ -0,0 +1,2 @@
++fileFormatVersion: 2
++guid: 2fb4b1f7d86e4fc0a13ca235261defca
+-- 
+2.51.0.windows.1
+
