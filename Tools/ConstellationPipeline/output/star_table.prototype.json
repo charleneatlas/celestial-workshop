@@ -1,0 +1,5619 @@
+{
+  "schema": "cw-star-table/1",
+  "source": "Wikidata (structured data, CC0 1.0) via https://www.wikidata.org/w/api.php",
+  "fetched_utc": "2026-11-17T08:16:24.492441+00:00",
+  "source_policy_excluded_reference_patterns": [
+    "\\bgaia\\b",
+    "\\bnasa\\b",
+    "exoplanet archive",
+    "\\bhyg\\b",
+    "stellarium",
+    "d3-celestial"
+  ],
+  "stars": [
+    {
+      "constellation": "big_dipper",
+      "id": "alkaid",
+      "name": "Alkaid",
+      "optional": false,
+      "qid": "Q13093",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q13093",
+      "wikidata_label": "Alkaid",
+      "instance_of": [
+        "variable star",
+        "infrared source",
+        "high proper-motion star",
+        "navigational star",
+        "near-infrared source",
+        "ultraviolet source",
+        "star"
+      ],
+      "part_of": [
+        {
+          "qid": "Q10460",
+          "label": "Big Dipper"
+        }
+      ],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q13093$B5990259-345A-4088-9A6E-43CD6E5F2EDF",
+        "rank": "normal",
+        "value": 206.885157342,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q13093$9DCE44F3-0D10-4ECB-B722-81A9414904C2",
+        "rank": "normal",
+        "value": 49.313266729,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q13093$d08a8b30-ef25-4edb-a242-d4cd0fb776c6",
+        "rank": "normal",
+        "value": 31.38,
+        "unit": "milliarcsecond",
+        "sigma": 0.2400000000000002,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 103.94,
+        "ly_sigma": 0.79
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q13093$c80b9ad4-6481-46f6-81f5-7900ca41707a",
+        "rank": "preferred",
+        "value": 1.86,
+        "unit": "1",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q63881058",
+                "label": "VizieR Online Data Catalog: Stellar Photometry in Johnson's 11-color system (Ducati, 2002)"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q13093$2531a9ca-4502-2742-6768-f4f34b6ba1fe",
+          "rank": "normal",
+          "raw": "100.0 light-year",
+          "sigma": null,
+          "ly": 100.0,
+          "excluded_by_policy": false,
+          "sources": [
+            "https://encyklopedia.pwn.pl/haslo/Alkaid;3867883.html"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13093$375bc706-f6ed-4659-85d2-2706445ba286",
+          "rank": "deprecated",
+          "raw": "29.7 milliarcsecond",
+          "sigma": 8.9,
+          "ly": 109.8,
+          "excluded_by_policy": false,
+          "sources": [
+            "The General Catalogue of Trigonometric Stellar Parallaxes, Fourth Edition"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13093$2379715c-796f-4fd2-9480-8bdf36e85cd9",
+          "rank": "deprecated",
+          "raw": "32.39 milliarcsecond",
+          "sigma": 0.740000000000002,
+          "ly": 100.7,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13093$d08a8b30-ef25-4edb-a242-d4cd0fb776c6",
+          "rank": "normal",
+          "raw": "31.38 milliarcsecond",
+          "sigma": 0.2400000000000002,
+          "ly": 103.9,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 0.99,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.67,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.86,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.98,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.16,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.24,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.408,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.35,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.881019,
+          "rank": "normal",
+          "filter": [
+            "G band"
+          ],
+          "excluded_by_policy": true
+        }
+      ],
+      "flags": [
+        "MULTIPLE_DISTANCE_VALUES(3)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "big_dipper",
+      "id": "mizar",
+      "name": "Mizar",
+      "optional": false,
+      "qid": "Q66477109",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q66477109",
+      "wikidata_label": "Mizar",
+      "instance_of": [
+        "binary star",
+        "star",
+        "infrared source",
+        "astrophysical X-ray source",
+        "double star"
+      ],
+      "part_of": [
+        {
+          "qid": "Q47146387",
+          "label": "Mizar and Alcor"
+        },
+        {
+          "qid": "Q10460",
+          "label": "Big Dipper"
+        }
+      ],
+      "has_part": [
+        {
+          "qid": "Q12064840",
+          "label": "Zeta2 Ursae Majoris"
+        },
+        {
+          "qid": "Q13086",
+          "label": "Zeta Ursae Majoris A"
+        }
+      ],
+      "ra_deg": {
+        "statement_id": "Q66477109$977589af-8ce6-475c-9998-595cfed394fb",
+        "rank": "normal",
+        "value": 200.981418667,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q66477109$da496d0b-de84-47b6-8d35-40c0962fd195",
+        "rank": "normal",
+        "value": 54.925351972,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q66477109$c9ed5f0e-ce11-4db0-858d-6efda8cae5a2",
+        "rank": "normal",
+        "value": 38.01,
+        "unit": "milliarcsecond",
+        "sigma": 1.7100000000000009,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 85.81,
+        "ly_sigma": 3.86
+      },
+      "apparent_magnitude": null,
+      "all_distance_candidates": [
+        {
+          "kind": "parallax",
+          "statement_id": "Q66477109$5cc4b03b-b45b-42ef-b2a5-26dc740d2bf9",
+          "rank": "deprecated",
+          "raw": "41.73 milliarcsecond",
+          "sigma": 0.610000000000003,
+          "ly": 78.2,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q66477109$c9ed5f0e-ce11-4db0-858d-6efda8cae5a2",
+          "rank": "normal",
+          "raw": "38.01 milliarcsecond",
+          "sigma": 1.7100000000000009,
+          "ly": 85.8,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        }
+      ],
+      "all_magnitudes": [],
+      "flags": [
+        "MULTIPLE_DISTANCE_VALUES(2)",
+        "MISSING_MAGNITUDE",
+        "STAR_SYSTEM(binary star, star, infrared source, astrophysical X-ray source, double star)"
+      ]
+    },
+    {
+      "constellation": "big_dipper",
+      "id": "alioth",
+      "name": "Alioth",
+      "optional": false,
+      "qid": "Q13091",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q13091",
+      "wikidata_label": "Alioth",
+      "instance_of": [
+        "double star",
+        "variable star",
+        "Alpha² Canum Venaticorum variable",
+        "infrared source",
+        "high proper-motion star",
+        "navigational star",
+        "near-infrared source",
+        "ultraviolet source",
+        "star",
+        "peculiar star",
+        "Ap/Bp star",
+        "rotating variable star"
+      ],
+      "part_of": [],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q13091$FC97C4AF-1EBD-487B-8508-01719894A88F",
+        "rank": "normal",
+        "value": 193.5072899675,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q13091$819F0C30-56B5-4A71-8D93-3F42D7AE36A6",
+        "rank": "normal",
+        "value": 55.95982295694,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q13091$6d6a7944-775b-4977-be7b-e93b22216d4c",
+        "rank": "deprecated",
+        "value": 39.51,
+        "unit": "milliarcsecond",
+        "sigma": 0.1999999999999993,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 82.55,
+        "ly_sigma": 0.42
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q13091$26f8ec49-5468-43c9-9616-0be98356fade",
+        "rank": "preferred",
+        "value": 1.77,
+        "unit": "1",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q63881058",
+                "label": "VizieR Online Data Catalog: Stellar Photometry in Johnson's 11-color system (Ducati, 2002)"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q13091$1b548f64-8014-4c10-ba53-40753da91836",
+          "rank": "normal",
+          "raw": "24.2627 parsec",
+          "sigma": 1.0826000000000011,
+          "ly": 79.1,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Data Release 2"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13091$9df819db-f756-4c23-9ec9-bde7a408ac94",
+          "rank": "normal",
+          "raw": "41.2155 milliarcsecond",
+          "sigma": 1.8389999999999986,
+          "ly": 79.1,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Data Release 2"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13091$f04659e0-d778-42e2-b71c-2bdbe9759f45",
+          "rank": "deprecated",
+          "raw": "8.6 milliarcsecond",
+          "sigma": 15.0,
+          "ly": 379.3,
+          "excluded_by_policy": false,
+          "sources": [
+            "The General Catalogue of Trigonometric Stellar Parallaxes, Fourth Edition"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13091$6d6a7944-775b-4977-be7b-e93b22216d4c",
+          "rank": "deprecated",
+          "raw": "39.51 milliarcsecond",
+          "sigma": 0.1999999999999993,
+          "ly": 82.6,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13091$d680eaf2-ae2e-46bb-8bba-9c1fcdc87ab2",
+          "rank": "deprecated",
+          "raw": "40.3 milliarcsecond",
+          "sigma": 0.620000000000001,
+          "ly": 80.9,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 1.76,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.75,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.77,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.79,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.82,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.72,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.73,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.76,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.731607,
+          "rank": "normal",
+          "filter": [
+            "G band"
+          ],
+          "excluded_by_policy": true
+        }
+      ],
+      "flags": [
+        "CHOSEN_DISTANCE_STATEMENT_IS_DEPRECATED_RANK",
+        "MULTIPLE_DISTANCE_VALUES(2)",
+        "SOME_DISTANCE_STATEMENTS_EXCLUDED_BY_SOURCE_POLICY",
+        "STAR_SYSTEM(double star, variable star, Alpha² Canum Venaticorum variable, infrared source, high proper-motion star, navigational star, near-infrared source, ultraviolet source, star, peculiar star, Ap/Bp star, rotating variable star)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "big_dipper",
+      "id": "megrez",
+      "name": "Megrez",
+      "optional": false,
+      "qid": "Q850779",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q850779",
+      "wikidata_label": "Megrez",
+      "instance_of": [
+        "double star",
+        "variable star",
+        "infrared source",
+        "high proper-motion star",
+        "near-infrared source",
+        "ultraviolet source",
+        "star"
+      ],
+      "part_of": [
+        {
+          "qid": "Q10460",
+          "label": "Big Dipper"
+        }
+      ],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q850779$10370822-5309-4D62-9515-8FF2FEA76171",
+        "rank": "normal",
+        "value": 183.85650263625,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q850779$8F723D95-9319-4691-AE15-26DB99120CAF",
+        "rank": "normal",
+        "value": 57.03261544611,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q850779$e4d8a601-4ad6-4605-b61d-b15843447994",
+        "rank": "deprecated",
+        "value": 40.51,
+        "unit": "milliarcsecond",
+        "sigma": 0.14999999999999858,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 80.51,
+        "ly_sigma": 0.3
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q850779$d1d712d3-0ed6-48be-833d-a04a6dd01312",
+        "rank": "preferred",
+        "value": 3.32,
+        "unit": "1",
+        "sigma": 0.009000000000000119,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q66682294",
+                "label": "UBV photometry of stars whose positions are accurately known. VII."
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q850779$dc6a1bd3-3019-4083-9524-fb66e27273fe",
+          "rank": "deprecated",
+          "raw": "24.8531 parsec",
+          "sigma": 0.15770000000000017,
+          "ly": 81.1,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Data Release 2"
+          ]
+        },
+        {
+          "kind": "distance",
+          "statement_id": "Q850779$026b9d16-1408-44d3-a323-cb52eb5050b6",
+          "rank": "normal",
+          "raw": "24.7967 parsec",
+          "sigma": 0.11950000000000038,
+          "ly": 80.9,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Early Data Release 3"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q850779$0fce6039-59cf-40b2-9dee-3fc37690fd12",
+          "rank": "normal",
+          "raw": "40.2364 milliarcsecond",
+          "sigma": 0.25530000000000186,
+          "ly": 81.1,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Data Release 2"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q850779$8fbf33ea-3fea-4723-8dd4-286a71223b91",
+          "rank": "deprecated",
+          "raw": "56.8 milliarcsecond",
+          "sigma": 7.799999999999997,
+          "ly": 57.4,
+          "excluded_by_policy": false,
+          "sources": [
+            "The General Catalogue of Trigonometric Stellar Parallaxes, Fourth Edition"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q850779$e4d8a601-4ad6-4605-b61d-b15843447994",
+          "rank": "deprecated",
+          "raw": "40.51 milliarcsecond",
+          "sigma": 0.14999999999999858,
+          "ly": 80.5,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q850779$9a4c0e5f-bff1-40e7-a6d7-fa1b8ea09bc2",
+          "rank": "deprecated",
+          "raw": "40.05 milliarcsecond",
+          "sigma": 0.5999999999999979,
+          "ly": 81.4,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q850779$fcf2e947-9225-4786-b784-f88d807ffa81",
+          "rank": "deprecated",
+          "raw": "40.3279 milliarcsecond",
+          "sigma": 0.1944999999999979,
+          "ly": 80.9,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Early Data Release 3"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 3.46,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.41,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.32,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.25,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.25,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.11,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.31,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.09,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.311102,
+          "rank": "normal",
+          "filter": [
+            "G band"
+          ],
+          "excluded_by_policy": true
+        }
+      ],
+      "flags": [
+        "CHOSEN_DISTANCE_STATEMENT_IS_DEPRECATED_RANK",
+        "MULTIPLE_DISTANCE_VALUES(2)",
+        "SOME_DISTANCE_STATEMENTS_EXCLUDED_BY_SOURCE_POLICY",
+        "STAR_SYSTEM(double star, variable star, infrared source, high proper-motion star, near-infrared source, ultraviolet source, star)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "big_dipper",
+      "id": "phecda",
+      "name": "Phecda",
+      "optional": false,
+      "qid": "Q13099",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q13099",
+      "wikidata_label": "Phecda",
+      "instance_of": [
+        "double star",
+        "variable star",
+        "infrared source",
+        "astrophysical X-ray source",
+        "emission-line star",
+        "high proper-motion star",
+        "near-infrared source",
+        "ultraviolet source",
+        "star"
+      ],
+      "part_of": [
+        {
+          "qid": "Q10460",
+          "label": "Big Dipper"
+        }
+      ],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q13099$06B52A28-44F8-41F7-BB7A-55B719307193",
+        "rank": "normal",
+        "value": 178.4576971525,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q13099$BDFA968C-E310-4535-ACDB-CFD6C1DD9377",
+        "rank": "normal",
+        "value": 53.69475972917,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q13099$134567fd-cc45-4b5c-9f04-f3eb5f1d2027",
+        "rank": "deprecated",
+        "value": 39.21,
+        "unit": "milliarcsecond",
+        "sigma": 0.3999999999999986,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 83.18,
+        "ly_sigma": 0.85
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q13099$72ae126b-4785-42cf-8e08-b1d8e26cdb6c",
+        "rank": "preferred",
+        "value": 2.44,
+        "unit": "1",
+        "sigma": 0.008999999999999897,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q66682289",
+                "label": "UBV photometry of stars whose positions are accurately known. VI"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q13099$12e1b6b4-63c4-4115-a097-ba30d9f8a613",
+          "rank": "normal",
+          "raw": "33.9131 parsec",
+          "sigma": 1.1717999999999975,
+          "ly": 110.6,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Data Release 2"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13099$02c5df58-83e7-42dd-9610-acb3a3fe52a0",
+          "rank": "normal",
+          "raw": "29.4871 milliarcsecond",
+          "sigma": 1.0189000000000004,
+          "ly": 110.6,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Data Release 2"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13099$24fe6fa1-9f1f-4345-9674-165fd802de66",
+          "rank": "deprecated",
+          "raw": "22.2 milliarcsecond",
+          "sigma": 8.9,
+          "ly": 146.9,
+          "excluded_by_policy": false,
+          "sources": [
+            "The General Catalogue of Trigonometric Stellar Parallaxes, Fourth Edition"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13099$134567fd-cc45-4b5c-9f04-f3eb5f1d2027",
+          "rank": "deprecated",
+          "raw": "39.21 milliarcsecond",
+          "sigma": 0.3999999999999986,
+          "ly": 83.2,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13099$bc48f00d-138e-4c82-965f-d205649aa0cb",
+          "rank": "deprecated",
+          "raw": "38.99 milliarcsecond",
+          "sigma": 0.6799999999999997,
+          "ly": 83.7,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 2.44,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.45,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.44,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.44,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.47,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.4,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.487,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.33,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.436276,
+          "rank": "normal",
+          "filter": [
+            "G band"
+          ],
+          "excluded_by_policy": true
+        }
+      ],
+      "flags": [
+        "CHOSEN_DISTANCE_STATEMENT_IS_DEPRECATED_RANK",
+        "MULTIPLE_DISTANCE_VALUES(2)",
+        "SOME_DISTANCE_STATEMENTS_EXCLUDED_BY_SOURCE_POLICY",
+        "STAR_SYSTEM(double star, variable star, infrared source, astrophysical X-ray source, emission-line star, high proper-motion star, near-infrared source, ultraviolet source, star)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "big_dipper",
+      "id": "merak",
+      "name": "Merak",
+      "optional": false,
+      "qid": "Q13096",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q13096",
+      "wikidata_label": "Merak",
+      "instance_of": [
+        "peculiar star",
+        "variable star",
+        "infrared source",
+        "high proper-motion star",
+        "near-infrared source",
+        "ultraviolet source",
+        "star",
+        "Ap/Bp star",
+        "suspected variable",
+        "A-type subgiant star"
+      ],
+      "part_of": [
+        {
+          "qid": "Q10460",
+          "label": "Big Dipper"
+        },
+        {
+          "qid": "Q1195678",
+          "label": "Ursa Major Moving Group"
+        }
+      ],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q13096$8d8e1276-aeb6-470c-b200-6839697395cb",
+        "rank": "normal",
+        "value": 165.46033229797,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q66061041",
+                "label": "Gaia Data Release 3"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q13096$7bf2b0b6-b273-4c08-8df2-6143656f44cc",
+        "rank": "normal",
+        "value": 56.3824336495,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q66061041",
+                "label": "Gaia Data Release 3"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q13096$ef94736e-0bd6-46f5-b8d2-c70fdc6d01fe",
+        "rank": "deprecated",
+        "value": 40.9,
+        "unit": "milliarcsecond",
+        "sigma": 0.16000000000000014,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 79.74,
+        "ly_sigma": 0.31
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q13096$6aa36c23-62ff-493a-b49c-0b6bbb760f0e",
+        "rank": "preferred",
+        "value": 2.37,
+        "unit": "1",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q63881058",
+                "label": "VizieR Online Data Catalog: Stellar Photometry in Johnson's 11-color system (Ducati, 2002)"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q13096$986cf20a-aefe-457b-b410-2103d4fcd795",
+          "rank": "deprecated",
+          "raw": "29.5879 parsec",
+          "sigma": 0.9716000000000005,
+          "ly": 96.5,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Data Release 2"
+          ]
+        },
+        {
+          "kind": "distance",
+          "statement_id": "Q13096$497ce527-7de5-450b-bf2d-feaf9c3859b7",
+          "rank": "normal",
+          "raw": "25.9047 parsec",
+          "sigma": 0.7571999999999992,
+          "ly": 84.5,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Early Data Release 3"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13096$baf9a870-ca5b-4724-b5f8-83ee121f221a",
+          "rank": "deprecated",
+          "raw": "33.7976 milliarcsecond",
+          "sigma": 1.1098,
+          "ly": 96.5,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Data Release 2"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13096$3a91d488-2653-4d29-84c9-bf503a3b5bd3",
+          "rank": "deprecated",
+          "raw": "46.6 milliarcsecond",
+          "sigma": 8.2,
+          "ly": 70.0,
+          "excluded_by_policy": false,
+          "sources": [
+            "The General Catalogue of Trigonometric Stellar Parallaxes, Fourth Edition"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13096$ef94736e-0bd6-46f5-b8d2-c70fdc6d01fe",
+          "rank": "deprecated",
+          "raw": "40.9 milliarcsecond",
+          "sigma": 0.16000000000000014,
+          "ly": 79.7,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13096$034bcf40-76b0-4b82-9afd-2c5a7f1836e6",
+          "rank": "deprecated",
+          "raw": "41.07 milliarcsecond",
+          "sigma": 0.6000000000000014,
+          "ly": 79.4,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13096$886985d0-58f0-4c00-9136-1e43fd08a977",
+          "rank": "normal",
+          "raw": "38.6031 milliarcsecond",
+          "sigma": 1.128499999999999,
+          "ly": 84.5,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Early Data Release 3"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 2.35,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.37,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.31,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.35,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.35,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.359,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.35,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.398536,
+          "rank": "normal",
+          "filter": [
+            "G band"
+          ],
+          "excluded_by_policy": true
+        },
+        {
+          "value": 2.35,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        }
+      ],
+      "flags": [
+        "POSITION_FROM_EXCLUDED_SOURCE(Gaia Data Release 3)_NEEDS_APPROVAL",
+        "CHOSEN_DISTANCE_STATEMENT_IS_DEPRECATED_RANK",
+        "MULTIPLE_DISTANCE_VALUES(2)",
+        "SOME_DISTANCE_STATEMENTS_EXCLUDED_BY_SOURCE_POLICY",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "big_dipper",
+      "id": "dubhe",
+      "name": "Dubhe",
+      "optional": false,
+      "qid": "Q13084",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q13084",
+      "wikidata_label": "Dubhe",
+      "instance_of": [
+        "binary star",
+        "spectroscopic binary",
+        "star",
+        "variable star",
+        "infrared source",
+        "high proper-motion star",
+        "navigational star",
+        "double star",
+        "near-infrared source",
+        "ultraviolet source",
+        "multiple star",
+        "suspected variable"
+      ],
+      "part_of": [
+        {
+          "qid": "Q10460",
+          "label": "Big Dipper"
+        },
+        {
+          "qid": "Q7058862",
+          "label": "Northern Pole"
+        }
+      ],
+      "has_part": [
+        {
+          "qid": "Q66477223",
+          "label": "Alpha UMa A"
+        },
+        {
+          "qid": "Q66477224",
+          "label": "Alpha UMa B"
+        }
+      ],
+      "ra_deg": {
+        "statement_id": "Q13084$8CCF7D88-97D1-4444-A839-12C9C196A182",
+        "rank": "normal",
+        "value": 165.931964674,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q13084$4155BEC9-813E-4FEA-AB8B-1AA89A579863",
+        "rank": "normal",
+        "value": 61.751034688,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q13084$1dac4d4d-756b-437a-85ad-b4876c8c7234",
+        "rank": "normal",
+        "value": 26.54,
+        "unit": "milliarcsecond",
+        "sigma": 0.4800000000000004,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 122.89,
+        "ly_sigma": 2.22
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q13084$a59c06e8-64d0-4fbf-90bb-87c47fa26e1d",
+        "rank": "preferred",
+        "value": 1.79,
+        "unit": "1",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q63881058",
+                "label": "VizieR Online Data Catalog: Stellar Photometry in Johnson's 11-color system (Ducati, 2002)"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q13084$728a4769-46ec-9634-4e79-78df5a4405ac",
+          "rank": "normal",
+          "raw": "37.7 parsec",
+          "sigma": 0.6999999999999993,
+          "ly": 123.0,
+          "excluded_by_policy": false,
+          "sources": []
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13084$b214f8eb-bdc9-40c2-93ed-81145297e6c2",
+          "rank": "deprecated",
+          "raw": "28.5 milliarcsecond",
+          "sigma": 2.8999999999999986,
+          "ly": 114.4,
+          "excluded_by_policy": false,
+          "sources": [
+            "The General Catalogue of Trigonometric Stellar Parallaxes, Fourth Edition"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13084$1dac4d4d-756b-437a-85ad-b4876c8c7234",
+          "rank": "normal",
+          "raw": "26.54 milliarcsecond",
+          "sigma": 0.4800000000000004,
+          "ly": 122.9,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13084$b83e6774-6985-471c-97a5-3477e9f5cf7a",
+          "rank": "deprecated",
+          "raw": "26.38 milliarcsecond",
+          "sigma": 0.5299999999999994,
+          "ly": 123.6,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 3.78,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.86,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.79,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 0.98,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 0.4,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": -0.01,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": -0.61,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": -0.64,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        }
+      ],
+      "flags": [
+        "MULTIPLE_DISTANCE_VALUES(3)",
+        "STAR_SYSTEM(binary star, spectroscopic binary, star, variable star, infrared source, high proper-motion star, navigational star, double star, near-infrared source, ultraviolet source, multiple star, suspected variable)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "cassiopeia",
+      "id": "segin",
+      "name": "Segin",
+      "optional": false,
+      "qid": "Q13602",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q13602",
+      "wikidata_label": "Epsilon Cassiopeiae",
+      "instance_of": [
+        "star",
+        "Be-type star",
+        "variable star",
+        "infrared source",
+        "emission-line star",
+        "near-infrared source",
+        "pulsating variable star",
+        "ultraviolet source"
+      ],
+      "part_of": [],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q13602$7b8f175a-1309-4119-8247-3894f872799b",
+        "rank": "normal",
+        "value": 28.5988920257,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q98668919",
+                "label": "Gaia Early Data Release 3"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q13602$08365aa1-6a7c-4f54-95c1-f16eb2e09cde",
+        "rank": "normal",
+        "value": 63.67010006632999,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q98668919",
+                "label": "Gaia Early Data Release 3"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q13602$4eb4e7f1-07d2-400a-a2da-318f5b0605c5",
+        "rank": "deprecated",
+        "value": 7.92,
+        "unit": "milliarcsecond",
+        "sigma": 0.4299999999999997,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 411.81,
+        "ly_sigma": 22.36
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q13602$89f4a281-9e1d-4cae-87ca-805873a38d99",
+        "rank": "preferred",
+        "value": 3.37,
+        "unit": "1",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q63881058",
+                "label": "VizieR Online Data Catalog: Stellar Photometry in Johnson's 11-color system (Ducati, 2002)"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q13602$6f1dc6c8-9840-4169-82b0-ac1403ce1fc8",
+          "rank": "deprecated",
+          "raw": "140.6094 parsec",
+          "sigma": 7.291499999999999,
+          "ly": 458.6,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Data Release 2"
+          ]
+        },
+        {
+          "kind": "distance",
+          "statement_id": "Q13602$74e1b815-fef8-47ad-b1af-46b306b2431b",
+          "rank": "normal",
+          "raw": "142.782 parsec",
+          "sigma": 5.0700999999999965,
+          "ly": 465.7,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Early Data Release 3"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13602$f6ccb203-95e0-47a1-9310-566b652c9a7e",
+          "rank": "deprecated",
+          "raw": "7.1119 milliarcsecond",
+          "sigma": 0.3687999999999998,
+          "ly": 458.6,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Data Release 2"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13602$4dd087c9-b714-4a06-b9f3-7a27d45a262e",
+          "rank": "deprecated",
+          "raw": "8.8 milliarcsecond",
+          "sigma": 7.3999999999999995,
+          "ly": 370.6,
+          "excluded_by_policy": false,
+          "sources": [
+            "The General Catalogue of Trigonometric Stellar Parallaxes, Fourth Edition"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13602$4eb4e7f1-07d2-400a-a2da-318f5b0605c5",
+          "rank": "deprecated",
+          "raw": "7.92 milliarcsecond",
+          "sigma": 0.4299999999999997,
+          "ly": 411.8,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13602$be17d033-5367-4d21-bf1c-3075ff612339",
+          "rank": "deprecated",
+          "raw": "7.38 milliarcsecond",
+          "sigma": 0.5700000000000003,
+          "ly": 441.9,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13602$ba43a337-20fb-4faa-bfec-71c653245f76",
+          "rank": "normal",
+          "raw": "7.0037 milliarcsecond",
+          "sigma": 0.24869999999999992,
+          "ly": 465.7,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Early Data Release 3"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 2.61,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.22,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.37,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.4,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.52,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.67,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.74,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.79,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.354666,
+          "rank": "normal",
+          "filter": [
+            "G band"
+          ],
+          "excluded_by_policy": true
+        }
+      ],
+      "flags": [
+        "POSITION_FROM_EXCLUDED_SOURCE(Gaia Early Data Release 3)_NEEDS_APPROVAL",
+        "CHOSEN_DISTANCE_STATEMENT_IS_DEPRECATED_RANK",
+        "MULTIPLE_DISTANCE_VALUES(2)",
+        "SOME_DISTANCE_STATEMENTS_EXCLUDED_BY_SOURCE_POLICY",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "cassiopeia",
+      "id": "ruchbah",
+      "name": "Ruchbah",
+      "optional": false,
+      "qid": "Q13597",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q13597",
+      "wikidata_label": "Delta Cassiopeiae",
+      "instance_of": [
+        "binary star",
+        "Algol variable",
+        "infrared source",
+        "high proper-motion star",
+        "eclipsing binary",
+        "double star",
+        "near-infrared source",
+        "ultraviolet source"
+      ],
+      "part_of": [],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q13597$ACB870BC-005C-4A3A-8279-E0F471A3533A",
+        "rank": "normal",
+        "value": 21.45396446208,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q13597$524DA4E8-BB13-42A2-8708-630F8CDCF84A",
+        "rank": "normal",
+        "value": 60.23528402972,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q13597$c7023e7c-784a-40fc-bf24-278bc453e496",
+        "rank": "deprecated",
+        "value": 32.81,
+        "unit": "milliarcsecond",
+        "sigma": 0.14000000000000057,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 99.41,
+        "ly_sigma": 0.42
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q13597$9650b614-6af6-454e-9587-c6c13518a4b0",
+        "rank": "preferred",
+        "value": 2.68,
+        "unit": "1",
+        "sigma": 0.009000000000000119,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q66682289",
+                "label": "UBV photometry of stars whose positions are accurately known. VI"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q13597$208e651f-9790-480c-a09f-79c71abd5b4f",
+          "rank": "deprecated",
+          "raw": "29.0455 parsec",
+          "sigma": 0.5312000000000001,
+          "ly": 94.7,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Data Release 2"
+          ]
+        },
+        {
+          "kind": "distance",
+          "statement_id": "Q13597$5fd70bb1-ca87-4384-b94a-4cbc0eb934e1",
+          "rank": "normal",
+          "raw": "31.221 parsec",
+          "sigma": 0.39010000000000034,
+          "ly": 101.8,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Early Data Release 3"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13597$ba69d0ed-247e-49c1-a195-be6ef99c2bad",
+          "rank": "normal",
+          "raw": "34.4288 milliarcsecond",
+          "sigma": 0.6296999999999997,
+          "ly": 94.7,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Data Release 2"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13597$3fc21fb1-d67f-4186-91db-bcd7134f9d34",
+          "rank": "deprecated",
+          "raw": "34.3 milliarcsecond",
+          "sigma": 5.499999999999998,
+          "ly": 95.1,
+          "excluded_by_policy": false,
+          "sources": [
+            "The General Catalogue of Trigonometric Stellar Parallaxes, Fourth Edition"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13597$c7023e7c-784a-40fc-bf24-278bc453e496",
+          "rank": "deprecated",
+          "raw": "32.81 milliarcsecond",
+          "sigma": 0.14000000000000057,
+          "ly": 99.4,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13597$7477bdaa-3f85-4a6e-b42d-50b2eed9b1f7",
+          "rank": "deprecated",
+          "raw": "32.81 milliarcsecond",
+          "sigma": 0.620000000000001,
+          "ly": 99.4,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13597$6da1480c-662a-4d96-8cb4-5b91b8ee1d85",
+          "rank": "deprecated",
+          "raw": "32.0297 milliarcsecond",
+          "sigma": 0.40029999999999966,
+          "ly": 101.8,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Early Data Release 3"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 2.93,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.81,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.68,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.53,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.44,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.34,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.367,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.25,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.68053,
+          "rank": "normal",
+          "filter": [
+            "G band"
+          ],
+          "excluded_by_policy": true
+        }
+      ],
+      "flags": [
+        "CHOSEN_DISTANCE_STATEMENT_IS_DEPRECATED_RANK",
+        "MULTIPLE_DISTANCE_VALUES(2)",
+        "SOME_DISTANCE_STATEMENTS_EXCLUDED_BY_SOURCE_POLICY",
+        "STAR_SYSTEM(binary star, Algol variable, infrared source, high proper-motion star, eclipsing binary, double star, near-infrared source, ultraviolet source)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "cassiopeia",
+      "id": "gamma",
+      "name": "Gamma Cassiopeia",
+      "optional": false,
+      "qid": "Q13584",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q13584",
+      "wikidata_label": "Gamma Cassiopeiae",
+      "instance_of": [
+        "Be-type star",
+        "shell star",
+        "triple star system",
+        "emission-line star",
+        "astrophysical X-ray source",
+        "gamma-ray source",
+        "infrared source",
+        "near-infrared source",
+        "ultraviolet source",
+        "star",
+        "spectroscopic binary",
+        "high-mass X-ray binary",
+        "double star",
+        "variable star"
+      ],
+      "part_of": [],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q13584$765d12ec-96d1-4825-a2d4-eda7765d91bb",
+        "rank": "normal",
+        "value": 14.17721289375,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q13584$0e6bc1b8-42a2-47a1-9d80-272866c0b026",
+        "rank": "normal",
+        "value": 60.71674002472,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q13584$88de8044-ef03-4907-9c8a-794c21d5ef85",
+        "rank": "normal",
+        "value": 5.94,
+        "unit": "milliarcsecond",
+        "sigma": 0.11999999999999966,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 549.08,
+        "ly_sigma": 11.09
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q13584$920ad8fb-51ba-4aad-b73f-59f4d2864fab",
+        "rank": "preferred",
+        "value": 2.39,
+        "unit": "1",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q63881058",
+                "label": "VizieR Online Data Catalog: Stellar Photometry in Johnson's 11-color system (Ducati, 2002)"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q13584$848e9297-af03-41e3-a17b-1067ace81bf7",
+          "rank": "normal",
+          "raw": "117.0 parsec",
+          "sigma": 12.0,
+          "ly": 381.6,
+          "excluded_by_policy": false,
+          "sources": [
+            "The interstellar Ca II distance scale"
+          ]
+        },
+        {
+          "kind": "distance",
+          "statement_id": "Q13584$872e91c4-8b70-42d5-9177-5525412a5124",
+          "rank": "deprecated",
+          "raw": "0.19 kiloparsec",
+          "sigma": null,
+          "ly": 619.7,
+          "excluded_by_policy": false,
+          "sources": [
+            "The Milky Way in X-rays for an outside observer. Log(N)-Log(S) and luminosity function of X-ray binaries from RXTE/ASM data"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13584$847548ca-c273-497f-89d0-68f4ffe650a1",
+          "rank": "deprecated",
+          "raw": "14.8 milliarcsecond",
+          "sigma": 8.899999999999999,
+          "ly": 220.4,
+          "excluded_by_policy": false,
+          "sources": [
+            "The General Catalogue of Trigonometric Stellar Parallaxes, Fourth Edition"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13584$1b1dd8cf-6aad-4795-b1af-740c79da2d4d",
+          "rank": "deprecated",
+          "raw": "5.32 milliarcsecond",
+          "sigma": 0.56,
+          "ly": 613.1,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13584$88de8044-ef03-4907-9c8a-794c21d5ef85",
+          "rank": "normal",
+          "raw": "5.94 milliarcsecond",
+          "sigma": 0.11999999999999966,
+          "ly": 549.1,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 1.18,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.29,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.39,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.32,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.4,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.756,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.993,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.039,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.064583,
+          "rank": "normal",
+          "filter": [
+            "G band"
+          ],
+          "excluded_by_policy": true
+        }
+      ],
+      "flags": [
+        "MULTIPLE_DISTANCE_VALUES(4)",
+        "DISTANCE_DISAGREEMENT(382-620 ly, x1.62)",
+        "STAR_SYSTEM(Be-type star, shell star, triple star system, emission-line star, astrophysical X-ray source, gamma-ray source, infrared source, near-infrared source, ultraviolet source, star, spectroscopic binary, high-mass X-ray binary, double star, variable star)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "cassiopeia",
+      "id": "schedar",
+      "name": "Schedar",
+      "optional": false,
+      "qid": "Q13108",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q13108",
+      "wikidata_label": "Alpha Cassiopeiae",
+      "instance_of": [
+        "double star",
+        "variable star",
+        "infrared source",
+        "high proper-motion star",
+        "navigational star",
+        "near-infrared source",
+        "ultraviolet source",
+        "star"
+      ],
+      "part_of": [],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q13108$7C6607A2-3A0C-4B6A-9EE7-8467D19968C5",
+        "rank": "normal",
+        "value": 10.12683778292,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q13108$91EEAA2A-C50B-4EB3-863A-2B40BAC8B3DB",
+        "rank": "normal",
+        "value": 56.53733115833,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q13108$cc118fd6-c4e2-44f7-b110-6b966acb46fb",
+        "rank": "deprecated",
+        "value": 14.29,
+        "unit": "milliarcsecond",
+        "sigma": 0.14999999999999947,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 228.24,
+        "ly_sigma": 2.4
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q13108$ce2b2552-49ea-228b-cfe6-fd79a8bf7a84",
+        "rank": "preferred",
+        "value": 2.23,
+        "unit": "1",
+        "sigma": null,
+        "references": [
+          {},
+          {
+            "stated_in": [
+              {
+                "qid": "Q63881058",
+                "label": "VizieR Online Data Catalog: Stellar Photometry in Johnson's 11-color system (Ducati, 2002)"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q13108$74eb73cd-4be4-3ec6-0fae-f5016b1c692b",
+          "rank": "deprecated",
+          "raw": "229.0 light-year",
+          "sigma": 9.0,
+          "ly": 229.0,
+          "excluded_by_policy": false,
+          "sources": []
+        },
+        {
+          "kind": "distance",
+          "statement_id": "Q13108$2c1e3d87-f8ae-4512-ac2c-61d9ade64f86",
+          "rank": "normal",
+          "raw": "70.9673 parsec",
+          "sigma": 2.5120999999999967,
+          "ly": 231.5,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Early Data Release 3"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13108$ed96e3f0-66ae-4cf5-a045-3ce277a6829b",
+          "rank": "normal",
+          "raw": "1.6949 milliarcsecond",
+          "sigma": 1.2847,
+          "ly": 1924.3,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Data Release 2"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13108$2136cecd-0634-4c9a-b94f-0cb7bcaeb20b",
+          "rank": "deprecated",
+          "raw": "12.7 milliarcsecond",
+          "sigma": 6.1000000000000005,
+          "ly": 256.8,
+          "excluded_by_policy": false,
+          "sources": [
+            "The General Catalogue of Trigonometric Stellar Parallaxes, Fourth Edition"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13108$cc118fd6-c4e2-44f7-b110-6b966acb46fb",
+          "rank": "deprecated",
+          "raw": "14.29 milliarcsecond",
+          "sigma": 0.14999999999999947,
+          "ly": 228.2,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13108$95c46b47-3cfb-4f22-b981-78470fa8a998",
+          "rank": "deprecated",
+          "raw": "14.27 milliarcsecond",
+          "sigma": 0.5700000000000003,
+          "ly": 228.6,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13108$63fe7180-cb17-4bdb-91d9-7ba7f2adc06e",
+          "rank": "deprecated",
+          "raw": "14.091 milliarcsecond",
+          "sigma": 0.49880000000000013,
+          "ly": 231.5,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Early Data Release 3"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 2.23,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 4.52,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.4,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.45,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 0.85,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 0.42,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": -0.21,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": -0.25,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.942524,
+          "rank": "normal",
+          "filter": [
+            "G band"
+          ],
+          "excluded_by_policy": true
+        }
+      ],
+      "flags": [
+        "CHOSEN_DISTANCE_STATEMENT_IS_DEPRECATED_RANK",
+        "MULTIPLE_DISTANCE_VALUES(3)",
+        "SOME_DISTANCE_STATEMENTS_EXCLUDED_BY_SOURCE_POLICY",
+        "STAR_SYSTEM(double star, variable star, infrared source, high proper-motion star, navigational star, near-infrared source, ultraviolet source, star)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "cassiopeia",
+      "id": "caph",
+      "name": "Caph",
+      "optional": false,
+      "qid": "Q13594",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q13594",
+      "wikidata_label": "Beta Cassiopeiae",
+      "instance_of": [
+        "double star",
+        "variable star",
+        "Delta Scuti variable",
+        "infrared source",
+        "astrophysical X-ray source",
+        "high proper-motion star",
+        "near-infrared source",
+        "ultraviolet source"
+      ],
+      "part_of": [],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q13594$ABE3326A-60EE-490B-B93B-59EB813A1EBA",
+        "rank": "normal",
+        "value": 2.294521578,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q13594$7554D4D2-2000-4FCD-9F96-EC2E825F5FCB",
+        "rank": "normal",
+        "value": 59.149781098,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q13594$e37436bf-6113-4b53-9a5f-084f3393da64",
+        "rank": "normal",
+        "value": 59.58,
+        "unit": "milliarcsecond",
+        "sigma": 0.379999999999999,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 54.74,
+        "ly_sigma": 0.35
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q13594$c4b6e9d0-fc39-4850-a958-274b0e663960",
+        "rank": "preferred",
+        "value": 2.27,
+        "unit": "1",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q63881058",
+                "label": "VizieR Online Data Catalog: Stellar Photometry in Johnson's 11-color system (Ducati, 2002)"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q13594$34539acd-4a59-0408-5c8d-e7568b35e81f",
+          "rank": "normal",
+          "raw": "54.4 light-year",
+          "sigma": null,
+          "ly": 54.4,
+          "excluded_by_policy": false,
+          "sources": [
+            "https://encyklopedia.pwn.pl/haslo/Caph;3883111.html"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13594$43beee29-613e-45fb-bf0f-953b2230a17c",
+          "rank": "deprecated",
+          "raw": "69.5 milliarcsecond",
+          "sigma": 6.599999999999998,
+          "ly": 46.9,
+          "excluded_by_policy": false,
+          "sources": [
+            "The General Catalogue of Trigonometric Stellar Parallaxes, Fourth Edition"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13594$e37436bf-6113-4b53-9a5f-084f3393da64",
+          "rank": "normal",
+          "raw": "59.58 milliarcsecond",
+          "sigma": 0.379999999999999,
+          "ly": 54.7,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13594$bd3502a2-f26e-4c6a-a6e7-2848c42caf25",
+          "rank": "deprecated",
+          "raw": "59.89 milliarcsecond",
+          "sigma": 0.5600000000000023,
+          "ly": 54.5,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 2.73,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.61,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.27,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.97,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.77,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.63,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.43,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.44,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.232691,
+          "rank": "normal",
+          "filter": [
+            "G band"
+          ],
+          "excluded_by_policy": true
+        }
+      ],
+      "flags": [
+        "MULTIPLE_DISTANCE_VALUES(3)",
+        "STAR_SYSTEM(double star, variable star, Delta Scuti variable, infrared source, astrophysical X-ray source, high proper-motion star, near-infrared source, ultraviolet source)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "orion",
+      "id": "betelgeuse",
+      "name": "Betelgeuse",
+      "optional": false,
+      "qid": "Q12124",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q12124",
+      "wikidata_label": "Betelgeuse",
+      "instance_of": [
+        "red supergiant",
+        "long-period variable star",
+        "navigational star",
+        "infrared source",
+        "near-infrared source",
+        "sub-millimetric radio source",
+        "ultraviolet source",
+        "semiregular variable star",
+        "variable star",
+        "pulsating variable star"
+      ],
+      "part_of": [
+        {
+          "qid": "Q505816",
+          "label": "Winter Triangle"
+        }
+      ],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q12124$DB30A518-E21A-4E53-9408-0CEB001E6FA1",
+        "rank": "normal",
+        "value": 88.792938991,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q12124$A1C5689A-CB09-4821-819E-21782E7DFE68",
+        "rank": "normal",
+        "value": 7.407063995,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q12124$09497601-418e-bf7f-cd90-bbadd6dc1f44",
+        "rank": "normal",
+        "value": 6.55,
+        "unit": "milliarcsecond",
+        "sigma": 0.8300000000000001,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 497.95,
+        "ly_sigma": 63.1
+      },
+      "apparent_magnitude": null,
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q12124$b2e9fcee-421c-ff3c-2f6a-2d646fdb7521",
+          "rank": "normal",
+          "raw": "548.0 light-year",
+          "sigma": null,
+          "ly": 548.0,
+          "excluded_by_policy": false,
+          "sources": [
+            "Standing on the Shoulders of Giants: New Mass and Distance Estimates for Betelgeuse through Combined Evolutionary, Asteroseismic, and Hydrodynamic Simulations with MESA"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q12124$09b12ca0-4639-b16c-5d36-b791455667b9",
+          "rank": "deprecated",
+          "raw": "9.8 milliarcsecond",
+          "sigma": 4.7,
+          "ly": 332.8,
+          "excluded_by_policy": false,
+          "sources": [
+            "The General Catalogue of Trigonometric Stellar Parallaxes, Fourth Edition"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q12124$09497601-418e-bf7f-cd90-bbadd6dc1f44",
+          "rank": "normal",
+          "raw": "6.55 milliarcsecond",
+          "sigma": 0.8300000000000001,
+          "ly": 497.9,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q12124$db1916cb-cfda-4631-8a34-a7f0f9411cad",
+          "rank": "deprecated",
+          "raw": "7.63 milliarcsecond",
+          "sigma": 1.6399999999999997,
+          "ly": 427.5,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 0.42,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": true
+        },
+        {
+          "value": 4.38,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.27,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": -1.17,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": -2.45,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": -3.0,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": -3.73,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": -4.05,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        }
+      ],
+      "flags": [
+        "MULTIPLE_DISTANCE_VALUES(3)",
+        "DISTANCE_DISAGREEMENT(427-548 ly, x1.28)",
+        "DISTANCE_UNCERTAINTY>10%(13%)",
+        "V_MAGNITUDE_ONLY_FROM_EXCLUDED_SOURCE(The HYG Database, UBVRIJKL photometry of the bright stars)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "orion",
+      "id": "bellatrix",
+      "name": "Bellatrix",
+      "optional": false,
+      "qid": "Q13066",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q13066",
+      "wikidata_label": "Bellatrix",
+      "instance_of": [
+        "suspected variable",
+        "infrared source",
+        "astrophysical X-ray source",
+        "optical double",
+        "navigational star",
+        "near-infrared source",
+        "ultraviolet source",
+        "binary star",
+        "variable star",
+        "double star",
+        "star"
+      ],
+      "part_of": [],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q13066$45F9190E-B754-49FF-9D1F-9FDEA57BAA7D",
+        "rank": "normal",
+        "value": 81.282763557,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q13066$61DCBF67-CE44-420B-A12E-E477ECC1DD91",
+        "rank": "normal",
+        "value": 6.349703264,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q13066$61245e80-8fd2-4d2e-9fc5-9455705ee046",
+        "rank": "normal",
+        "value": 12.92,
+        "unit": "milliarcsecond",
+        "sigma": 0.5199999999999996,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 252.44,
+        "ly_sigma": 10.16
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q13066$f67c61af-23cf-4f9c-8a2e-9d4c26912e7a",
+        "rank": "preferred",
+        "value": 1.64,
+        "unit": "1",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q63881058",
+                "label": "VizieR Online Data Catalog: Stellar Photometry in Johnson's 11-color system (Ducati, 2002)"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q13066$b6389a6e-8db9-43da-9895-b165054ee718",
+          "rank": "normal",
+          "raw": "121.0 parsec",
+          "sigma": 9.0,
+          "ly": 394.6,
+          "excluded_by_policy": false,
+          "sources": [
+            "The interstellar Ca II distance scale"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13066$1842d813-2404-41a7-83fc-169677684549",
+          "rank": "deprecated",
+          "raw": "27.9 milliarcsecond",
+          "sigma": 15.0,
+          "ly": 116.9,
+          "excluded_by_policy": false,
+          "sources": [
+            "The General Catalogue of Trigonometric Stellar Parallaxes, Fourth Edition"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13066$61245e80-8fd2-4d2e-9fc5-9455705ee046",
+          "rank": "normal",
+          "raw": "12.92 milliarcsecond",
+          "sigma": 0.5199999999999996,
+          "ly": 252.4,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13066$6ab82a13-73e7-436b-944e-13468506978c",
+          "rank": "deprecated",
+          "raw": "13.42 milliarcsecond",
+          "sigma": 0.9800000000000004,
+          "ly": 243.0,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 0.54,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.42,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.64,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.73,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.95,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.17,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.24,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.32,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        }
+      ],
+      "flags": [
+        "MULTIPLE_DISTANCE_VALUES(3)",
+        "DISTANCE_DISAGREEMENT(243-395 ly, x1.62)",
+        "STAR_SYSTEM(suspected variable, infrared source, astrophysical X-ray source, optical double, navigational star, near-infrared source, ultraviolet source, binary star, variable star, double star, star)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "orion",
+      "id": "mintaka",
+      "name": "Mintaka",
+      "optional": false,
+      "qid": "Q680341",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q680341",
+      "wikidata_label": "Mintaka",
+      "instance_of": [
+        "multiple star",
+        "eclipsing binary",
+        "spectroscopic binary",
+        "infrared source",
+        "astrophysical X-ray source",
+        "near-infrared source",
+        "ultraviolet source",
+        "Algol variable",
+        "variable star",
+        "star",
+        "binary star"
+      ],
+      "part_of": [
+        {
+          "qid": "Q324312",
+          "label": "Orion's Belt"
+        },
+        {
+          "qid": "Q80634730",
+          "label": "delta Orionis Cluster"
+        },
+        {
+          "qid": "Q86939956",
+          "label": "Orion X"
+        }
+      ],
+      "has_part": [
+        {
+          "qid": "Q66477092",
+          "label": "Delta Orionis A"
+        },
+        {
+          "qid": "Q66476670",
+          "label": "Delta Orionis B"
+        }
+      ],
+      "ra_deg": {
+        "statement_id": "Q680341$5AA67D98-82D0-4A3B-8CE7-848A5CD9CA89",
+        "rank": "normal",
+        "value": 83.001667056,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q680341$0FCC1912-38A1-48EE-B8EE-45CA626C6AA1",
+        "rank": "normal",
+        "value": -0.299095107,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q680341$795c8c18-4471-4f35-8d39-7fa78de53864",
+        "rank": "normal",
+        "value": 4.71,
+        "unit": "milliarcsecond",
+        "sigma": 0.5800000000000001,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 692.48,
+        "ly_sigma": 85.27
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q680341$419c5590-7cdb-419b-b1c8-cb0afac91176",
+        "rank": "preferred",
+        "value": 2.41,
+        "unit": "1",
+        "sigma": 0.010000000000000009,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q29010778",
+                "label": "The Tycho double star catalogue"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "parallax",
+          "statement_id": "Q680341$51e3d805-566b-4180-b6c9-db1f08c7aa8e",
+          "rank": "deprecated",
+          "raw": "3.56 milliarcsecond",
+          "sigma": 0.8299999999999998,
+          "ly": 916.2,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q680341$795c8c18-4471-4f35-8d39-7fa78de53864",
+          "rank": "normal",
+          "raw": "4.71 milliarcsecond",
+          "sigma": 0.5800000000000001,
+          "ly": 692.5,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 0.96,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.02,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.41,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.32,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.54,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.72,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.84,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.88,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.248773,
+          "rank": "normal",
+          "filter": [
+            "G band"
+          ],
+          "excluded_by_policy": true
+        }
+      ],
+      "flags": [
+        "MULTIPLE_DISTANCE_VALUES(2)",
+        "DISTANCE_DISAGREEMENT(692-916 ly, x1.32)",
+        "DISTANCE_UNCERTAINTY>10%(12%)",
+        "STAR_SYSTEM(multiple star, eclipsing binary, spectroscopic binary, infrared source, astrophysical X-ray source, near-infrared source, ultraviolet source, Algol variable, variable star, star, binary star)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "orion",
+      "id": "alnilam",
+      "name": "Alnilam",
+      "optional": false,
+      "qid": "Q13070",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q13070",
+      "wikidata_label": "Alnilam",
+      "instance_of": [
+        "blue supergiant",
+        "pulsating variable star",
+        "emission-line star",
+        "navigational star",
+        "astrophysical X-ray source",
+        "infrared source",
+        "near-infrared source",
+        "ultraviolet source"
+      ],
+      "part_of": [
+        {
+          "qid": "Q324312",
+          "label": "Orion's Belt"
+        }
+      ],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q13070$230DD5AD-D8D7-4BE1-A3CE-188C22006E33",
+        "rank": "normal",
+        "value": 84.053388941,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q13070$ACD0073F-8BCE-4829-AC24-BBAD431A6DD0",
+        "rank": "normal",
+        "value": -1.201919136,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q13070$5a78f796-9717-43ae-8552-dedce8b22dd3",
+        "rank": "normal",
+        "value": 1.65,
+        "unit": "milliarcsecond",
+        "sigma": 0.45000000000000007,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 1976.71,
+        "ly_sigma": 539.1
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q13070$f86a0d65-4162-c7e3-7f2a-62297c21d70f",
+        "rank": "preferred",
+        "value": 1.69,
+        "unit": "1",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q63881058",
+                "label": "VizieR Online Data Catalog: Stellar Photometry in Johnson's 11-color system (Ducati, 2002)"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q13070$90c54169-c9d9-4f5f-a746-b0a559c39034",
+          "rank": "normal",
+          "raw": "366.0 parsec",
+          "sigma": 70.0,
+          "ly": 1193.7,
+          "excluded_by_policy": false,
+          "sources": [
+            "The interstellar Ca II distance scale"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13070$84ba52ee-e04e-4d49-a406-494ece0509f3",
+          "rank": "deprecated",
+          "raw": "2.43 milliarcsecond",
+          "sigma": 0.9099999999999999,
+          "ly": 1342.2,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13070$5a78f796-9717-43ae-8552-dedce8b22dd3",
+          "rank": "normal",
+          "raw": "1.65 milliarcsecond",
+          "sigma": 0.45000000000000007,
+          "ly": 1976.7,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 0.48,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.51,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.69,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.76,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.93,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.07,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.07,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.16,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        }
+      ],
+      "flags": [
+        "MULTIPLE_DISTANCE_VALUES(3)",
+        "DISTANCE_DISAGREEMENT(1194-1977 ly, x1.66)",
+        "DISTANCE_UNCERTAINTY>10%(27%)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "orion",
+      "id": "alnitak",
+      "name": "Alnitak",
+      "optional": false,
+      "qid": "Q13076",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q13076",
+      "wikidata_label": "Alnitak",
+      "instance_of": [
+        "star",
+        "variable star",
+        "infrared source",
+        "astrophysical X-ray source",
+        "binary star",
+        "emission-line star",
+        "double star",
+        "near-infrared source",
+        "ultraviolet source",
+        "multiple star"
+      ],
+      "part_of": [
+        {
+          "qid": "Q324312",
+          "label": "Orion's Belt"
+        }
+      ],
+      "has_part": [
+        {
+          "qid": "Q66477108",
+          "label": "Zeta Orionis A"
+        },
+        {
+          "qid": "Q66476707",
+          "label": "Zeta Orionis B"
+        }
+      ],
+      "ra_deg": {
+        "statement_id": "Q13076$42DEADA0-F2E0-45ED-BC15-FC59C0EF7DF1",
+        "rank": "normal",
+        "value": 85.189694428,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q13076$8792CCD3-3ABF-499A-B618-05361E32A439",
+        "rank": "normal",
+        "value": -1.942573586,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q13076$23313544-442c-408e-b4bb-6762a5c5a277",
+        "rank": "normal",
+        "value": 4.43,
+        "unit": "milliarcsecond",
+        "sigma": 0.6400000000000001,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 736.24,
+        "ly_sigma": 106.36
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q13076$b8c026df-d9b2-4872-9c9b-0806c9c8c141",
+        "rank": "preferred",
+        "value": 1.77,
+        "unit": "1",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q69078536",
+                "label": "Sloan magnitudes for the brightest stars"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q13076$e8226060-4c7d-2d42-80bc-33e0c0b75851",
+          "rank": "normal",
+          "raw": "1260.0 light-year",
+          "sigma": null,
+          "ly": 1260.0,
+          "excluded_by_policy": false,
+          "sources": []
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13076$6b080165-fc4f-4a1c-9d6e-c9b507fc0617",
+          "rank": "deprecated",
+          "raw": "23.9 milliarcsecond",
+          "sigma": 15.0,
+          "ly": 136.5,
+          "excluded_by_policy": false,
+          "sources": [
+            "The General Catalogue of Trigonometric Stellar Parallaxes, Fourth Edition"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13076$23313544-442c-408e-b4bb-6762a5c5a277",
+          "rank": "normal",
+          "raw": "4.43 milliarcsecond",
+          "sigma": 0.6400000000000001,
+          "ly": 736.2,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13076$f7c85f3f-09ce-4a9a-89ef-80c81e142a49",
+          "rank": "deprecated",
+          "raw": "3.99 milliarcsecond",
+          "sigma": 0.79,
+          "ly": 817.4,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 2.25,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.35,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.4,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.53,
+          "rank": "normal",
+          "filter": [
+            "z' band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.3,
+          "rank": "normal",
+          "filter": [
+            "i' band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.97,
+          "rank": "normal",
+          "filter": [
+            "r' band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.56,
+          "rank": "normal",
+          "filter": [
+            "g' band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.25,
+          "rank": "normal",
+          "filter": [
+            "u' band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.05,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.85,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.56,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 0.5,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.77,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        }
+      ],
+      "flags": [
+        "MULTIPLE_DISTANCE_VALUES(3)",
+        "DISTANCE_DISAGREEMENT(736-1260 ly, x1.71)",
+        "DISTANCE_UNCERTAINTY>10%(14%)",
+        "STAR_SYSTEM(star, variable star, infrared source, astrophysical X-ray source, binary star, emission-line star, double star, near-infrared source, ultraviolet source, multiple star)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "orion",
+      "id": "saiph",
+      "name": "Saiph",
+      "optional": false,
+      "qid": "Q14028",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q14028",
+      "wikidata_label": "Saiph",
+      "instance_of": [
+        "blue supergiant",
+        "infrared source",
+        "astrophysical X-ray source",
+        "near-infrared source",
+        "ultraviolet source",
+        "variable star",
+        "suspected variable",
+        "star",
+        "hypergiant"
+      ],
+      "part_of": [],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q14028$086B5355-F713-4B3D-9694-A0DB4F3D5F20",
+        "rank": "normal",
+        "value": 86.93912016833,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q14028$35447D6A-7A0E-4F9C-B098-F663D6E1857F",
+        "rank": "normal",
+        "value": -9.66960491861,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q14028$a1275329-87c5-464f-8ac0-946ed2265c3c",
+        "rank": "normal",
+        "value": 5.04,
+        "unit": "milliarcsecond",
+        "sigma": 0.21999999999999975,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 647.14,
+        "ly_sigma": 28.25
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q14028$6128671f-20f2-4126-9415-53c15150b576",
+        "rank": "preferred",
+        "value": 2.06,
+        "unit": "1",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q63881058",
+                "label": "VizieR Online Data Catalog: Stellar Photometry in Johnson's 11-color system (Ducati, 2002)"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q14028$051732af-d305-4e96-8ff0-4a86359acc58",
+          "rank": "normal",
+          "raw": "245.0 parsec",
+          "sigma": 40.0,
+          "ly": 799.1,
+          "excluded_by_policy": false,
+          "sources": [
+            "The interstellar Ca II distance scale"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q14028$fb1854e5-5406-44f4-ab68-57289718e251",
+          "rank": "deprecated",
+          "raw": "13.2 milliarcsecond",
+          "sigma": 15.0,
+          "ly": 247.1,
+          "excluded_by_policy": false,
+          "sources": [
+            "The General Catalogue of Trigonometric Stellar Parallaxes, Fourth Edition"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q14028$a1275329-87c5-464f-8ac0-946ed2265c3c",
+          "rank": "normal",
+          "raw": "5.04 milliarcsecond",
+          "sigma": 0.21999999999999975,
+          "ly": 647.1,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q14028$897f90a0-ce03-436a-9277-b3e45fa7e1e0",
+          "rank": "deprecated",
+          "raw": "4.52 milliarcsecond",
+          "sigma": 0.77,
+          "ly": 721.6,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 0.87,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.88,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.06,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.09,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.27,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.47,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.686,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.6,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.077826,
+          "rank": "normal",
+          "filter": [
+            "G band"
+          ],
+          "excluded_by_policy": true
+        }
+      ],
+      "flags": [
+        "MULTIPLE_DISTANCE_VALUES(3)",
+        "DISTANCE_DISAGREEMENT(647-799 ly, x1.23)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "orion",
+      "id": "rigel",
+      "name": "Rigel",
+      "optional": false,
+      "qid": "Q12126",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q12126",
+      "wikidata_label": "Rigel",
+      "instance_of": [
+        "B-type supergiant star",
+        "blue supergiant",
+        "multiple star",
+        "pulsating variable star",
+        "infrared source",
+        "astrophysical X-ray source",
+        "emission-line star",
+        "interstellar medium",
+        "reflection nebula",
+        "navigational star",
+        "near-infrared source",
+        "ultraviolet source",
+        "Alpha Cygni variable",
+        "variable star",
+        "suspected variable"
+      ],
+      "part_of": [
+        {
+          "qid": "Q515922",
+          "label": "Winter Hexagon"
+        }
+      ],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q12126$9C9CB67E-5828-4593-B063-39DA02140CC8",
+        "rank": "normal",
+        "value": 78.634467067,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q12126$888DFEDA-86D0-4A10-8A28-640D8BC50F2B",
+        "rank": "normal",
+        "value": -8.201638365,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q12126$275fdc5e-4393-38b0-a138-ed1b38a6287d",
+        "rank": "normal",
+        "value": 3.78,
+        "unit": "milliarcsecond",
+        "sigma": 0.3400000000000001,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q118398",
+                "label": "arXiv"
+              }
+            ]
+          },
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 862.85,
+        "ly_sigma": 77.61
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q12126$fd90412a-4eaf-4551-9a71-04da82e5c9bc",
+        "rank": "preferred",
+        "value": 0.13,
+        "unit": "1",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q63881058",
+                "label": "VizieR Online Data Catalog: Stellar Photometry in Johnson's 11-color system (Ducati, 2002)"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q12126$54cce7cd-45bd-53f6-5849-dba4ddcf2b67",
+          "rank": "normal",
+          "raw": "860.0 light-year",
+          "sigma": 80.0,
+          "ly": 860.0,
+          "excluded_by_policy": false,
+          "sources": []
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q12126$275fdc5e-4393-38b0-a138-ed1b38a6287d",
+          "rank": "normal",
+          "raw": "3.78 milliarcsecond",
+          "sigma": 0.3400000000000001,
+          "ly": 862.8,
+          "excluded_by_policy": false,
+          "sources": [
+            "arXiv",
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q12126$78944461-1dbf-4430-bcfe-aa4a8daa7cd2",
+          "rank": "deprecated",
+          "raw": "9.3 milliarcsecond",
+          "sigma": 6.2,
+          "ly": 350.7,
+          "excluded_by_policy": false,
+          "sources": [
+            "The General Catalogue of Trigonometric Stellar Parallaxes, Fourth Edition"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q12126$782c3aad-8e2b-46d8-b947-c92ef5918610",
+          "rank": "deprecated",
+          "raw": "4.22 milliarcsecond",
+          "sigma": 0.81,
+          "ly": 772.9,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 0.13,
+          "rank": "preferred",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": true
+        },
+        {
+          "value": -0.56,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 0.1,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 0.15,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 0.22,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 0.2,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 0.18,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 0.13,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        }
+      ],
+      "flags": [
+        "MULTIPLE_DISTANCE_VALUES(3)",
+        "STAR_SYSTEM(B-type supergiant star, blue supergiant, multiple star, pulsating variable star, infrared source, astrophysical X-ray source, emission-line star, interstellar medium, reflection nebula, navigational star, near-infrared source, ultraviolet source, Alpha Cygni variable, variable star, suspected variable)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "orion",
+      "id": "meissa",
+      "name": "Meissa",
+      "optional": true,
+      "qid": "Q14219",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q14219",
+      "wikidata_label": "Meissa",
+      "instance_of": [
+        "binary star",
+        "variable star",
+        "double star",
+        "near-infrared source",
+        "ultraviolet source",
+        "suspected variable",
+        "star"
+      ],
+      "part_of": [
+        {
+          "qid": "Q1109641",
+          "label": "Collinder 69"
+        }
+      ],
+      "has_part": [
+        {
+          "qid": "Q66530986",
+          "label": "Lambda Orionis A"
+        },
+        {
+          "qid": "Q3826290",
+          "label": "Lambda Orionis B"
+        }
+      ],
+      "ra_deg": {
+        "statement_id": "Q14219$0B640EF3-43AB-4B80-B705-29D7B765CE4D",
+        "rank": "normal",
+        "value": 83.784490021,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q14219$5FA1C785-9020-4374-BFFC-28DDB0116BBA",
+        "rank": "normal",
+        "value": 9.934155874,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q14219$29f72d38-eb88-4628-b434-e9be1f88e2b7",
+        "rank": "normal",
+        "value": 2.97,
+        "unit": "milliarcsecond",
+        "sigma": 0.55,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q28315126",
+                "label": "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+              }
+            ]
+          }
+        ],
+        "kind": "parallax",
+        "ly": 1098.17,
+        "ly_sigma": 203.36
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q14219$a2d3d7c4-4228-498e-9b2a-c4e9a5fef168",
+        "rank": "preferred",
+        "value": 3.66,
+        "unit": "1",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q63881058",
+                "label": "VizieR Online Data Catalog: Stellar Photometry in Johnson's 11-color system (Ducati, 2002)"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q14219$50baa069-47fc-9f1b-9e4d-819f698f66f7",
+          "rank": "normal",
+          "raw": "320.0 parsec",
+          "sigma": null,
+          "ly": 1043.7,
+          "excluded_by_policy": false,
+          "sources": []
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q14219$29f72d38-eb88-4628-b434-e9be1f88e2b7",
+          "rank": "normal",
+          "raw": "2.97 milliarcsecond",
+          "sigma": 0.55,
+          "ly": 1098.2,
+          "excluded_by_policy": false,
+          "sources": [
+            "van Leeuwen 2007, Validation of the new Hipparcos reduction (A&A 474, 653)"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q14219$2ad692b6-8b15-4346-a57f-dc08f1ecda7b",
+          "rank": "deprecated",
+          "raw": "3.09 milliarcsecond",
+          "sigma": 0.78,
+          "ly": 1055.5,
+          "excluded_by_policy": false,
+          "sources": [
+            "Perryman et al. 1997, The Hipparcos Catalogue (A&A 323, L49)"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 2.45,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.48,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.66,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.72,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.89,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.73,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.77,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.88,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        }
+      ],
+      "flags": [
+        "MULTIPLE_DISTANCE_VALUES(3)",
+        "DISTANCE_UNCERTAINTY>10%(19%)",
+        "STAR_SYSTEM(binary star, variable star, double star, near-infrared source, ultraviolet source, suspected variable, star)",
+        "VARIABLE"
+      ]
+    }
+  ],
+  "alternate_items": [
+    {
+      "constellation": "big_dipper",
+      "id": "mizar@Q13086",
+      "name": "Mizar (alternate item)",
+      "optional": true,
+      "qid": "Q13086",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q13086",
+      "wikidata_label": "Zeta Ursae Majoris A",
+      "instance_of": [
+        "spectroscopic binary",
+        "star",
+        "variable star",
+        "double star",
+        "near-infrared source",
+        "ultraviolet source"
+      ],
+      "part_of": [
+        {
+          "qid": "Q66477109",
+          "label": "Mizar"
+        }
+      ],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q13086$84e25e07-1f10-4a92-acd3-a32d9aedf3ac",
+        "rank": "normal",
+        "value": 200.98142616882203,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q98668919",
+                "label": "Gaia Early Data Release 3"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q13086$2f9d6cb5-05b4-46da-98e5-717ab4ee838a",
+        "rank": "normal",
+        "value": 54.92535988330278,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q98668919",
+                "label": "Gaia Early Data Release 3"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q13086$73c65cd1-9692-4213-951e-6f1b54925714",
+        "rank": "deprecated",
+        "value": 25.4,
+        "unit": "parsec",
+        "sigma": 0.20000000000000107,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q55880218",
+                "label": "Accurate masses and radii of normal stars: modern results and applications"
+              }
+            ]
+          }
+        ],
+        "kind": "distance",
+        "ly": 82.84,
+        "ly_sigma": 0.65
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q13086$855CAAC2-0CC7-448B-BF76-FA96A3A12D8F",
+        "rank": "preferred",
+        "value": 2.22,
+        "unit": "1",
+        "sigma": 0.0029999999999998916,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q2725928",
+                "label": "The Tycho-2 catalogue of the 2.5 million brightest stars"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q13086$73c65cd1-9692-4213-951e-6f1b54925714",
+          "rank": "deprecated",
+          "raw": "25.4 parsec",
+          "sigma": 0.20000000000000107,
+          "ly": 82.8,
+          "excluded_by_policy": false,
+          "sources": [
+            "Accurate masses and radii of normal stars: modern results and applications"
+          ]
+        },
+        {
+          "kind": "distance",
+          "statement_id": "Q13086$6eb02d30-aef3-4311-8070-090805112382",
+          "rank": "normal",
+          "raw": "24.8674 parsec",
+          "sigma": 0.2857999999999983,
+          "ly": 81.1,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Early Data Release 3"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13086$17b90863-13f4-480d-861d-d46dce468dca",
+          "rank": "deprecated",
+          "raw": "39.4 milliarcsecond",
+          "sigma": null,
+          "ly": 82.8,
+          "excluded_by_policy": false,
+          "sources": [
+            "Accurate masses and radii of normal stars: modern results and applications"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13086$865e8662-243f-4191-a43f-062e893794ea",
+          "rank": "deprecated",
+          "raw": "39.4 milliarcsecond",
+          "sigma": null,
+          "ly": 82.8,
+          "excluded_by_policy": false,
+          "sources": [
+            "Accurate masses and radii of normal stars: modern results and applications"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q13086$9d0e373b-f410-4a83-8406-6cc9676ead27",
+          "rank": "normal",
+          "raw": "40.2133 milliarcsecond",
+          "sigma": 0.4623000000000026,
+          "ly": 81.1,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Early Data Release 3"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 2.22,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.11,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.271,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.1,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.12,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.603,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.152,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.32,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.282647,
+          "rank": "normal",
+          "filter": [
+            "G band"
+          ],
+          "excluded_by_policy": true
+        }
+      ],
+      "flags": [
+        "POSITION_FROM_EXCLUDED_SOURCE(Gaia Early Data Release 3)_NEEDS_APPROVAL",
+        "DISTANCE_NOT_FROM_PREFERRED_SOURCE",
+        "CHOSEN_DISTANCE_STATEMENT_IS_DEPRECATED_RANK",
+        "MULTIPLE_DISTANCE_VALUES(3)",
+        "SOME_DISTANCE_STATEMENTS_EXCLUDED_BY_SOURCE_POLICY",
+        "STAR_SYSTEM(spectroscopic binary, star, variable star, double star, near-infrared source, ultraviolet source)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "big_dipper",
+      "id": "mizar@Q12064840",
+      "name": "Mizar (alternate item)",
+      "optional": true,
+      "qid": "Q12064840",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q12064840",
+      "wikidata_label": "Zeta2 Ursae Majoris",
+      "instance_of": [
+        "binary star",
+        "spectroscopic binary",
+        "variable star",
+        "infrared source",
+        "high proper-motion star",
+        "double star",
+        "star"
+      ],
+      "part_of": [
+        {
+          "qid": "Q66477109",
+          "label": "Mizar"
+        },
+        {
+          "qid": "Q1195678",
+          "label": "Ursa Major Moving Group"
+        }
+      ],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q12064840$C08C4944-4934-46D2-BF8C-324420F8EC17",
+        "rank": "normal",
+        "value": 200.9846792480303,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q51905050",
+                "label": "Gaia Data Release 2"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q12064840$0A63E4EA-294A-4C21-B94F-B23EBFFE94F0",
+        "rank": "normal",
+        "value": 54.9218072347124,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q51905050",
+                "label": "Gaia Data Release 2"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": null,
+      "apparent_magnitude": {
+        "statement_id": "Q12064840$22eaf60e-b1be-4a67-99fb-6c44251eb20c",
+        "rank": "preferred",
+        "value": 3.88,
+        "unit": "1",
+        "sigma": 0.0,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q29010778",
+                "label": "The Tycho double star catalogue"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q12064840$cca0b375-4f66-4340-bb29-b2b20cbe069f",
+          "rank": "normal",
+          "raw": "24.6888 parsec",
+          "sigma": 0.2120999999999995,
+          "ly": 80.5,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Data Release 2"
+          ]
+        },
+        {
+          "kind": "parallax",
+          "statement_id": "Q12064840$ff36bfa5-081f-4a96-99ba-a20c2e88d480",
+          "rank": "normal",
+          "raw": "40.5042 milliarcsecond",
+          "sigma": 0.34800000000000253,
+          "ly": 80.5,
+          "excluded_by_policy": true,
+          "sources": [
+            "Gaia Data Release 2"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 4.05,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.88,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.8238,
+          "rank": "normal",
+          "filter": [
+            "G band"
+          ],
+          "excluded_by_policy": true
+        },
+        {
+          "value": 2.821,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        }
+      ],
+      "flags": [
+        "POSITION_FROM_EXCLUDED_SOURCE(Gaia Data Release 2)_NEEDS_APPROVAL",
+        "MULTIPLE_DISTANCE_VALUES(2)",
+        "SOME_DISTANCE_STATEMENTS_EXCLUDED_BY_SOURCE_POLICY",
+        "DISTANCE_ONLY_FROM_EXCLUDED_SOURCE",
+        "STAR_SYSTEM(binary star, spectroscopic binary, variable star, infrared source, high proper-motion star, double star, star)",
+        "VARIABLE"
+      ]
+    },
+    {
+      "constellation": "big_dipper",
+      "id": "dubhe@Q66477223",
+      "name": "Dubhe (alternate item)",
+      "optional": true,
+      "qid": "Q66477223",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q66477223",
+      "wikidata_label": "Alpha UMa A",
+      "instance_of": [
+        "double star",
+        "high proper-motion star",
+        "star",
+        "multiple star",
+        "G-type giant star",
+        "binary star"
+      ],
+      "part_of": [
+        {
+          "qid": "Q13084",
+          "label": "Dubhe"
+        }
+      ],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q66477223$7fba52f5-0217-4930-a78d-4f91e02c5c07",
+        "rank": "normal",
+        "value": 165.9319542,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q29010778",
+                "label": "The Tycho double star catalogue"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q66477223$ea5161cb-2187-4134-a7b2-90bf253f9fec",
+        "rank": "normal",
+        "value": 61.7510333,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q29010778",
+                "label": "The Tycho double star catalogue"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": null,
+      "apparent_magnitude": {
+        "statement_id": "Q66477223$37822b60-d1c5-478b-ba76-72e77746bf33",
+        "rank": "preferred",
+        "value": 2.0,
+        "unit": "1",
+        "sigma": 0.009999999999999898,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q29010778",
+                "label": "The Tycho double star catalogue"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [],
+      "all_magnitudes": [
+        {
+          "value": 3.33,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.0,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        }
+      ],
+      "flags": [
+        "MISSING_DISTANCE",
+        "STAR_SYSTEM(double star, high proper-motion star, star, multiple star, G-type giant star, binary star)"
+      ]
+    },
+    {
+      "constellation": "orion",
+      "id": "alnitak@Q66477108",
+      "name": "Alnitak (alternate item)",
+      "optional": true,
+      "qid": "Q66477108",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q66477108",
+      "wikidata_label": "Zeta Orionis A",
+      "instance_of": [
+        "binary star",
+        "star",
+        "spectroscopic binary"
+      ],
+      "part_of": [
+        {
+          "qid": "Q13076",
+          "label": "Alnitak"
+        }
+      ],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q66477108$ee4b10e7-6021-4be5-aa71-8fb5f3a067ed",
+        "rank": "normal",
+        "value": 85.1896958,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q29010778",
+                "label": "The Tycho double star catalogue"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q66477108$b99c0268-6818-4740-90dc-2f84399b7ff0",
+        "rank": "normal",
+        "value": -1.9425722,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q29010778",
+                "label": "The Tycho double star catalogue"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": {
+        "statement_id": "Q66477108$a4f45ccf-9c7b-40fe-b2f5-4f0f94cd6a32",
+        "rank": "normal",
+        "value": 297.0,
+        "unit": "parsec",
+        "sigma": 45.0,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q56557736",
+                "label": "The interstellar Ca II distance scale"
+              }
+            ]
+          }
+        ],
+        "kind": "distance",
+        "ly": 968.68,
+        "ly_sigma": 146.77
+      },
+      "apparent_magnitude": {
+        "statement_id": "Q66477108$982fe511-5ffa-4d64-8300-ddc0b68c9985",
+        "rank": "preferred",
+        "value": 1.88,
+        "unit": "1",
+        "sigma": 0.009999999999999898,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q29010778",
+                "label": "The Tycho double star catalogue"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [
+        {
+          "kind": "distance",
+          "statement_id": "Q66477108$a4f45ccf-9c7b-40fe-b2f5-4f0f94cd6a32",
+          "rank": "normal",
+          "raw": "297.0 parsec",
+          "sigma": 45.0,
+          "ly": 968.7,
+          "excluded_by_policy": false,
+          "sources": [
+            "The interstellar Ca II distance scale"
+          ]
+        }
+      ],
+      "all_magnitudes": [
+        {
+          "value": 0.5,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.77,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.88,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 1.84,
+          "rank": "normal",
+          "filter": [
+            "R band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.04,
+          "rank": "normal",
+          "filter": [
+            "I band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.19,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.26,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 2.32,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        }
+      ],
+      "flags": [
+        "DISTANCE_NOT_FROM_PREFERRED_SOURCE",
+        "DISTANCE_UNCERTAINTY>10%(15%)",
+        "STAR_SYSTEM(binary star, star, spectroscopic binary)"
+      ]
+    },
+    {
+      "constellation": "orion",
+      "id": "meissa@Q66530986",
+      "name": "Meissa (alternate item)",
+      "optional": true,
+      "qid": "Q66530986",
+      "wikidata_url": "https://www.wikidata.org/wiki/Q66530986",
+      "wikidata_label": "Lambda Orionis A",
+      "instance_of": [
+        "star",
+        "astrophysical X-ray source",
+        "binary star",
+        "emission-line star"
+      ],
+      "part_of": [
+        {
+          "qid": "Q14219",
+          "label": "Meissa"
+        }
+      ],
+      "has_part": [],
+      "ra_deg": {
+        "statement_id": "Q66530986$a06079ad-2bb8-4e80-9cf9-bdf0da7d69a5",
+        "rank": "normal",
+        "value": 83.7844875,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q2725928",
+                "label": "The Tycho-2 catalogue of the 2.5 million brightest stars"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "dec_deg": {
+        "statement_id": "Q66530986$467a4c9d-107d-46e4-b976-d3dc375f6cce",
+        "rank": "normal",
+        "value": 9.9341556,
+        "unit": "degree",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q2725928",
+                "label": "The Tycho-2 catalogue of the 2.5 million brightest stars"
+              }
+            ]
+          }
+        ],
+        "epoch": []
+      },
+      "distance": null,
+      "apparent_magnitude": {
+        "statement_id": "Q66530986$f9a648c1-303a-48a2-b2da-76a57a966f32",
+        "rank": "preferred",
+        "value": 3.47,
+        "unit": "1",
+        "sigma": null,
+        "references": [
+          {
+            "stated_in": [
+              {
+                "qid": "Q63881058",
+                "label": "VizieR Online Data Catalog: Stellar Photometry in Johnson's 11-color system (Ducati, 2002)"
+              }
+            ]
+          }
+        ],
+        "filter": [
+          {
+            "qid": "Q4892529",
+            "label": "V band"
+          }
+        ]
+      },
+      "all_distance_candidates": [],
+      "all_magnitudes": [
+        {
+          "value": 2.17,
+          "rank": "normal",
+          "filter": [
+            "U band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.47,
+          "rank": "preferred",
+          "filter": [
+            "V band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.85,
+          "rank": "normal",
+          "filter": [
+            "J band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.99,
+          "rank": "normal",
+          "filter": [
+            "H band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 4.03,
+          "rank": "normal",
+          "filter": [
+            "K band"
+          ],
+          "excluded_by_policy": false
+        },
+        {
+          "value": 3.48,
+          "rank": "normal",
+          "filter": [
+            "B band"
+          ],
+          "excluded_by_policy": false
+        }
+      ],
+      "flags": [
+        "MISSING_DISTANCE",
+        "STAR_SYSTEM(star, astrophysical X-ray source, binary star, emission-line star)"
+      ]
+    }
+  ]
+}

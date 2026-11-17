@@ -1,0 +1,209 @@
+{
+  "displayName": "Big Dipper",
+  "artboardSize": {
+    "x": 1920.0,
+    "y": 1080.0
+  },
+  "projection": {
+    "type": "gnomonic",
+    "centre_ra_deg": 185.990465,
+    "centre_dec_deg": 56.514258,
+    "orientation": "north up, east left",
+    "px_per_tangent_unit": 3398.843,
+    "fit_fraction": 0.85,
+    "sky_zoom_vs_real": 1.322
+  },
+  "stars": [
+    {
+      "starName": "Alkaid",
+      "affinityPosition": {
+        "x": 144.0,
+        "y": 854.4
+      },
+      "distanceLightYears": 104,
+      "provenance": {
+        "qid": "Q13093",
+        "ra_deg": 206.885157342,
+        "dec_deg": 49.313266729,
+        "position_statement": "Q13093$B5990259-345A-4088-9A6E-43CD6E5F2EDF",
+        "distance_ly": 103.94,
+        "distance_ly_sigma": 0.79,
+        "distance_statement": "Q13093$d08a8b30-ef25-4edb-a242-d4cd0fb776c6",
+        "flags": [
+          "MULTIPLE_DISTANCE_VALUES(3)",
+          "VARIABLE"
+        ]
+      }
+    },
+    {
+      "starName": "Mizar",
+      "affinityPosition": {
+        "x": 449.1,
+        "y": 579.2
+      },
+      "distanceLightYears": 86,
+      "provenance": {
+        "qid": "Q66477109",
+        "ra_deg": 200.981418667,
+        "dec_deg": 54.925351972,
+        "position_statement": "Q66477109$977589af-8ce6-475c-9998-595cfed394fb",
+        "distance_ly": 85.81,
+        "distance_ly_sigma": 3.86,
+        "distance_statement": "Q66477109$c9ed5f0e-ce11-4db0-858d-6efda8cae5a2",
+        "flags": [
+          "MULTIPLE_DISTANCE_VALUES(2)",
+          "MISSING_MAGNITUDE",
+          "STAR_SYSTEM(binary star, star, infrared source, astrophysical X-ray source, double star)"
+        ]
+      }
+    },
+    {
+      "starName": "Alioth",
+      "affinityPosition": {
+        "x": 710.4,
+        "y": 559.3
+      },
+      "distanceLightYears": 83,
+      "provenance": {
+        "qid": "Q13091",
+        "ra_deg": 193.5072899675,
+        "dec_deg": 55.95982295694,
+        "position_statement": "Q13091$FC97C4AF-1EBD-487B-8508-01719894A88F",
+        "distance_ly": 82.55,
+        "distance_ly_sigma": 0.42,
+        "distance_statement": "Q13091$6d6a7944-775b-4977-be7b-e93b22216d4c",
+        "flags": [
+          "CHOSEN_DISTANCE_STATEMENT_IS_DEPRECATED_RANK",
+          "MULTIPLE_DISTANCE_VALUES(2)",
+          "SOME_DISTANCE_STATEMENTS_EXCLUDED_BY_SOURCE_POLICY",
+          "STAR_SYSTEM(double star, variable star, Alpha² Canum Venaticorum variable, infrared source, high proper-motion star, navigational star, near-infrared source, ultraviolet source, star, peculiar star, Ap/Bp star, rotating variable star)",
+          "VARIABLE"
+        ]
+      }
+    },
+    {
+      "starName": "Megrez",
+      "affinityPosition": {
+        "x": 1028.9,
+        "y": 508.2
+      },
+      "distanceLightYears": 81,
+      "provenance": {
+        "qid": "Q850779",
+        "ra_deg": 183.85650263625,
+        "dec_deg": 57.03261544611,
+        "position_statement": "Q850779$10370822-5309-4D62-9515-8FF2FEA76171",
+        "distance_ly": 80.51,
+        "distance_ly_sigma": 0.3,
+        "distance_statement": "Q850779$e4d8a601-4ad6-4605-b61d-b15843447994",
+        "flags": [
+          "CHOSEN_DISTANCE_STATEMENT_IS_DEPRECATED_RANK",
+          "MULTIPLE_DISTANCE_VALUES(2)",
+          "SOME_DISTANCE_STATEMENTS_EXCLUDED_BY_SOURCE_POLICY",
+          "STAR_SYSTEM(double star, variable star, infrared source, high proper-motion star, near-infrared source, ultraviolet source, star)",
+          "VARIABLE"
+        ]
+      }
+    },
+    {
+      "starName": "Phecda",
+      "affinityPosition": {
+        "x": 1224.9,
+        "y": 693.3
+      },
+      "distanceLightYears": 83,
+      "provenance": {
+        "qid": "Q13099",
+        "ra_deg": 178.4576971525,
+        "dec_deg": 53.69475972917,
+        "position_statement": "Q13099$06B52A28-44F8-41F7-BB7A-55B719307193",
+        "distance_ly": 83.18,
+        "distance_ly_sigma": 0.85,
+        "distance_statement": "Q13099$134567fd-cc45-4b5c-9f04-f3eb5f1d2027",
+        "flags": [
+          "CHOSEN_DISTANCE_STATEMENT_IS_DEPRECATED_RANK",
+          "MULTIPLE_DISTANCE_VALUES(2)",
+          "SOME_DISTANCE_STATEMENTS_EXCLUDED_BY_SOURCE_POLICY",
+          "STAR_SYSTEM(double star, variable star, infrared source, astrophysical X-ray source, emission-line star, high proper-motion star, near-infrared source, ultraviolet source, star)",
+          "VARIABLE"
+        ]
+      }
+    },
+    {
+      "starName": "Merak",
+      "affinityPosition": {
+        "x": 1633.0,
+        "y": 446.3
+      },
+      "distanceLightYears": 80,
+      "provenance": {
+        "qid": "Q13096",
+        "ra_deg": 165.46033229797,
+        "dec_deg": 56.3824336495,
+        "position_statement": "Q13096$8d8e1276-aeb6-470c-b200-6839697395cb",
+        "distance_ly": 79.74,
+        "distance_ly_sigma": 0.31,
+        "distance_statement": "Q13096$ef94736e-0bd6-46f5-b8d2-c70fdc6d01fe",
+        "flags": [
+          "POSITION_FROM_EXCLUDED_SOURCE(Gaia Data Release 3)_NEEDS_APPROVAL",
+          "CHOSEN_DISTANCE_STATEMENT_IS_DEPRECATED_RANK",
+          "MULTIPLE_DISTANCE_VALUES(2)",
+          "SOME_DISTANCE_STATEMENTS_EXCLUDED_BY_SOURCE_POLICY",
+          "VARIABLE"
+        ]
+      }
+    },
+    {
+      "starName": "Dubhe",
+      "affinityPosition": {
+        "x": 1523.0,
+        "y": 140.4
+      },
+      "distanceLightYears": 123,
+      "provenance": {
+        "qid": "Q13084",
+        "ra_deg": 165.931964674,
+        "dec_deg": 61.751034688,
+        "position_statement": "Q13084$8CCF7D88-97D1-4444-A839-12C9C196A182",
+        "distance_ly": 122.89,
+        "distance_ly_sigma": 2.22,
+        "distance_statement": "Q13084$1dac4d4d-756b-437a-85ad-b4876c8c7234",
+        "flags": [
+          "MULTIPLE_DISTANCE_VALUES(3)",
+          "STAR_SYSTEM(binary star, spectroscopic binary, star, variable star, infrared source, high proper-motion star, navigational star, double star, near-infrared source, ultraviolet source, multiple star, suspected variable)",
+          "VARIABLE"
+        ]
+      }
+    }
+  ],
+  "connections": [
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      5,
+      6
+    ],
+    [
+      6,
+      3
+    ]
+  ]
+}

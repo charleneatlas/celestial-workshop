@@ -1,0 +1,372 @@
+{
+  "big_dipper": {
+    "projection": {
+      "type": "gnomonic",
+      "centre_ra_deg": 185.990465,
+      "centre_dec_deg": 56.514258,
+      "orientation": "north up, east left",
+      "px_per_tangent_unit": 3398.843,
+      "fit_fraction": 0.85,
+      "sky_zoom_vs_real": 1.322
+    },
+    "checks": {
+      "max_ray_deviation_deg_over_depth_scales": 1.2074182697257333e-06,
+      "image_vs_true_similarity": {
+        "scale": 1.3217666537056727,
+        "rotation_deg": -0.0006092660909312656,
+        "max_rel_residual": 4.858426978553644e-05
+      }
+    },
+    "stars": [
+      [
+        "Alkaid",
+        144.0,
+        854.4,
+        104
+      ],
+      [
+        "Mizar",
+        449.1,
+        579.2,
+        86
+      ],
+      [
+        "Alioth",
+        710.4,
+        559.3,
+        83
+      ],
+      [
+        "Megrez",
+        1028.9,
+        508.2,
+        81
+      ],
+      [
+        "Phecda",
+        1224.9,
+        693.3,
+        83
+      ],
+      [
+        "Merak",
+        1633.0,
+        446.3,
+        80
+      ],
+      [
+        "Dubhe",
+        1523.0,
+        140.4,
+        123
+      ]
+    ],
+    "connections": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        5,
+        6
+      ],
+      [
+        6,
+        3
+      ]
+    ]
+  },
+  "cassiopeia": {
+    "projection": {
+      "type": "gnomonic",
+      "centre_ra_deg": 14.8474,
+      "centre_dec_deg": 60.362578,
+      "orientation": "north up, east left",
+      "px_per_tangent_unit": 6623.707,
+      "fit_fraction": 0.85,
+      "sky_zoom_vs_real": 2.576
+    },
+    "checks": {
+      "max_ray_deviation_deg_over_depth_scales": 8.537736462515939e-07,
+      "image_vs_true_similarity": {
+        "scale": 2.575917082791662,
+        "rotation_deg": -0.0011376418677125878,
+        "max_rel_residual": 6.4564602633383e-05
+      }
+    },
+    "stars": [
+      [
+        "Segin",
+        256.0,
+        81.0,
+        412
+      ],
+      [
+        "Ruchbah",
+        581.1,
+        535.7,
+        99
+      ],
+      [
+        "Gamma Cassiopeia",
+        997.9,
+        498.9,
+        549
+      ],
+      [
+        "Schedar",
+        1261.5,
+        972.5,
+        228
+      ],
+      [
+        "Caph",
+        1702.9,
+        610.1,
+        55
+      ]
+    ],
+    "connections": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        4
+      ]
+    ],
+    "cassiopeia_vs_existing": {
+      "similarity_fit_generated_to_existing": {
+        "scale": 0.8592,
+        "rotation_deg": 2.63,
+        "residual_px": {
+          "Segin": 1.2,
+          "Ruchbah": 0.9,
+          "Gamma Cassiopeia": 3.0,
+          "Schedar": 1.4,
+          "Caph": 0.4
+        },
+        "residual_true_sky_deg": {
+          "Segin": 0.013,
+          "Ruchbah": 0.009,
+          "Gamma Cassiopeia": 0.03,
+          "Schedar": 0.014,
+          "Caph": 0.004
+        }
+      },
+      "existing_angular_size_vs_real": 2.178,
+      "pair_separations_deg_existing_vs_real": [
+        [
+          "Segin",
+          "Ruchbah",
+          10.3,
+          4.8
+        ],
+        [
+          "Segin",
+          "Gamma Cassiopeia",
+          15.77,
+          7.33
+        ],
+        [
+          "Segin",
+          "Schedar",
+          25.19,
+          11.58
+        ],
+        [
+          "Segin",
+          "Caph",
+          28.78,
+          13.26
+        ],
+        [
+          "Ruchbah",
+          "Gamma Cassiopeia",
+          7.88,
+          3.62
+        ],
+        [
+          "Ruchbah",
+          "Schedar",
+          15.35,
+          6.98
+        ],
+        [
+          "Ruchbah",
+          "Caph",
+          21.23,
+          9.69
+        ],
+        [
+          "Gamma Cassiopeia",
+          "Schedar",
+          10.33,
+          4.68
+        ],
+        [
+          "Gamma Cassiopeia",
+          "Caph",
+          13.5,
+          6.15
+        ],
+        [
+          "Schedar",
+          "Caph",
+          10.68,
+          4.91
+        ]
+      ],
+      "existing_distances_ly": {
+        "Segin": 412.0,
+        "Ruchbah": 99.0,
+        "Gamma Cassiopeia": 549.0,
+        "Schedar": 228.0,
+        "Caph": 55.0
+      },
+      "generated_distances_ly": {
+        "Segin": 412,
+        "Ruchbah": 99,
+        "Gamma Cassiopeia": 549,
+        "Schedar": 228,
+        "Caph": 55
+      },
+      "sky_radius_m_existing": [
+        700.2,
+        472.1,
+        800.0,
+        566.1,
+        440.1
+      ],
+      "sky_radius_m_generated": [
+        700.2,
+        472.1,
+        800.0,
+        566.1,
+        440.1
+      ]
+    }
+  },
+  "orion": {
+    "projection": {
+      "type": "gnomonic",
+      "centre_ra_deg": 83.983464,
+      "centre_dec_deg": -1.081558,
+      "orientation": "north up, east left",
+      "px_per_tangent_unit": 3034.751,
+      "fit_fraction": 0.85,
+      "sky_zoom_vs_real": 1.18
+    },
+    "checks": {
+      "max_ray_deviation_deg_over_depth_scales": 1.4787793334710982e-06,
+      "image_vs_true_similarity": {
+        "scale": 1.1801542797726507,
+        "rotation_deg": -0.001208275188298053,
+        "max_rel_residual": 9.930337574253185e-05
+      }
+    },
+    "stars": [
+      [
+        "Betelgeuse",
+        704.0,
+        85.7,
+        498
+      ],
+      [
+        "Bellatrix",
+        1103.5,
+        143.8,
+        252
+      ],
+      [
+        "Mintaka",
+        1012.0,
+        498.6,
+        692
+      ],
+      [
+        "Alnilam",
+        956.3,
+        546.4,
+        1977
+      ],
+      [
+        "Alnitak",
+        896.1,
+        585.6,
+        736
+      ],
+      [
+        "Saiph",
+        803.8,
+        999.0,
+        647
+      ],
+      [
+        "Rigel",
+        1243.4,
+        921.0,
+        863
+      ]
+    ],
+    "connections": [
+      [
+        0,
+        1
+      ],
+      [
+        0,
+        4
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        4
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        2,
+        6
+      ],
+      [
+        5,
+        6
+      ]
+    ]
+  }
+}

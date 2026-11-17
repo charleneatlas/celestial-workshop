@@ -1,0 +1,214 @@
+{
+  "displayName": "Orion",
+  "artboardSize": {
+    "x": 1920.0,
+    "y": 1080.0
+  },
+  "projection": {
+    "type": "gnomonic",
+    "centre_ra_deg": 83.983464,
+    "centre_dec_deg": -1.081558,
+    "orientation": "north up, east left",
+    "px_per_tangent_unit": 3034.751,
+    "fit_fraction": 0.85,
+    "sky_zoom_vs_real": 1.18
+  },
+  "stars": [
+    {
+      "starName": "Betelgeuse",
+      "affinityPosition": {
+        "x": 704.0,
+        "y": 85.7
+      },
+      "distanceLightYears": 498,
+      "provenance": {
+        "qid": "Q12124",
+        "ra_deg": 88.792938991,
+        "dec_deg": 7.407063995,
+        "position_statement": "Q12124$DB30A518-E21A-4E53-9408-0CEB001E6FA1",
+        "distance_ly": 497.95,
+        "distance_ly_sigma": 63.1,
+        "distance_statement": "Q12124$09497601-418e-bf7f-cd90-bbadd6dc1f44",
+        "flags": [
+          "MULTIPLE_DISTANCE_VALUES(3)",
+          "DISTANCE_DISAGREEMENT(427-548 ly, x1.28)",
+          "DISTANCE_UNCERTAINTY>10%(13%)",
+          "V_MAGNITUDE_ONLY_FROM_EXCLUDED_SOURCE(The HYG Database, UBVRIJKL photometry of the bright stars)",
+          "VARIABLE"
+        ]
+      }
+    },
+    {
+      "starName": "Bellatrix",
+      "affinityPosition": {
+        "x": 1103.5,
+        "y": 143.8
+      },
+      "distanceLightYears": 252,
+      "provenance": {
+        "qid": "Q13066",
+        "ra_deg": 81.282763557,
+        "dec_deg": 6.349703264,
+        "position_statement": "Q13066$45F9190E-B754-49FF-9D1F-9FDEA57BAA7D",
+        "distance_ly": 252.44,
+        "distance_ly_sigma": 10.16,
+        "distance_statement": "Q13066$61245e80-8fd2-4d2e-9fc5-9455705ee046",
+        "flags": [
+          "MULTIPLE_DISTANCE_VALUES(3)",
+          "DISTANCE_DISAGREEMENT(243-395 ly, x1.62)",
+          "STAR_SYSTEM(suspected variable, infrared source, astrophysical X-ray source, optical double, navigational star, near-infrared source, ultraviolet source, binary star, variable star, double star, star)",
+          "VARIABLE"
+        ]
+      }
+    },
+    {
+      "starName": "Mintaka",
+      "affinityPosition": {
+        "x": 1012.0,
+        "y": 498.6
+      },
+      "distanceLightYears": 692,
+      "provenance": {
+        "qid": "Q680341",
+        "ra_deg": 83.001667056,
+        "dec_deg": -0.299095107,
+        "position_statement": "Q680341$5AA67D98-82D0-4A3B-8CE7-848A5CD9CA89",
+        "distance_ly": 692.48,
+        "distance_ly_sigma": 85.27,
+        "distance_statement": "Q680341$795c8c18-4471-4f35-8d39-7fa78de53864",
+        "flags": [
+          "MULTIPLE_DISTANCE_VALUES(2)",
+          "DISTANCE_DISAGREEMENT(692-916 ly, x1.32)",
+          "DISTANCE_UNCERTAINTY>10%(12%)",
+          "STAR_SYSTEM(multiple star, eclipsing binary, spectroscopic binary, infrared source, astrophysical X-ray source, near-infrared source, ultraviolet source, Algol variable, variable star, star, binary star)",
+          "VARIABLE"
+        ]
+      }
+    },
+    {
+      "starName": "Alnilam",
+      "affinityPosition": {
+        "x": 956.3,
+        "y": 546.4
+      },
+      "distanceLightYears": 1977,
+      "provenance": {
+        "qid": "Q13070",
+        "ra_deg": 84.053388941,
+        "dec_deg": -1.201919136,
+        "position_statement": "Q13070$230DD5AD-D8D7-4BE1-A3CE-188C22006E33",
+        "distance_ly": 1976.71,
+        "distance_ly_sigma": 539.1,
+        "distance_statement": "Q13070$5a78f796-9717-43ae-8552-dedce8b22dd3",
+        "flags": [
+          "MULTIPLE_DISTANCE_VALUES(3)",
+          "DISTANCE_DISAGREEMENT(1194-1977 ly, x1.66)",
+          "DISTANCE_UNCERTAINTY>10%(27%)",
+          "VARIABLE"
+        ]
+      }
+    },
+    {
+      "starName": "Alnitak",
+      "affinityPosition": {
+        "x": 896.1,
+        "y": 585.6
+      },
+      "distanceLightYears": 736,
+      "provenance": {
+        "qid": "Q13076",
+        "ra_deg": 85.189694428,
+        "dec_deg": -1.942573586,
+        "position_statement": "Q13076$42DEADA0-F2E0-45ED-BC15-FC59C0EF7DF1",
+        "distance_ly": 736.24,
+        "distance_ly_sigma": 106.36,
+        "distance_statement": "Q13076$23313544-442c-408e-b4bb-6762a5c5a277",
+        "flags": [
+          "MULTIPLE_DISTANCE_VALUES(3)",
+          "DISTANCE_DISAGREEMENT(736-1260 ly, x1.71)",
+          "DISTANCE_UNCERTAINTY>10%(14%)",
+          "STAR_SYSTEM(star, variable star, infrared source, astrophysical X-ray source, binary star, emission-line star, double star, near-infrared source, ultraviolet source, multiple star)",
+          "VARIABLE"
+        ]
+      }
+    },
+    {
+      "starName": "Saiph",
+      "affinityPosition": {
+        "x": 803.8,
+        "y": 999.0
+      },
+      "distanceLightYears": 647,
+      "provenance": {
+        "qid": "Q14028",
+        "ra_deg": 86.93912016833,
+        "dec_deg": -9.66960491861,
+        "position_statement": "Q14028$086B5355-F713-4B3D-9694-A0DB4F3D5F20",
+        "distance_ly": 647.14,
+        "distance_ly_sigma": 28.25,
+        "distance_statement": "Q14028$a1275329-87c5-464f-8ac0-946ed2265c3c",
+        "flags": [
+          "MULTIPLE_DISTANCE_VALUES(3)",
+          "DISTANCE_DISAGREEMENT(647-799 ly, x1.23)",
+          "VARIABLE"
+        ]
+      }
+    },
+    {
+      "starName": "Rigel",
+      "affinityPosition": {
+        "x": 1243.4,
+        "y": 921.0
+      },
+      "distanceLightYears": 863,
+      "provenance": {
+        "qid": "Q12126",
+        "ra_deg": 78.634467067,
+        "dec_deg": -8.201638365,
+        "position_statement": "Q12126$9C9CB67E-5828-4593-B063-39DA02140CC8",
+        "distance_ly": 862.85,
+        "distance_ly_sigma": 77.61,
+        "distance_statement": "Q12126$275fdc5e-4393-38b0-a138-ed1b38a6287d",
+        "flags": [
+          "MULTIPLE_DISTANCE_VALUES(3)",
+          "STAR_SYSTEM(B-type supergiant star, blue supergiant, multiple star, pulsating variable star, infrared source, astrophysical X-ray source, emission-line star, interstellar medium, reflection nebula, navigational star, near-infrared source, ultraviolet source, Alpha Cygni variable, variable star, suspected variable)",
+          "VARIABLE"
+        ]
+      }
+    }
+  ],
+  "connections": [
+    [
+      0,
+      1
+    ],
+    [
+      0,
+      4
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      2,
+      6
+    ],
+    [
+      5,
+      6
+    ]
+  ]
+}

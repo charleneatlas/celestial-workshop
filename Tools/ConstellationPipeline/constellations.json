@@ -1,0 +1,71 @@
+{
+  "_comment": [
+    "Project-authored constellation definitions (our own data, not from any catalog).",
+    "Stars are identified by Wikidata QID only; every measured value comes from ingest_wikidata.py.",
+    "connections are our own stick figures: pairs of star ids. The star order is the default",
+    "(legacy) polyline order used when the game cannot take an explicit connection list.",
+    "alternates: other Wikidata items for the same point of light (system vs component),",
+    "fetched only to flag ambiguity; they are never used for geometry."
+  ],
+  "constellations": [
+    {
+      "id": "big_dipper",
+      "displayName": "Big Dipper",
+      "note": "Asterism in Ursa Major (not an IAU constellation). Closed bowl.",
+      "stars": [
+        { "id": "alkaid", "name": "Alkaid", "qid": "Q13093" },
+        { "id": "mizar",  "name": "Mizar",  "qid": "Q66477109", "alternates": ["Q13086", "Q12064840"] },
+        { "id": "alioth", "name": "Alioth", "qid": "Q13091" },
+        { "id": "megrez", "name": "Megrez", "qid": "Q850779" },
+        { "id": "phecda", "name": "Phecda", "qid": "Q13099" },
+        { "id": "merak",  "name": "Merak",  "qid": "Q13096" },
+        { "id": "dubhe",  "name": "Dubhe",  "qid": "Q13084", "alternates": ["Q66477223"] }
+      ],
+      "connections": [
+        ["alkaid", "mizar"], ["mizar", "alioth"], ["alioth", "megrez"],
+        ["megrez", "phecda"], ["phecda", "merak"], ["merak", "dubhe"], ["dubhe", "megrez"]
+      ]
+    },
+    {
+      "id": "cassiopeia",
+      "displayName": "Cassiopeia",
+      "note": "Cross-check against the existing in-game W (same star order as the scene's generator).",
+      "stars": [
+        { "id": "segin",   "name": "Segin",            "qid": "Q13602" },
+        { "id": "ruchbah", "name": "Ruchbah",          "qid": "Q13597" },
+        { "id": "gamma",   "name": "Gamma Cassiopeia", "qid": "Q13584" },
+        { "id": "schedar", "name": "Schedar",          "qid": "Q13108" },
+        { "id": "caph",    "name": "Caph",             "qid": "Q13594" }
+      ],
+      "connections": [
+        ["segin", "ruchbah"], ["ruchbah", "gamma"], ["gamma", "schedar"], ["schedar", "caph"]
+      ]
+    },
+    {
+      "id": "orion",
+      "displayName": "Orion",
+      "note": "Seven-star hourglass: shoulders, belt, knees (the seven brightest of the figure). Meissa (head) is an optional eighth star.",
+      "stars": [
+        { "id": "betelgeuse", "name": "Betelgeuse", "qid": "Q12124" },
+        { "id": "bellatrix",  "name": "Bellatrix",  "qid": "Q13066" },
+        { "id": "mintaka",    "name": "Mintaka",    "qid": "Q680341" },
+        { "id": "alnilam",    "name": "Alnilam",    "qid": "Q13070" },
+        { "id": "alnitak",    "name": "Alnitak",    "qid": "Q13076", "alternates": ["Q66477108"] },
+        { "id": "saiph",      "name": "Saiph",      "qid": "Q14028" },
+        { "id": "rigel",      "name": "Rigel",      "qid": "Q12126" }
+      ],
+      "optionalStars": [
+        { "id": "meissa", "name": "Meissa", "qid": "Q14219", "alternates": ["Q66530986"] }
+      ],
+      "connections": [
+        ["betelgeuse", "bellatrix"],
+        ["betelgeuse", "alnitak"], ["bellatrix", "mintaka"],
+        ["mintaka", "alnilam"], ["alnilam", "alnitak"],
+        ["alnitak", "saiph"], ["mintaka", "rigel"], ["saiph", "rigel"]
+      ],
+      "optionalConnections": [
+        ["meissa", "betelgeuse"], ["meissa", "bellatrix"]
+      ]
+    }
+  ]
+}

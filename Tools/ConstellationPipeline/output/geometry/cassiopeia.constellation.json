@@ -1,0 +1,153 @@
+{
+  "displayName": "Cassiopeia",
+  "artboardSize": {
+    "x": 1920.0,
+    "y": 1080.0
+  },
+  "projection": {
+    "type": "gnomonic",
+    "centre_ra_deg": 14.8474,
+    "centre_dec_deg": 60.362578,
+    "orientation": "north up, east left",
+    "px_per_tangent_unit": 6623.707,
+    "fit_fraction": 0.85,
+    "sky_zoom_vs_real": 2.576
+  },
+  "stars": [
+    {
+      "starName": "Segin",
+      "affinityPosition": {
+        "x": 256.0,
+        "y": 81.0
+      },
+      "distanceLightYears": 412,
+      "provenance": {
+        "qid": "Q13602",
+        "ra_deg": 28.5988920257,
+        "dec_deg": 63.67010006632999,
+        "position_statement": "Q13602$7b8f175a-1309-4119-8247-3894f872799b",
+        "distance_ly": 411.81,
+        "distance_ly_sigma": 22.36,
+        "distance_statement": "Q13602$4eb4e7f1-07d2-400a-a2da-318f5b0605c5",
+        "flags": [
+          "POSITION_FROM_EXCLUDED_SOURCE(Gaia Early Data Release 3)_NEEDS_APPROVAL",
+          "CHOSEN_DISTANCE_STATEMENT_IS_DEPRECATED_RANK",
+          "MULTIPLE_DISTANCE_VALUES(2)",
+          "SOME_DISTANCE_STATEMENTS_EXCLUDED_BY_SOURCE_POLICY",
+          "VARIABLE"
+        ]
+      }
+    },
+    {
+      "starName": "Ruchbah",
+      "affinityPosition": {
+        "x": 581.1,
+        "y": 535.7
+      },
+      "distanceLightYears": 99,
+      "provenance": {
+        "qid": "Q13597",
+        "ra_deg": 21.45396446208,
+        "dec_deg": 60.23528402972,
+        "position_statement": "Q13597$ACB870BC-005C-4A3A-8279-E0F471A3533A",
+        "distance_ly": 99.41,
+        "distance_ly_sigma": 0.42,
+        "distance_statement": "Q13597$c7023e7c-784a-40fc-bf24-278bc453e496",
+        "flags": [
+          "CHOSEN_DISTANCE_STATEMENT_IS_DEPRECATED_RANK",
+          "MULTIPLE_DISTANCE_VALUES(2)",
+          "SOME_DISTANCE_STATEMENTS_EXCLUDED_BY_SOURCE_POLICY",
+          "STAR_SYSTEM(binary star, Algol variable, infrared source, high proper-motion star, eclipsing binary, double star, near-infrared source, ultraviolet source)",
+          "VARIABLE"
+        ]
+      }
+    },
+    {
+      "starName": "Gamma Cassiopeia",
+      "affinityPosition": {
+        "x": 997.9,
+        "y": 498.9
+      },
+      "distanceLightYears": 549,
+      "provenance": {
+        "qid": "Q13584",
+        "ra_deg": 14.17721289375,
+        "dec_deg": 60.71674002472,
+        "position_statement": "Q13584$765d12ec-96d1-4825-a2d4-eda7765d91bb",
+        "distance_ly": 549.08,
+        "distance_ly_sigma": 11.09,
+        "distance_statement": "Q13584$88de8044-ef03-4907-9c8a-794c21d5ef85",
+        "flags": [
+          "MULTIPLE_DISTANCE_VALUES(4)",
+          "DISTANCE_DISAGREEMENT(382-620 ly, x1.62)",
+          "STAR_SYSTEM(Be-type star, shell star, triple star system, emission-line star, astrophysical X-ray source, gamma-ray source, infrared source, near-infrared source, ultraviolet source, star, spectroscopic binary, high-mass X-ray binary, double star, variable star)",
+          "VARIABLE"
+        ]
+      }
+    },
+    {
+      "starName": "Schedar",
+      "affinityPosition": {
+        "x": 1261.5,
+        "y": 972.5
+      },
+      "distanceLightYears": 228,
+      "provenance": {
+        "qid": "Q13108",
+        "ra_deg": 10.12683778292,
+        "dec_deg": 56.53733115833,
+        "position_statement": "Q13108$7C6607A2-3A0C-4B6A-9EE7-8467D19968C5",
+        "distance_ly": 228.24,
+        "distance_ly_sigma": 2.4,
+        "distance_statement": "Q13108$cc118fd6-c4e2-44f7-b110-6b966acb46fb",
+        "flags": [
+          "CHOSEN_DISTANCE_STATEMENT_IS_DEPRECATED_RANK",
+          "MULTIPLE_DISTANCE_VALUES(3)",
+          "SOME_DISTANCE_STATEMENTS_EXCLUDED_BY_SOURCE_POLICY",
+          "STAR_SYSTEM(double star, variable star, infrared source, high proper-motion star, navigational star, near-infrared source, ultraviolet source, star)",
+          "VARIABLE"
+        ]
+      }
+    },
+    {
+      "starName": "Caph",
+      "affinityPosition": {
+        "x": 1702.9,
+        "y": 610.1
+      },
+      "distanceLightYears": 55,
+      "provenance": {
+        "qid": "Q13594",
+        "ra_deg": 2.294521578,
+        "dec_deg": 59.149781098,
+        "position_statement": "Q13594$ABE3326A-60EE-490B-B93B-59EB813A1EBA",
+        "distance_ly": 54.74,
+        "distance_ly_sigma": 0.35,
+        "distance_statement": "Q13594$e37436bf-6113-4b53-9a5f-084f3393da64",
+        "flags": [
+          "MULTIPLE_DISTANCE_VALUES(3)",
+          "STAR_SYSTEM(double star, variable star, Delta Scuti variable, infrared source, astrophysical X-ray source, high proper-motion star, near-infrared source, ultraviolet source)",
+          "VARIABLE"
+        ]
+      }
+    }
+  ],
+  "connections": [
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ]
+  ]
+}
