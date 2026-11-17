@@ -454,11 +454,14 @@ public sealed class GuidanceHooks : MonoBehaviour
         }
     }
 
+    // The menu hint ("Craft another constellation") appears with the
+    // post-puzzle buttons, which come after a delay (and after the signed
+    // certificate has left), not the moment the signature is done.
     private void OnMenuShown()
     {
-        if (director != null && gameFlow != null && gameFlow.IsPractice)
+        if (director != null)
         {
-            SetMenuText(true);
+            SetMenuText(gameFlow != null && gameFlow.IsPractice);
             director.Show("menu");
         }
     }
@@ -467,10 +470,8 @@ public sealed class GuidanceHooks : MonoBehaviour
     {
         if (director != null)
         {
-            // Completing first plays the acknowledgement; the menu hint follows it.
+            // Plays the acknowledgement; the menu hint follows the menu.
             director.Complete("sign");
-            SetMenuText(gameFlow != null && gameFlow.IsPractice);
-            director.Show("menu");
         }
     }
 

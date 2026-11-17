@@ -350,6 +350,19 @@ public sealed class StarChartLayout : MonoBehaviour
     [Min(0f)]
     private float labelGap = 0.0018f;
 
+    public enum LabelSpot { Auto, Above, Below, UpperRight, UpperLeft, LowerRight, LowerLeft }
+
+    [System.Serializable]
+    public struct LabelOverride
+    {
+        public string starName;
+        public LabelSpot spot;
+    }
+
+    [Tooltip("Optional fixed name positions by star name (e.g. Phecda below-left, outside the Big Dipper's bowl). Stars not listed are placed automatically.")]
+    [SerializeField]
+    private List<LabelOverride> labelOverrides = new List<LabelOverride>();
+
     [Tooltip("Random tilt of each name, in degrees.")]
     [SerializeField]
     [Range(0f, 10f)]
@@ -1243,7 +1256,7 @@ public sealed class StarChartLayout : MonoBehaviour
             {
                 TextMeshPro label = CreateText(stars[i].starName.ToUpperInvariant(), labelFont, labelCapHeight);
                 Vector2 halfSize = HalfSize(label);
-                PlaceText(label, ChooseLabelSpot(starPositions[i], halfSize), Signed(random) * labelTilt);
+                PlaceText(label, ChooseLabelSpot(starPositions[i], halfSize, LabelSpotFor(stars[i].starName)), Signed(random) * labelTilt);
             }
         }
 
@@ -1451,7 +1464,20 @@ public sealed class StarChartLayout : MonoBehaviour
 
     // Above the star unless that's crowded by lines, stars or the rim; then
     // the clearest of the other sides.
-    private Vector3 ChooseLabelSpot(Vector3 star, Vector2 half)
+    private LabelSpot LabelSpotFor(string starName)
+    {
+        foreach (LabelOverride entry in labelOverrides)
+        {
+            if (string.Equals(entry.starName, starName, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return entry.spot;
+            }
+        }
+
+        return LabelSpot.Auto;
+    }
+
+    private Vector3 ChooseLabelSpot(Vector3 star, Vector2 half, LabelSpot forced = LabelSpot.Auto)
     {
         float reach = sketchStarRadius + labelGap;
         Vector3[] offsets =
@@ -1464,6 +1490,12 @@ public sealed class StarChartLayout : MonoBehaviour
             new Vector3(-(reach * 0.7f + half.x), 0f, -(reach * 0.7f + half.y * 0.6f)),
         };
         float[] preference = { 0.0012f, 0.0006f, 0.0003f, 0.0003f, 0f, 0f };
+
+        // A fixed spot (LabelSpot order matches the offsets above).
+        if (forced != LabelSpot.Auto)
+        {
+            return star + offsets[(int)forced - 1];
+        }
 
         Vector3 best = star + offsets[0];
         float bestScore = float.MinValue;

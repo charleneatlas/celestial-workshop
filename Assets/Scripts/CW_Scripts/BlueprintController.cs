@@ -35,6 +35,17 @@ public class BlueprintController : MonoBehaviour
     private Vector3 distanceLabelOffset =
         new Vector3(0f, -0.025f, 0f);
 
+    [System.Serializable]
+    public struct DistanceLabelOverride
+    {
+        public string starName;
+        public Vector3 offset;
+    }
+
+    [Tooltip("Optional per-star offsets (same space as Distance Label Offset), e.g. Dubhe's readout kept off Merak's name. Stars not listed use Distance Label Offset.")]
+    [SerializeField]
+    private List<DistanceLabelOverride> distanceLabelOverrides = new List<DistanceLabelOverride>();
+
     [Header("Distance Label Style")]
     [Tooltip("Optional: fades the label between its paper and lens colours as the chart docks.")]
     [SerializeField]
@@ -272,7 +283,7 @@ public class BlueprintController : MonoBehaviour
 
             distanceLabel.transform.position =
                 star.transform.position +
-                blueprintVisual.TransformDirection(distanceLabelOffset);
+                blueprintVisual.TransformDirection(DistanceOffsetFor(star.StarId));
 
             StyleDistanceLabel();
             distanceLabel.gameObject.SetActive(true);
@@ -280,7 +291,20 @@ public class BlueprintController : MonoBehaviour
         }
     }
 
-    // Slides the label sideways (and, if needed, toward the centre) so the
+    private Vector3 DistanceOffsetFor(string starId)
+    {
+        foreach (DistanceLabelOverride entry in distanceLabelOverrides)
+        {
+            if (string.Equals(entry.starName, starId, System.StringComparison.OrdinalIgnoreCase))
+            {
+                return entry.offset;
+            }
+        }
+
+        return distanceLabelOffset;
+    }
+
+        // Slides the label sideways (and, if needed, toward the centre) so the
     // whole text block stays inside the round chart.
     private void KeepDistanceLabelOnChart()
     {

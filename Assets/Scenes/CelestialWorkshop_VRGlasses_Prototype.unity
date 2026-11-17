@@ -49605,6 +49605,7 @@ MonoBehaviour:
   constellationGenerator: {fileID: 65651445}
   distanceLabel: {fileID: 512684826}
   distanceLabelOffset: {x: 0, y: 0, z: -0.05}
+  distanceLabelOverrides: []
   chartLayout: {fileID: 0}
   distanceTextColor: {r: 0.1, g: 0.1, b: 0.12, a: 1}
   distanceHaloColor: {r: 0.98, g: 0.95, b: 0.86, a: 0.95}
@@ -53865,6 +53866,11 @@ MonoBehaviour:
   constellationGenerator: {fileID: 65651445}
   distanceLabel: {fileID: 1731055944}
   distanceLabelOffset: {x: 0, y: 0.002, z: -0.02}
+  distanceLabelOverrides:
+  - starName: Dubhe
+    offset: {x: 0.002, y: 0.002, z: 0.025}
+  - starName: Megrez
+    offset: {x: -0.024, y: 0.002, z: -0.005}
   chartLayout: {fileID: 330823360}
   distanceTextColor: {r: 0.1, g: 0.1, b: 0.12, a: 1}
   distanceHaloColor: {r: 0.98, g: 0.95, b: 0.86, a: 0.95}
@@ -53955,6 +53961,11 @@ MonoBehaviour:
   labelHaloColor: {r: 0.97, g: 0.93, b: 0.84, a: 0.75}
   labelHaloSize: 0.45
   labelGap: 0.0018
+  labelOverrides:
+  - starName: Phecda
+    spot: 6
+  - starName: Megrez
+    spot: 3
   labelTilt: 3
   showTitle: 1
   titleFont: {fileID: 11400000, guid: 943acece6cb2b5b4e9efda708b5082fb, type: 2}
