@@ -38,6 +38,10 @@ public sealed class BoxSelection : MonoBehaviour
     [SerializeField]
     private ConstellationBox starterPack;
 
+    [Tooltip("Hidden while the Starter Pack is open (cleaner view of its sculptures); shown again with all boxes. Only the Starter Pack does this.")]
+    [SerializeField]
+    private GameObject starterPackHiddenRiser;
+
     [Tooltip("Grabbable constellation sculptures inside the Starter Pack.")]
     [SerializeField]
     private TitleLetterMini[] sculptures = new TitleLetterMini[0];
@@ -63,6 +67,9 @@ public sealed class BoxSelection : MonoBehaviour
 
     [SerializeField]
     private bool logEvents = true;
+
+    // The box opened into PackOpen (null when none is open).
+    private ConstellationBox openedBox;
 
     public State Current { get; private set; } = State.Hidden;
 
@@ -248,6 +255,7 @@ public sealed class BoxSelection : MonoBehaviour
             }
         }
 
+        openedBox = opened;
         Log($"'{opened.DisplayName}' opened.");
         SetState(State.PackOpen);
     }
@@ -276,6 +284,19 @@ public sealed class BoxSelection : MonoBehaviour
     private void SetState(State state)
     {
         Current = state;
+        if (state != State.PackOpen && state != State.Launching)
+        {
+            openedBox = null;
+        }
+
+        // Starter Pack only: its riser steps away while the pack is open (and
+        // while a sculpture launches); every other state shows it again.
+        if (starterPackHiddenRiser != null)
+        {
+            bool hide = openedBox != null && openedBox == starterPack &&
+                        (state == State.PackOpen || state == State.Launching);
+            starterPackHiddenRiser.SetActive(!hide);
+        }
         if (allBoxesButtonRoot != null)
         {
             allBoxesButtonRoot.SetActive(state == State.PackOpen);

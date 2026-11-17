@@ -225959,6 +225959,7 @@ MonoBehaviour:
   - {fileID: 2112890598}
   - {fileID: 1081164839}
   starterPack: {fileID: 628267359}
+  starterPackHiddenRiser: {fileID: 1527632811}
   sculptures:
   - {fileID: 2131797687}
   - {fileID: 501943431}
