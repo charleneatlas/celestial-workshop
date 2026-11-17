@@ -1,9 +1,13 @@
+## Created by Charlene Atlas
+A Proper Motion LLC experience
+
+## Built with
+Meta XR Core, Interaction and Platform SDKs, and Unity
+Copyright © Meta Platform Technologies, LLC and its affiliates. All rights reserved.
+Celestial Workshop was made with Unity®. Unity is a trademark or registered trademark of Unity Technologies
+Copyright © 2005-2026 Unity Technologies. All rights reserved.
+
 ## Music
-
-"The Britons" Kevin MacLeod (incompetech.com)
-Licensed under Creative Commons: By Attribution 4.0 License
-http://creativecommons.org/licenses/by/4.0/
-
-"Morning" Kevin MacLeod (incompetech.com)
+"The Britons" and "Morning" Kevin MacLeod (incompetech.com)
 Licensed under Creative Commons: By Attribution 4.0 License
 http://creativecommons.org/licenses/by/4.0/
