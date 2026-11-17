@@ -115,25 +115,27 @@ def back():
 
 
 def back_to_title():
-    # Return arrow bringing you back to the star (the title sky).
+    # Workshop doorway: arched door with planks, a ring pull and the threshold.
     return [
-        sparkle(11, 14, 8.5, 1.9),
-        '<path d="M40 41 L40 34 C40 24 34 20.5 27 20.5 L26 20.5"/>',
-        '<path d="M36 44 L40 40 L44 44" stroke-width="%s"/>' % DETAIL,
-        '<path d="M18.5 20.5 L28 12.5 L28 28.5 Z" fill="INK" stroke-width="2.6"/>',
+        '<path d="M11 42 L11 20 A13 13 0 0 1 37 20 L37 42"/>',
+        '<path d="M5 42.5 L43 42.5"/>',
+        '<path d="M20 15 L20 41 M28 15 L28 41" stroke-width="2.6"/>',
+        '<circle cx="32" cy="29" r="2.6" fill="INK" stroke="none"/>',
     ]
 
 
 def field_note():
-    # Folded note with the Cassiopeia-like star line inside.
+    # Open field guide / sketchbook: notes on the left page, a small
+    # constellation sketch on the right.
     return [
-        '<path d="M11 5.5 L29.5 5.5 L37.5 13.5 L37.5 42.5 L11 42.5 Z"/>',
-        '<path d="M29.5 5.5 L29.5 13.5 L37.5 13.5" stroke-width="%s"/>' % DETAIL,
-        '<path d="M17 35 L21.5 25 L26 30 L31.5 21" stroke-width="2.8"/>',
-        '<circle cx="17" cy="35" r="2.7" fill="INK" stroke="none"/>',
-        '<circle cx="21.5" cy="25" r="2.7" fill="INK" stroke="none"/>',
-        '<circle cx="26" cy="30" r="2.7" fill="INK" stroke="none"/>',
-        '<circle cx="31.5" cy="21" r="2.7" fill="INK" stroke="none"/>',
+        '<path d="M24 13 C18 9.5 10.5 9.5 4.5 11.5 L4.5 39.5 C10.5 37.5 18 37.5 24 41 '
+        'C30 37.5 37.5 37.5 43.5 39.5 L43.5 11.5 C37.5 9.5 30 9.5 24 13 Z"/>',
+        '<path d="M24 13 L24 41" stroke-width="%s"/>' % DETAIL,
+        '<path d="M9.5 19 L19 18.5 M9.5 25 L19 24.5 M9.5 31 L16 30.7" stroke-width="2.6"/>',
+        '<path d="M29.5 31 L33.5 20 L39 27" stroke-width="2.6"/>',
+        '<circle cx="29.5" cy="31" r="2.6" fill="INK" stroke="none"/>',
+        '<circle cx="33.5" cy="20" r="2.6" fill="INK" stroke="none"/>',
+        '<circle cx="39" cy="27" r="2.6" fill="INK" stroke="none"/>',
     ]
 
 
@@ -194,8 +196,8 @@ ICONS = [
     ("cw_icon_lower", "Lower", "Fletched arrow descending onto a spirit level", lower),
     ("cw_icon_credits", "Credits", "Quill with an ink flourish", credits),
     ("cw_icon_back", "Back (Credits board, Field Note reader)", "Fletched U-turn return arrow", back),
-    ("cw_icon_back_to_title", "Back to title", "Fletched return arrow homing on the title star", back_to_title),
-    ("cw_icon_field_note", "Field Note", "Dog-eared note with a star-chart line", field_note),
+    ("cw_icon_back_to_title", "Back to title", "Workshop doorway: arched door, ring pull, threshold", back_to_title),
+    ("cw_icon_field_note", "Field Note", "Open field guide with notes and a constellation sketch", field_note),
     ("cw_icon_all_boxes", "All boxes", "Three stacked constellation boxes", all_boxes),
     ("cw_icon_try_another", "Choose Another Constellation / Try Another Letter", "Armillary turn: two orbit arrows round a star", try_another),
     ("cw_icon_another_box", "Choose Another Box / Enter the Workshop", "Open box with a star rising", another_box),

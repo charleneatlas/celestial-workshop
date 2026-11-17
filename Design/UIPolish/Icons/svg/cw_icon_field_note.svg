@@ -1,10 +1,10 @@
 <!-- Celestial Workshop icon: Field Note. Original work, no third-party artwork. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="#381F0D" stroke-width="4.0" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M11 5.5 L29.5 5.5 L37.5 13.5 L37.5 42.5 L11 42.5 Z"/>
-  <path d="M29.5 5.5 L29.5 13.5 L37.5 13.5" stroke-width="3.2"/>
-  <path d="M17 35 L21.5 25 L26 30 L31.5 21" stroke-width="2.8"/>
-  <circle cx="17" cy="35" r="2.7" fill="#381F0D" stroke="none"/>
-  <circle cx="21.5" cy="25" r="2.7" fill="#381F0D" stroke="none"/>
-  <circle cx="26" cy="30" r="2.7" fill="#381F0D" stroke="none"/>
-  <circle cx="31.5" cy="21" r="2.7" fill="#381F0D" stroke="none"/>
+  <path d="M24 13 C18 9.5 10.5 9.5 4.5 11.5 L4.5 39.5 C10.5 37.5 18 37.5 24 41 C30 37.5 37.5 37.5 43.5 39.5 L43.5 11.5 C37.5 9.5 30 9.5 24 13 Z"/>
+  <path d="M24 13 L24 41" stroke-width="3.2"/>
+  <path d="M9.5 19 L19 18.5 M9.5 25 L19 24.5 M9.5 31 L16 30.7" stroke-width="2.6"/>
+  <path d="M29.5 31 L33.5 20 L39 27" stroke-width="2.6"/>
+  <circle cx="29.5" cy="31" r="2.6" fill="#381F0D" stroke="none"/>
+  <circle cx="33.5" cy="20" r="2.6" fill="#381F0D" stroke="none"/>
+  <circle cx="39" cy="27" r="2.6" fill="#381F0D" stroke="none"/>
 </svg>

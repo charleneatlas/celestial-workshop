@@ -1,7 +1,7 @@
 <!-- Celestial Workshop icon: Back to title. Original work, no third-party artwork. -->
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="#381F0D" stroke-width="4.0" stroke-linecap="round" stroke-linejoin="round">
-  <path d="M11 5.5 Q12.9 12.1 19.5 14 Q12.9 15.9 11 22.5 Q9.1 15.9 2.5 14 Q9.1 12.1 11 5.5 Z" fill="#381F0D" stroke="#381F0D" stroke-width="1.6"/>
-  <path d="M40 41 L40 34 C40 24 34 20.5 27 20.5 L26 20.5"/>
-  <path d="M36 44 L40 40 L44 44" stroke-width="3.2"/>
-  <path d="M18.5 20.5 L28 12.5 L28 28.5 Z" fill="#381F0D" stroke-width="2.6"/>
+  <path d="M11 42 L11 20 A13 13 0 0 1 37 20 L37 42"/>
+  <path d="M5 42.5 L43 42.5"/>
+  <path d="M20 15 L20 41 M28 15 L28 41" stroke-width="2.6"/>
+  <circle cx="32" cy="29" r="2.6" fill="#381F0D" stroke="none"/>
 </svg>
