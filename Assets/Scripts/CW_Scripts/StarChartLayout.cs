@@ -423,6 +423,7 @@ public sealed class StarChartLayout : MonoBehaviour
     private Transform labelRoot;
     private readonly List<Vector3> starPositions = new List<Vector3>();
     private readonly List<Vector3> segmentA = new List<Vector3>();
+    private readonly List<Vector2Int> chartConnections = new List<Vector2Int>();
     private readonly List<Vector3> segmentB = new List<Vector3>();
 
     public float ChartRadius => chartRadius;
@@ -800,10 +801,12 @@ public sealed class StarChartLayout : MonoBehaviour
             starPositions.Add(position);
         }
 
-        for (int i = 0; i < starPositions.Count - 1; i++)
+        // List order plus any alsoConnectTo links (e.g. the Big Dipper's bowl).
+        ConstellationGenerator.GetConnections(constellationGenerator.stars, chartConnections);
+        foreach (Vector2Int link in chartConnections)
         {
-            segmentA.Add(starPositions[i]);
-            segmentB.Add(starPositions[i + 1]);
+            segmentA.Add(starPositions[link.x]);
+            segmentB.Add(starPositions[link.y]);
         }
     }
 

@@ -14,7 +14,67 @@ public class ConstellationGenerator : MonoBehaviour
         public Vector2 affinityPosition;
 
         public float distanceLightYears;
+
+        [Tooltip("Optional: the name of an earlier star this star also connects to, " +
+                 "besides the next star in the list. Closes a loop (the Big Dipper's bowl) " +
+                 "without repeating a star. Empty = list order only.")]
+        public string alsoConnectTo;
     }
+
+    /// <summary>
+    /// The constellation's connections as star index pairs: each star to the
+    /// next in list order (the original polyline), then each optional
+    /// alsoConnectTo link. Shared by the 3D rods and the Star Chart, so both
+    /// always draw the same lines. Unknown names are skipped with a warning.
+    /// </summary>
+    public static void GetConnections(IList<StarData> starList, List<Vector2Int> into)
+    {
+        into.Clear();
+        if (starList == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < starList.Count - 1; i++)
+        {
+            into.Add(new Vector2Int(i, i + 1));
+        }
+
+        for (int i = 0; i < starList.Count; i++)
+        {
+            string target = starList[i] != null ? starList[i].alsoConnectTo : null;
+            if (string.IsNullOrEmpty(target))
+            {
+                continue;
+            }
+
+            int j = -1;
+            for (int k = 0; k < starList.Count; k++)
+            {
+                if (k != i && starList[k] != null &&
+                    string.Equals(starList[k].starName, target, StringComparison.OrdinalIgnoreCase))
+                {
+                    j = k;
+                    break;
+                }
+            }
+
+            if (j < 0)
+            {
+                Debug.LogWarning($"ConstellationGenerator: '{starList[i].starName}' connects to unknown star '{target}'.");
+                continue;
+            }
+
+            if (Mathf.Abs(i - j) == 1)
+            {
+                continue; // Already a list-order connection.
+            }
+
+            into.Add(new Vector2Int(i, j));
+        }
+    }
+
+    private static readonly List<Vector2Int> connectionScratch = new List<Vector2Int>();
 
     [Serializable]
     public class AppearanceSettings
@@ -337,11 +397,12 @@ public class ConstellationGenerator : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < positions.Length - 1; i++)
+        GetConnections(stars, connectionScratch);
+        foreach (Vector2Int link in connectionScratch)
         {
             CreateCylinderBetweenPoints(
-                positions[i],
-                positions[i + 1],
+                positions[link.x],
+                positions[link.y],
                 generatedRootObject.transform,
                 activeLineMaterial,
                 activeLineWidth,
