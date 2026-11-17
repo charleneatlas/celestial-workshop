@@ -718,6 +718,13 @@ public sealed class ConstellationSetup : MonoBehaviour
 
         RegisterGeneratedStars(miniGeneratedRoot);
         RegisterGeneratedStars(skyGeneratedRoot);
+
+        // A revisited point (E3/E5, O1/O7) has two coincident spheres but one
+        // chart dot; marking the dot must mark both, or the twin hides the mark.
+        ConstellationStarKeys.MergeCoLocated(
+            generatedStarsById,
+            constellationGenerator.stars
+        );
     }
 
     private void RegisterGeneratedStars(GameObject generatedRoot)
