@@ -273,10 +273,11 @@ namespace CW.Guidance
         public void RecordCompleted(string id)
         {
             if (string.IsNullOrEmpty(id)) return;
-            SessionDone.Add(id);
+            string key = ScopedKey(id);
+            SessionDone.Add(key);
             if (rememberAcrossLaunches)
             {
-                PlayerPrefs.SetInt(playerPrefsPrefix + id, 1);
+                PlayerPrefs.SetInt(playerPrefsPrefix + key, 1);
                 PlayerPrefs.Save();
             }
         }
@@ -284,9 +285,19 @@ namespace CW.Guidance
         public bool WasCompleted(string id)
         {
             if (string.IsNullOrEmpty(id)) return false;
-            return SessionDone.Contains(id)
-                || (rememberAcrossLaunches && PlayerPrefs.GetInt(playerPrefsPrefix + id, 0) == 1);
+            string key = ScopedKey(id);
+            return SessionDone.Contains(key)
+                || (rememberAcrossLaunches && PlayerPrefs.GetInt(playerPrefsPrefix + key, 0) == 1);
         }
+
+        /// <summary>
+        /// Which mode's memory onlyOnce steps use (e.g. "practice" or "main"),
+        /// so a hint seen in one mode still shows once in the other. Empty =
+        /// one shared memory. Set by the game when the mode changes.
+        /// </summary>
+        public string Scope { get; set; } = "";
+
+        private string ScopedKey(string id) => string.IsNullOrEmpty(Scope) ? id : Scope + "/" + id;
 
         /// <summary>Forgets every completed step (session, and PlayerPrefs for this director's steps).</summary>
         public void ResetMemory()
@@ -297,6 +308,8 @@ namespace CW.Guidance
                 if (step != null && !string.IsNullOrEmpty(step.id))
                 {
                     PlayerPrefs.DeleteKey(playerPrefsPrefix + step.id);
+                    PlayerPrefs.DeleteKey(playerPrefsPrefix + "practice/" + step.id);
+                    PlayerPrefs.DeleteKey(playerPrefsPrefix + "main/" + step.id);
                 }
             }
 

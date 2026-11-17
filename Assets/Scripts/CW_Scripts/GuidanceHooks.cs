@@ -85,6 +85,7 @@ public sealed class GuidanceHooks : MonoBehaviour
     private float releasedGrace = 0.6f;
 
     private float releasedAt = -1f;
+    private float letterReleasedAt = -1f;
 
     private void LateUpdate()
     {
@@ -160,6 +161,12 @@ public sealed class GuidanceHooks : MonoBehaviour
             titleRoutine = null;
         }
 
+        // Once-only hints are remembered per mode: the title leads to practice
+        // (its letters), the boxes to the main puzzle.
+        director.Scope = stage == GameFlow.Stage.Puzzle
+            ? (gameFlow != null && gameFlow.IsPractice ? "practice" : "main")
+            : stage == GameFlow.Stage.Title ? "practice" : "main";
+
         if (stage == GameFlow.Stage.Onboarding)
         {
             // The noticeboard teaches by itself; no cues meanwhile.
@@ -179,9 +186,10 @@ public sealed class GuidanceHooks : MonoBehaviour
             return;
         }
 
-        // Leaving the title: a placed letter answers the letter hint.
+        // Leaving the title: a placed letter answers the letter (and place) hint.
         if (gameFlow != null && gameFlow.IsPractice)
         {
+            director.Complete("place-model");
             director.Complete("title-letter");
         }
 
@@ -220,10 +228,39 @@ public sealed class GuidanceHooks : MonoBehaviour
             float until = Time.time + Mathf.Max(1f, titleHintSeconds);
             while ((Time.time < until || IsLetterHeld()) && !CreditsBoard.IsAnyOpen)
             {
-                if (IsLetterHeld() && !director.IsActive("title-letter"))
+                if (IsLetterHeld())
                 {
-                    director.Show("title-letter");
+                    // Holding a letter: on to "place it at the workstation"
+                    // (the ring shows meanwhile). If that's already done in
+                    // practice, no hint while holding.
+                    director.Complete("title-letter");
+                    director.Complete("title-start");
+                    if (!director.IsActive("place-model"))
+                    {
+                        director.Show("place-model");
+                    }
+
                     letterTurn = true;
+                }
+                else if (director.IsActive("place-model"))
+                {
+                    // Put back without placing (not just let go to place it):
+                    // after the grace, back to the letter hint.
+                    if (letterReleasedAt < 0f)
+                    {
+                        letterReleasedAt = Time.time;
+                    }
+                    else if (Time.time - letterReleasedAt >= releasedGrace)
+                    {
+                        letterReleasedAt = -1f;
+                        letterTurn = false;   // flipped below: the letter hint comes next
+                        break;
+                    }
+                }
+
+                if (IsLetterHeld())
+                {
+                    letterReleasedAt = -1f;
                 }
 
                 yield return null;
@@ -320,8 +357,12 @@ public sealed class GuidanceHooks : MonoBehaviour
         }
     }
 
+    private BoxSelection.State lastBoxState = BoxSelection.State.Hidden;
+
     private void OnBoxStateChanged(BoxSelection.State state)
     {
+        BoxSelection.State previous = lastBoxState;
+        lastBoxState = state;
         if (director == null)
         {
             return;
@@ -352,8 +393,11 @@ public sealed class GuidanceHooks : MonoBehaviour
 
             default:
                 // Left the boxes without placing anything: hide the box hints
-                // without completing them, so they come back next time.
-                if (director.IsActive("boxes-open") || director.IsActive("boxes-place") || director.IsActive("place-model"))
+                // without completing them, so they come back next time. (Not
+                // when they were already hidden, e.g. entering a practice
+                // puzzle, whose own place hint completes on the stage change.)
+                if (previous != BoxSelection.State.Hidden &&
+                    (director.IsActive("boxes-open") || director.IsActive("boxes-place") || director.IsActive("place-model")))
                 {
                     director.Clear();
                 }

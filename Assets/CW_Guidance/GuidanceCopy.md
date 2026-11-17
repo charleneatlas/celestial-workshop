@@ -9,7 +9,7 @@ One cue at a time. Each line is 8 words or fewer. "1st only" = `onlyOnce`
 | `title-start` | Press Start to explore constellations. | Start button | Alternates with `title-letter` | Start pressed | no (restarts on every return to the title) |
 | `boxes-open` | Open Starter Pack to choose a constellation. | Starter Pack lid | Box selection with all boxes shut (`BoxSelection` state Closed) | The pack opens | no (every visit) |
 | `boxes-place` | Choose a wooden model. | Starter Pack sculptures | The pack is open (PackOpen), or a picked-up sculpture was put back | A sculpture is picked up (`BoxSelection.IsSculptureHeld`) | no (every visit) |
-| `place-model` | Place at your workstation. | label: Workstation; halo: Workstation Marker (`pulseAround`) | `boxes-place` completed (sculpture picked up) | A sculpture is accepted (puzzle starts); let go without placing → back to `boxes-place` | no (every visit) |
+| `place-model` | Place at your workstation. | label: Workstation; halo: Workstation Marker (`pulseAround`) | Main: `boxes-place` completed (sculpture picked up). Practice: a title letter is held | Main: a sculpture is accepted. Practice: the letter is placed (practice puzzle starts). Let go without placing (0.6 s) → back to `boxes-place` / `title-letter` | yes, per mode |
 | `rotate` | Pinch inside the sky sphere to rotate the constellation. | label: glass sphere; halo: the sky constellation (`pulseAround`) | `ConstellationIntro.Finished` (rotation unlocked) | `VolumePinchRotation.AxisLocked` (first axis lock) | yes |
 | `chart` | Touch a star on your chart to find it in the sky. | Star Chart Blueprint | `rotate` completed (skipped if the chart was already touched) | `BlueprintController.StarTouched` (first chart star touch); cleared on near-solve | yes |
 | `match` | Match the stars to your chart | star chart / Earth-view display | `chart` completed (or `rotate`, if the chart was already used) (deferred automatically until the rotate acknowledgement ends) | Near-solve entered (`ConstellationSolveController` onNearSolveEntered); fall back to onSolved | yes (later puzzles: optionally show again with `autoHideSeconds` = 4) |
@@ -33,3 +33,6 @@ Stuck-player fallback (optional): if the near-solve hasn't arrived 45 s after
 `match` was shown, show a non-once step `match-again` with the same text
 (`autoHideSeconds` = 5). Don't reuse `rotate`/`match` for this, because they
 are `onlyOnce`.
+
+
+**Once-only memory is per mode.** `GuidanceDirector.Scope` is set by GuidanceHooks on every stage change: the title (practice letters) and practice puzzles use "practice", the boxes and main puzzles use "main". A hint seen in practice still shows once in the main game, and vice versa (once per launch unless Remember Across Launches is on).

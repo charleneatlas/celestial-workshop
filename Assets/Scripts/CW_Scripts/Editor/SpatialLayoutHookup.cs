@@ -21,8 +21,8 @@ public static class SpatialLayoutHookup
     // Ring-frame layout: x right, y up, z away from the player.
     static readonly Vector3 TableFromRing = new Vector3(0f, -0.009f, 0.365f);
     // Star Chart pose chosen in the headset (placed by hand, 2026-11-16).
-    static readonly Vector3 ChartFromMini = new Vector3(-0.211f, -0.074f, 0.016f);
-    static readonly Vector3 ChartRotation = new Vector3(313.2f, 348.0f, 347.4f);
+    static readonly Vector3 ChartFromMini = new Vector3(-0.199f, 0.015f, 0.068f);
+    static readonly Vector3 ChartRotation = new Vector3(297.5f, 349.0f, 348.0f);
 
     [MenuItem("Tools/Celestial Workshop/Hook Up Spatial Layout")]
     static void HookUpMenu() => Debug.Log("SpatialLayoutHookup: " + HookUp(true));

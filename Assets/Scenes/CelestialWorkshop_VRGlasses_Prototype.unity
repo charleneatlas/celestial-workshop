@@ -54000,8 +54000,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::WorkstationAnchor
   workstation: {fileID: 2106688612}
   reference: 0
-  offset: {x: -0.211, y: -0.074, z: 0.016}
-  rotation: {x: 313.2, y: 348, z: 347.4}
+  offset: {x: -0.199, y: 0.015, z: 0.068}
+  rotation: {x: 297.5, y: 349, z: 348}
   logPlacement: 0
 --- !u!1 &331854317
 GameObject:

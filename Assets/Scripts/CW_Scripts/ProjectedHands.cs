@@ -1,3 +1,4 @@
+using System.Linq;
 using Oculus.Interaction;
 using Oculus.Interaction.Input;
 using UnityEngine;
@@ -86,6 +87,10 @@ public sealed class ProjectedHands : MonoBehaviour
     [SerializeField]
     private Color tintOutline = new Color(0.75f, 0.7f, 1f, 1f);
 
+    [Tooltip("Diagnostics: once a second while a hand is projected, log its mapping (scale, pinch point, where the copy lands, its size and distance from the Earth camera).")]
+    [SerializeField]
+    private bool logDiagnostics;
+
     [Tooltip("Optional: replaces the copied hand materials.")]
     [SerializeField]
     private Material overrideMaterial;
@@ -158,7 +163,7 @@ public sealed class ProjectedHands : MonoBehaviour
             HandCopy copy = copies[side];
             if (want)
             {
-                HandVisual source = FindSource(handedness);
+                HandVisual source = FindSource(handedness, active);
                 if (source == null)
                 {
                     want = false;
@@ -197,22 +202,49 @@ public sealed class ProjectedHands : MonoBehaviour
         }
     }
 
-    private HandVisual FindSource(Handedness handedness)
+    // The visual of the hand doing the pinch. The rig also has the distance-grab
+    // reticles' hand visuals, placed and sized differently;
+    // which comes first in the list differs between Link and the device, so
+    // match the pinching hand itself and only fall back to a non-synthetic one.
+    private HandVisual FindSource(Handedness handedness, IHand pinching)
     {
+        HandVisual fallback = null;
         foreach (HandVisual visual in handVisuals)
         {
-            if (visual == null || !visual.isActiveAndEnabled || !visual.IsVisible || visual.Hand == null)
+            if (visual == null || !visual.isActiveAndEnabled || !visual.IsVisible || visual.Hand == null ||
+                visual.Hand.Handedness != handedness)
             {
                 continue;
             }
 
-            if (visual.Hand.Handedness == handedness)
+            if (pinching != null && ReferenceEquals(visual.Hand, pinching))
             {
                 return visual;
             }
+
+            // The distance-grab reticle hands live under "...HandReticle"; the
+            // player's own visuals (driven through a SyntheticHand for grab
+            // poses, so the hand type can't tell them apart) don't.
+            if (!IsReticle(visual.transform) && fallback == null)
+            {
+                fallback = visual;
+            }
         }
 
-        return null;
+        return fallback;
+    }
+
+    private static bool IsReticle(Transform t)
+    {
+        for (; t != null; t = t.parent)
+        {
+            if (t.name.Contains("Reticle"))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // Visual-only copy of the hand visual's hierarchy: transforms plus the
@@ -240,6 +272,12 @@ public sealed class ProjectedHands : MonoBehaviour
         {
             Transform parent = from[i].parent != null && map.TryGetValue(from[i].parent, out Transform mapped) ? mapped : to[0];
             to[i].SetParent(parent, false);
+
+            // Mirror what's switched on: each visual carries two hand rigs (one
+            // per tracking path) and only the one being driven is active. The
+            // idle one sits at the rig origin; copied and turned on, it lands
+            // near the Earth camera and shows as a huge hand on the device.
+            to[i].gameObject.SetActive(from[i].gameObject.activeSelf);
         }
 
         var renderers = new System.Collections.Generic.List<SkinnedMeshRenderer>();
@@ -308,13 +346,62 @@ public sealed class ProjectedHands : MonoBehaviour
             workstation.MiniToSky(contact) + turn * ((srcRoot.position - contact) * (k * handScale)),
             turn * srcRoot.rotation);
         dstRoot.localScale = srcRoot.lossyScale * (k * handScale);
+        LogDiagnostics(copy, contact, k);
 
         for (int i = 1; i < copy.From.Length; i++)
         {
             Transform src = copy.From[i];
-            copy.To[i].SetLocalPositionAndRotation(src.localPosition, src.localRotation);
-            copy.To[i].localScale = src.localScale;
+            Transform dst = copy.To[i];
+            bool on = src.gameObject.activeSelf;
+            if (dst.gameObject.activeSelf != on)
+            {
+                dst.gameObject.SetActive(on);   // the visual switched rigs (tracking path changed)
+            }
+
+            dst.SetLocalPositionAndRotation(src.localPosition, src.localRotation);
+            dst.localScale = src.localScale;
         }
+    }
+
+    private float nextDiagnosticAt;
+
+    private void LogDiagnostics(HandCopy copy, Vector3 contact, float k)
+    {
+        if (!logDiagnostics || Time.unscaledTime < nextDiagnosticAt)
+        {
+            return;
+        }
+
+        nextDiagnosticAt = Time.unscaledTime + 1f;
+        Transform srcRoot = copy.From[0];
+        Transform dstRoot = copy.To[0];
+        Transform root = copy.Source.Root;
+        Bounds b = default;
+        bool any = false;
+        foreach (SkinnedMeshRenderer r in copy.Renderers)
+        {
+            if (r != null && r.gameObject.activeInHierarchy)
+            {
+                if (!any) { b = r.bounds; any = true; } else { b.Encapsulate(r.bounds); }
+            }
+        }
+
+        Camera earth = earthViewCamera != null ? earthViewCamera : (earthViewCamera = FindEarthCamera());
+        float camDistance = earth != null ? Vector3.Distance(earth.transform.position, b.center) : -1f;
+        Vector3 skyContact = workstation.MiniToSky(contact);
+        Debug.Log($"ProjectedHands DIAG {copy.Source.name}: k {k:F4}, handScale {handScale}, hand.Scale {copy.Source.Hand.Scale:F3}, " +
+                  $"srcRoot '{srcRoot.name}' lossy {srcRoot.lossyScale.x:F3} at {srcRoot.position:F3}, visRoot '{(root != null ? root.name : "-")}' lossy {(root != null ? root.lossyScale.x : 0f):F3} at {(root != null ? root.position : Vector3.zero):F3}, " +
+                  $"contact {contact:F3} (thumb {(copy.ThumbTip != null ? copy.ThumbTip.name : "-")}), mini centre {workstation.Center:F3} (contact {Vector3.Distance(contact, workstation.Center) * 100f:F1} cm away), " +
+                  $"-> sky {skyContact:F3}; copy root {dstRoot.position:F3} lossy {dstRoot.lossyScale.x:F4}, copy mesh size {(any ? b.size.magnitude : 0f):F3} m at {(any ? b.center : Vector3.zero):F3}, " +
+                  $"{camDistance:F3} m from the Earth camera, active meshes {copy.Renderers.Count(r => r != null && r.gameObject.activeInHierarchy)}", this);
+    }
+
+    private Camera earthViewCamera;
+
+    private static Camera FindEarthCamera()
+    {
+        EarthViewCamera evc = FindFirstObjectByType<EarthViewCamera>();
+        return evc != null ? evc.GetComponent<Camera>() : null;
     }
 
     private void SetVisible(HandCopy copy, bool visible)
