@@ -41,7 +41,6 @@ public static class SelectionTableBuilder
     const string FontTitle = "Assets/CW_Art/Fonts/Meddon SDF.asset";
     const string FontHand = "Assets/CW_Art/Fonts/Caveat SDF.asset";
     const string FontBody = "Assets/CW_Art/Fonts/ArchitectsDaughter SDF.asset";
-    const string IconSheet = "Packages/com.meta.xr.sdk.interaction/Runtime/Sample/Textures/OCUIIconSet/OCUI_24_Filled_2x.png";
 
     // ---- Copy ----
     const string NoteTitle = "Skycrafter's Field Note";
@@ -411,7 +410,7 @@ public static class SelectionTableBuilder
         }
 
         t.SetAsLastSibling();
-        var button = SetupButton(t, "Field Note", "icon_file_24_Filled");
+        var button = SetupButton(t, "Field Note", WorkshopIcons.FieldNote);
         FitCanvas(row);
         SetPokeButtons(rowRoot);
         AddFeedbackButtons(button);
@@ -470,7 +469,7 @@ public static class SelectionTableBuilder
 
         Transform backT = backRow.Find("Btn Back to title");
         backT.name = "Btn Back";
-        var backButton = SetupButton(backT, "Back", "icon_arrow-left_24_Filled");
+        var backButton = SetupButton(backT, "Back", WorkshopIcons.Back);
         FitCanvas(backRow);
         SetPokeButtons(backRoot);
         AddFeedbackButtons(backButton);
@@ -536,9 +535,7 @@ public static class SelectionTableBuilder
             txt.text = label;
         }
 
-        var sprites = new Dictionary<string, Sprite>();
-        foreach (Object a in AssetDatabase.LoadAllAssetsAtPath(IconSheet))
-            if (a is Sprite sp) sprites[sp.name] = sp;
+        Dictionary<string, Sprite> sprites = WorkshopIcons.All();
 
         Transform iconT = t.Find("Content/Background/Elements/Icon");
         if (iconT != null && sprites.TryGetValue(icon, out Sprite sprite))

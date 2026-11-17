@@ -27,7 +27,6 @@ public static class CreditsBoardBuilder
     const string FontTitle = "Assets/CW_Art/Fonts/Meddon SDF.asset";
     const string FontHand = "Assets/CW_Art/Fonts/Caveat SDF.asset";
     const string FontBody = "Assets/CW_Art/Fonts/ArchitectsDaughter SDF.asset";
-    const string IconSheet = "Packages/com.meta.xr.sdk.interaction/Runtime/Sample/Textures/OCUIIconSet/OCUI_24_Filled_2x.png";
     const string WorkshopClip = "Assets/Audio/Music/The Britons.mp3";
     const string PuzzleClip = "Assets/Audio/Music/Morning.mp3";
 
@@ -59,9 +58,7 @@ public static class CreditsBoardBuilder
         Transform template = row != null ? row.Find("Btn Recenter") : null;
         if (template == null) return "Btn Recenter not found under Menu Canvas/Buttons (run Hook Up Placement Buttons first)";
 
-        var sprites = new Dictionary<string, Sprite>();
-        foreach (Object a in AssetDatabase.LoadAllAssetsAtPath(IconSheet))
-            if (a is Sprite s) sprites[s.name] = s;
+        Dictionary<string, Sprite> sprites = WorkshopIcons.All();
 
         // 1. Credits button at the end of the title row.
         Transform creditsT = row.Find("Btn Credits");
@@ -74,7 +71,7 @@ public static class CreditsBoardBuilder
         }
 
         creditsT.SetAsLastSibling();
-        MomentaryToggleButton creditsButton = SetupButton(creditsT, "Credits", sprites, "icon_info_24_Filled");
+        MomentaryToggleButton creditsButton = SetupButton(creditsT, "Credits", sprites, WorkshopIcons.Credits);
         FitCanvas(row);
         SetPokeButtons(startRoot);
 
@@ -144,7 +141,7 @@ public static class CreditsBoardBuilder
 
         Transform backT = backRow.Find("Btn Credits");
         backT.name = "Btn Back";
-        MomentaryToggleButton backButton = SetupButton(backT, "Back", sprites, "icon_arrow-left_24_Filled");
+        MomentaryToggleButton backButton = SetupButton(backT, "Back", sprites, WorkshopIcons.Back);
         FitCanvas(backRow);
         SetPokeButtons(backRoot);
 

@@ -13,14 +13,13 @@ using UnityEngine.UI;
 /// </summary>
 public static class PlacementControlsHookup
 {
-    const string IconSheet = "Packages/com.meta.xr.sdk.interaction/Runtime/Sample/Textures/OCUIIconSet/OCUI_24_Filled_2x.png";
     const float SmallWidth = 84f;
 
     static readonly (string name, string label, string icon)[] Buttons =
     {
-        ("Btn Recenter", "Recenter", "icon_visit-home_24_Filled"),
-        ("Btn Raise", "Raise", "icon_arrow-up_24_Filled"),
-        ("Btn Lower", "Lower", "icon_arrow-down_24_Filled"),
+        ("Btn Recenter", "Recenter", WorkshopIcons.Recenter),
+        ("Btn Raise", "Raise", WorkshopIcons.Raise),
+        ("Btn Lower", "Lower", WorkshopIcons.Lower),
     };
 
     [MenuItem("Tools/Celestial Workshop/Hook Up Placement Buttons")]
@@ -38,9 +37,7 @@ public static class PlacementControlsHookup
         var placement = Object.FindFirstObjectByType<WorkshopPlacement>(FindObjectsInactive.Include);
         if (placement == null) return "no WorkshopPlacement in the open scene";
 
-        var sprites = new Dictionary<string, Sprite>();
-        foreach (Object a in AssetDatabase.LoadAllAssetsAtPath(IconSheet))
-            if (a is Sprite s) sprites[s.name] = s;
+        Dictionary<string, Sprite> sprites = WorkshopIcons.All();
 
         var made = new List<MomentaryToggleButton>();
         foreach (var (name, label, icon) in Buttons)
