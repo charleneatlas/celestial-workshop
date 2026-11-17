@@ -29720,7 +29720,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   audioSource: {fileID: 1869617556}
-  impactClip: {fileID: 8300000, guid: f2a1fe3c6507bf444b97a62293ca89b7, type: 3}
+  impactClip: {fileID: 0}
   catchCollider: {fileID: 250527909}
 --- !u!1 &151205271
 GameObject:

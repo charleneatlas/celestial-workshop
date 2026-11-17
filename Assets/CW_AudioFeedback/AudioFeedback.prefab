@@ -80,8 +80,7 @@ MonoBehaviour:
     minInterval: 2
     notes: ISDK BasicGrab_Release x5. VolumePinchRotation.PinchEnded.
   - cue: 2
-    variants:
-    - {fileID: 8300000, guid: f2a1fe3c6507bf444b97a62293ca89b7, type: 3}
+    variants: []
     volume: 0.55
     pitchJitter: 0.05
     cooldownSeconds: 0.2
