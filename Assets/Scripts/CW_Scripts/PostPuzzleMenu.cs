@@ -60,7 +60,7 @@ public sealed class PostPuzzleMenu : MonoBehaviour
     private TMPro.TMP_Text chooseAnotherBoxLabel;
 
     [SerializeField]
-    private string chooseAnotherBoxText = "Choose Another Box";
+    private string chooseAnotherBoxText = "Boxes";
 
     [Header("Back to title during a puzzle")]
     [Tooltip("Small poke button shown throughout a puzzle, including with this menu up (hidden at the title and box selection). Leaves the puzzle without solving it.")]
@@ -83,6 +83,15 @@ public sealed class PostPuzzleMenu : MonoBehaviour
     [SerializeField]
     [Min(0f)]
     private float menuDelay = 1.5f;
+
+    [Tooltip("The Guild Certificate. After the delay above, the menu also waits until the signed certificate has left, so the two never show at different angles together. Found automatically if empty.")]
+    [SerializeField]
+    private GuildCertificate certificate;
+
+    [Tooltip("Longest the menu waits for the certificate to leave (safety; the certificate normally takes about 4.5 s after signing).")]
+    [SerializeField]
+    [Min(0f)]
+    private float certificateWaitLimit = 8f;
 
     [Header("Menu Layout")]
     [Tooltip("Menu position in this object's space (metres).")]
@@ -119,6 +128,11 @@ public sealed class PostPuzzleMenu : MonoBehaviour
 
     private void Awake()
     {
+        if (certificate == null)
+        {
+            certificate = FindFirstObjectByType<GuildCertificate>(FindObjectsInactive.Include);
+        }
+
         ApplyLayout();
         if (menuRoot != null)
         {
@@ -223,6 +237,16 @@ public sealed class PostPuzzleMenu : MonoBehaviour
     private System.Collections.IEnumerator ShowMenuAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
+
+        // The signed certificate holds, then shrinks away: show the menu
+        // after it has gone (capped, so the menu always comes).
+        float waited = 0f;
+        while (certificate != null && certificate.IsShown && waited < certificateWaitLimit)
+        {
+            waited += Time.deltaTime;
+            yield return null;
+        }
+
         pendingShow = null;
 
         // Left the puzzle (or reset) during the hold: nothing to show.
