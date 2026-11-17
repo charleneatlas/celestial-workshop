@@ -53,7 +53,7 @@ public static class WorkshopIcons
         { "Btn Field Note", FieldNote },
         { "Btn All boxes", AllBoxes },
         { "Btn Choose Another Constellation", TryAnother },
-        { "Btn Choose Another Box", AnotherBox },
+        { "Btn Choose Another Box", AllBoxes },
         { "Btn View Constellations", ViewConstellations },
     };
 
@@ -157,20 +157,38 @@ public static class WorkshopIcons
 
     // ------------------------------------------------------------------ sizing
 
-    // Canvas path -> (canvas scale, canvas y shift in its parent, label min, label max).
-    // Title row grows downward (top edge kept clear of the WORKSHOP letters).
-    static readonly (string path, float scale, float shiftY, float min, float max)[] Menus =
+    // One entry per button menu. Values are absolute, so re-running is a no-op.
+    //  scale     canvas scale (the ISDK sample default is 0.0005)
+    //  keepTop   grow downward (title row: stays clear of the WORKSHOP letters)
+    //  labelH    label box height; 20 lets autosize reach 14 (16 capped it at 12)
+    //  wideLabel label width for 112-wide buttons (centred, may use the side padding)
+    //  buttonW   button width (0 = leave), for long single-line labels
+    //  noWrap    single line: autosize shrinks instead of wrapping into the icon
+    struct Menu
     {
-        ("Constellation Title/Title Start Button/Menu Canvas", 0.00065f, -0.0075f, 12f, 14f),
-        ("WORKSHOP/TableItems/Puzzle Presentation/Constellation Boxes/Boxes Back To Title Button/Menu Canvas", 0.000625f, 0f, 12f, 14f),
-        ("WORKSHOP/TableItems/Puzzle Presentation/Constellation Boxes/All Boxes Button/Menu Canvas", 0.000625f, 0f, 12f, 14f),
-        ("WORKSHOP/TableItems/Puzzle Presentation/Constellation Boxes/Field Note Reader/Board/Back Button/Menu Canvas", 0.000625f, 0f, 12f, 14f),
-        ("WORKSHOP/TableItems/Puzzle Presentation/Puzzle Back Button/Menu Canvas", 0.000625f, 0f, 12f, 14f),
-        ("WORKSHOP/TableItems/Puzzle Presentation/Post-Puzzle Menu/Menu Canvas", 0.000625f, 0f, 11f, 14f),
+        public string path;
+        public float scale;
+        public bool keepTop;
+        public float labelH, wideLabel, buttonW, min, max;
+        public bool noWrap;
+    }
+
+    static readonly Menu[] Menus =
+    {
+        // Title row (~0.5 m away, title shelf x0.8 at runtime).
+        new Menu { path = "Constellation Title/Title Start Button/Menu Canvas", scale = 0.00073f, keepTop = true, labelH = 20f, wideLabel = 96f, min = 12f, max = 14f },
+        // Workshop table menus: close to the player, size unchanged; only the label box.
+        new Menu { path = "WORKSHOP/TableItems/Puzzle Presentation/Constellation Boxes/Boxes Back To Title Button/Menu Canvas", scale = 0.000625f, labelH = 20f, wideLabel = 96f, min = 12f, max = 14f },
+        new Menu { path = "WORKSHOP/TableItems/Puzzle Presentation/Constellation Boxes/All Boxes Button/Menu Canvas", scale = 0.000625f, labelH = 20f, wideLabel = 96f, min = 12f, max = 14f },
+        new Menu { path = "WORKSHOP/TableItems/Puzzle Presentation/Constellation Boxes/Field Note Reader/Board/Back Button/Menu Canvas", scale = 0.000625f, labelH = 20f, wideLabel = 96f, min = 12f, max = 14f },
+        // Back to title during the puzzle (~0.67 m away).
+        new Menu { path = "WORKSHOP/TableItems/Puzzle Presentation/Puzzle Back Button/Menu Canvas", scale = 0.00085f, labelH = 20f, wideLabel = 96f, min = 12f, max = 14f },
+        // Post-solve: wider buttons so each label is one line under its icon.
+        new Menu { path = "WORKSHOP/TableItems/Puzzle Presentation/Post-Puzzle Menu/Menu Canvas", scale = 0.000625f, labelH = 20f, wideLabel = 136f, buttonW = 160f, min = 12f, max = 14f, noWrap = true },
     };
 
-    const float BaseCanvasScale = 0.0005f;
     const float CreditsBoardScale = 1.35f;
+    const float CreditsBackCanvasScale = 0.00055f;
 
     [MenuItem("Tools/Celestial Workshop/Apply Menu Sizing")]
     static void ApplySizingMenu() => Debug.Log("WorkshopIcons: " + ApplySizing());
@@ -178,7 +196,7 @@ public static class WorkshopIcons
     public static string ApplySizing()
     {
         var log = new List<string>();
-        foreach (var m in Menus)
+        foreach (Menu m in Menus)
         {
             GameObject go = FindPath(m.path);
             if (go == null)
@@ -187,59 +205,44 @@ public static class WorkshopIcons
                 continue;
             }
 
-            Transform t = go.transform;
-            Undo.RecordObject(t, "Menu sizing");
-            // Shift relative to the original scale, so a second run is a no-op.
-            float current = t.localScale.x;
+            var rt = (RectTransform)go.transform;
+            Undo.RecordObject(rt, "Menu sizing");
+            float current = rt.localScale.x;
             if (!Mathf.Approximately(current, m.scale))
             {
-                float alreadyShifted = Mathf.Approximately(current, BaseCanvasScale) ? 0f : m.shiftY;
-                t.localPosition += new Vector3(0f, m.shiftY - alreadyShifted, 0f);
-                t.localScale = new Vector3(m.scale, m.scale, m.scale);
+                if (m.keepTop)
+                {
+                    // Keep the top edge: move down by half the added height.
+                    float dy = rt.rect.height * (m.scale - current) * 0.5f;
+                    rt.localPosition -= new Vector3(0f, dy, 0f);
+                }
+
+                rt.localScale = Vector3.one * m.scale;
             }
 
-            int labels = 0;
+            PrefabUtility.RecordPrefabInstancePropertyModifications(rt);
+            int n = 0;
             foreach (MomentaryToggleButton b in go.GetComponentsInChildren<MomentaryToggleButton>(true))
             {
-                TMP_Text label = b.transform.Find(LabelPath)?.GetComponent<TMP_Text>();
-                if (label == null) continue;
-                Undo.RecordObject(label, "Menu sizing");
-                label.enableAutoSizing = true;
-                label.fontSizeMin = m.min;
-                label.fontSizeMax = m.max;
-                PrefabUtility.RecordPrefabInstancePropertyModifications(label);
-                labels++;
+                if (SizeButton(b, m.labelH, m.wideLabel, m.buttonW, m.min, m.max, m.noWrap)) n++;
             }
 
-            PrefabUtility.RecordPrefabInstancePropertyModifications(t);
-            log.Add($"{go.name} under {t.parent.name}: scale {m.scale}, {labels} label(s)");
+            log.Add($"{rt.parent.name}: scale {m.scale}, {n} button(s)");
         }
 
-        // Credits board (prefab): the whole sheet 1.35x so the legal notices
-        // read at ~0.66 deg after the title's 0.8 scale; its Back button too.
+        // Credits board (prefab): the sheet 1.35x; its Back button canvas a
+        // little larger and the label box 20 tall.
         GameObject root = PrefabUtility.LoadPrefabContents(CreditsPrefab);
         try
         {
             Transform board = root.transform.Find("Board");
-            if (board != null)
-            {
-                board.localScale = Vector3.one * CreditsBoardScale;
-                log.Add($"Credits Board scale {CreditsBoardScale}");
-            }
-            else
-            {
-                log.Add("missing Credits/Board in prefab");
-            }
-
-            foreach (TMP_Text label in root.GetComponentsInChildren<TMP_Text>(true))
-            {
-                if (label.name != "Label (1)") continue;
-                label.enableAutoSizing = true;
-                label.fontSizeMin = 12f;
-                label.fontSizeMax = 14f;
-            }
-
+            if (board != null) board.localScale = Vector3.one * CreditsBoardScale;
+            Transform back = board != null ? board.Find("Back Button/Menu Canvas") : null;
+            if (back != null) back.localScale = Vector3.one * CreditsBackCanvasScale;
+            foreach (MomentaryToggleButton b in root.GetComponentsInChildren<MomentaryToggleButton>(true))
+                SizeButton(b, 20f, 96f, 0f, 12f, 14f, false);
             PrefabUtility.SaveAsPrefabAsset(root, CreditsPrefab);
+            log.Add($"Credits Board {CreditsBoardScale}, Back canvas {(back != null ? CreditsBackCanvasScale.ToString() : "missing")}");
         }
         finally
         {
@@ -248,6 +251,47 @@ public static class WorkshopIcons
 
         EditorSceneManager.MarkAllScenesDirty();
         return string.Join("; ", log);
+    }
+
+    static bool SizeButton(MomentaryToggleButton b, float labelH, float wideLabel, float buttonW, float min, float max, bool noWrap)
+    {
+        if (buttonW > 0f)
+        {
+            var le = b.GetComponent<LayoutElement>();
+            if (le != null)
+            {
+                Undo.RecordObject(le, "Menu sizing");
+                le.preferredWidth = buttonW;
+                le.minWidth = Mathf.Min(le.minWidth, buttonW);
+                PrefabUtility.RecordPrefabInstancePropertyModifications(le);
+            }
+        }
+
+        TMP_Text label = b.transform.Find(LabelPath)?.GetComponent<TMP_Text>();
+        if (label == null) return false;
+        var lr = label.rectTransform;
+        float buttonWidth = buttonW > 0f ? buttonW : b.GetComponent<LayoutElement>()?.preferredWidth ?? 0f;
+        Undo.RecordObject(lr, "Menu sizing");
+        Undo.RecordObject(label, "Menu sizing");
+        float w = buttonWidth >= 112f ? wideLabel : lr.sizeDelta.x;
+        lr.sizeDelta = new Vector2(w, labelH);
+        var lle = label.GetComponent<LayoutElement>();
+        if (lle != null)
+        {
+            Undo.RecordObject(lle, "Menu sizing");
+            lle.preferredWidth = w;
+            lle.preferredHeight = labelH;
+            lle.minHeight = labelH;
+            PrefabUtility.RecordPrefabInstancePropertyModifications(lle);
+        }
+
+        label.enableAutoSizing = true;
+        label.fontSizeMin = min;
+        label.fontSizeMax = max;
+        if (noWrap) label.textWrappingMode = TextWrappingModes.NoWrap;
+        PrefabUtility.RecordPrefabInstancePropertyModifications(lr);
+        PrefabUtility.RecordPrefabInstancePropertyModifications(label);
+        return true;
     }
 
     static GameObject FindPath(string path)
