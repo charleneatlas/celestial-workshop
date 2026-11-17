@@ -81657,13 +81657,17 @@ MonoBehaviour:
   showBothHands: 0
   fadeInSeconds: 0.12
   fadeOutSeconds: 0.35
-  handScale: 0.5
-  opacity: 0.55
+  handScale: 0.6
+  constantApparentSize: 1
+  referenceDistance: 0.3
+  apparentScaleLimits: {x: 0.2, y: 1.5}
+  opacity: 0.35
   outlineOpacity: 0.4
   useTint: 0
   tintTop: {r: 0.45, g: 0.38, b: 0.9, a: 1}
   tintBottom: {r: 0.2, g: 0.16, b: 0.5, a: 1}
   tintOutline: {r: 0.75, g: 0.7, b: 1, a: 1}
+  logDiagnostics: 0
   overrideMaterial: {fileID: 0}
 --- !u!114 &489672801 stripped
 MonoBehaviour:

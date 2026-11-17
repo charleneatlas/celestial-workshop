@@ -61,14 +61,27 @@ public sealed class ProjectedHands : MonoBehaviour
 
     [Tooltip("Size of the projected hand relative to an exact copy, scaled about the pinch point (thumb/index tips), so the fingertips stay on the matching point of the sky. The Earth camera sits much closer to the sky than the eyes are to the mini, so a full-size hand would fill the view.")]
     [SerializeField]
-    [Range(0.1f, 1f)]
-    private float handScale = 0.5f;
+    [Range(0.05f, 1f)]
+    private float handScale = 0.6f;
+
+    [Tooltip("Keep the hand the same size in the Earth view wherever the pinch is: the copy is scaled with its distance from the Earth camera (about the pinch point), so it never balloons near the camera. Hand Scale then applies at Reference Distance.")]
+    [SerializeField]
+    private bool constantApparentSize = true;
+
+    [Tooltip("Distance from the Earth camera (m) at which the copy is exactly Hand Scale.")]
+    [SerializeField]
+    [Min(0.01f)]
+    private float referenceDistance = 0.3f;
+
+    [Tooltip("Limits on the distance correction (x Hand Scale), so extreme distances stay sensible.")]
+    [SerializeField]
+    private Vector2 apparentScaleLimits = new Vector2(0.2f, 1.5f);
 
     [Header("Look (OculusHand material)")]
     [Tooltip("Body opacity at full visibility (the source material's default is 0.8).")]
     [SerializeField]
     [Range(0f, 1f)]
-    private float opacity = 0.55f;
+    private float opacity = 0.35f;
 
     [SerializeField]
     [Range(0f, 1f)]
@@ -338,14 +351,28 @@ public sealed class ProjectedHands : MonoBehaviour
         float k = workstation.MiniToSkyScale;
         Quaternion turn = workstation.MiniToSkyRotation;
 
-        // Exact similarity for the pinch point; the hand around it is scaled by handScale.
+        // Exact similarity for the pinch point; the hand around it is scaled by
+        // handScale (and, with Constant Apparent Size, by its distance from the
+        // Earth camera, so it looks the same size wherever the pinch is).
         Vector3 contact = copy.ThumbTip != null && copy.IndexTip != null
             ? (copy.ThumbTip.position + copy.IndexTip.position) * 0.5f
             : srcRoot.position;
+        Vector3 skyContact = workstation.MiniToSky(contact);
+        float scale = handScale;
+        if (constantApparentSize)
+        {
+            Camera earth = earthViewCamera != null ? earthViewCamera : (earthViewCamera = FindEarthCamera());
+            if (earth != null)
+            {
+                float distance = Vector3.Distance(earth.transform.position, skyContact);
+                scale *= Mathf.Clamp(distance / Mathf.Max(0.01f, referenceDistance), apparentScaleLimits.x, apparentScaleLimits.y);
+            }
+        }
+
         dstRoot.SetPositionAndRotation(
-            workstation.MiniToSky(contact) + turn * ((srcRoot.position - contact) * (k * handScale)),
+            skyContact + turn * ((srcRoot.position - contact) * (k * scale)),
             turn * srcRoot.rotation);
-        dstRoot.localScale = srcRoot.lossyScale * (k * handScale);
+        dstRoot.localScale = srcRoot.lossyScale * (k * scale);
         LogDiagnostics(copy, contact, k);
 
         for (int i = 1; i < copy.From.Length; i++)
@@ -392,7 +419,7 @@ public sealed class ProjectedHands : MonoBehaviour
         Debug.Log($"ProjectedHands DIAG {copy.Source.name}: k {k:F4}, handScale {handScale}, hand.Scale {copy.Source.Hand.Scale:F3}, " +
                   $"srcRoot '{srcRoot.name}' lossy {srcRoot.lossyScale.x:F3} at {srcRoot.position:F3}, visRoot '{(root != null ? root.name : "-")}' lossy {(root != null ? root.lossyScale.x : 0f):F3} at {(root != null ? root.position : Vector3.zero):F3}, " +
                   $"contact {contact:F3} (thumb {(copy.ThumbTip != null ? copy.ThumbTip.name : "-")}), mini centre {workstation.Center:F3} (contact {Vector3.Distance(contact, workstation.Center) * 100f:F1} cm away), " +
-                  $"-> sky {skyContact:F3}; copy root {dstRoot.position:F3} lossy {dstRoot.lossyScale.x:F4}, copy mesh size {(any ? b.size.magnitude : 0f):F3} m at {(any ? b.center : Vector3.zero):F3}, " +
+                  $"-> sky {skyContact:F3}; constant size {constantApparentSize}; copy root {dstRoot.position:F3} lossy {dstRoot.lossyScale.x:F4}, copy mesh size {(any ? b.size.magnitude : 0f):F3} m at {(any ? b.center : Vector3.zero):F3}, " +
                   $"{camDistance:F3} m from the Earth camera, active meshes {copy.Renderers.Count(r => r != null && r.gameObject.activeInHierarchy)}", this);
     }
 
