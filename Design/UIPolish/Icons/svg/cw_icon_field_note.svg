@@ -1,0 +1,10 @@
+<!-- Celestial Workshop icon: Field Note. Original work, no third-party artwork. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="#381F0D" stroke-width="4.0" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M11 5.5 L29.5 5.5 L37.5 13.5 L37.5 42.5 L11 42.5 Z"/>
+  <path d="M29.5 5.5 L29.5 13.5 L37.5 13.5" stroke-width="3.2"/>
+  <path d="M17 35 L21.5 25 L26 30 L31.5 21" stroke-width="2.8"/>
+  <circle cx="17" cy="35" r="2.7" fill="#381F0D" stroke="none"/>
+  <circle cx="21.5" cy="25" r="2.7" fill="#381F0D" stroke="none"/>
+  <circle cx="26" cy="30" r="2.7" fill="#381F0D" stroke="none"/>
+  <circle cx="31.5" cy="21" r="2.7" fill="#381F0D" stroke="none"/>
+</svg>

@@ -1,0 +1,7 @@
+<!-- Celestial Workshop icon: Choose Another Box / Enter the Workshop. Original work, no third-party artwork. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none" stroke="#381F0D" stroke-width="4.0" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="8" y="27" width="32" height="15.5" rx="1.5"/>
+  <path d="M8 27 L12.5 18.5 L35.5 18.5 L40 27" stroke-width="3.6"/>
+  <rect x="22.3" y="26.5" width="3.4" height="5.5" fill="#381F0D" stroke-width="1.6"/>
+  <path d="M24 2.5 Q25.6 7.9 31 9.5 Q25.6 11.1 24 16.5 Q22.4 11.1 17 9.5 Q22.4 7.9 24 2.5 Z" fill="#381F0D" stroke="#381F0D" stroke-width="1.6"/>
+</svg>
