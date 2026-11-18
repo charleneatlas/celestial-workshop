@@ -6850,6 +6850,7 @@ MonoBehaviour:
   usePlatformSdk: 1
   timeout: 4
   checkEntitlement: 1
+  requestAccountName: 0
   useUsernameIfNoDisplayName: 1
   maxLength: 24
   tryInEditor: 0

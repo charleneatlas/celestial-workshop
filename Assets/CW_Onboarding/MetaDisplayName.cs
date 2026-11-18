@@ -45,6 +45,13 @@ public sealed class MetaDisplayName : MonoBehaviour
     [SerializeField]
     private bool checkEntitlement = true;
 
+    [Tooltip("Ask the Platform SDK for the signed-in user's profile (Users.GetLoggedInUser). " +
+             "Off: platform initialisation and the entitlement check still run, but no user " +
+             "profile, user ID or display name is requested and the fallback name is used. " +
+             "Keep off until the User ID / User Profile Data Use Checkup is approved.")]
+    [SerializeField]
+    private bool requestAccountName = false;
+
     [Tooltip("Use the Oculus ID (username) when the account has no display name.")]
     [SerializeField]
     private bool useUsernameIfNoDisplayName = true;
@@ -176,6 +183,12 @@ public sealed class MetaDisplayName : MonoBehaviour
     {
         if (IsDone)
         {
+            return;
+        }
+
+        if (!requestAccountName)
+        {
+            Fail("account name lookup is off for this build");
             return;
         }
 
