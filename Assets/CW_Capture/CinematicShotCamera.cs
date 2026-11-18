@@ -55,6 +55,10 @@ public sealed class CinematicShotCamera : MonoBehaviour
     [Range(5f, 90f)]
     private float verticalFov = 25f;
 
+    [Tooltip("Level with the room: Azimuth 0 = the side the subject faces (where the player stands), + = to the player's left as seen from the subject, i.e. the camera moves to the player's right; Elevation = degrees above horizontal. Use it for tilted subjects like the chart easel.")]
+    [SerializeField]
+    private bool levelWithWorld = false;
+
     [Tooltip("Roll about the view axis (degrees).")]
     [SerializeField]
     [Range(-180f, 180f)]
@@ -138,12 +142,36 @@ public sealed class CinematicShotCamera : MonoBehaviour
         if (anchor != null)
         {
             Vector3 target = anchor.TransformPoint(targetOffset);
-            Vector3 fromTarget =
-                Quaternion.AngleAxis(-azimuth, anchor.up) *
-                Quaternion.AngleAxis(elevation, anchor.right) *
-                -anchor.forward;
+            Vector3 fromTarget;
+            if (levelWithWorld)
+            {
+                // Level frame: azimuth 0 = the side the subject's face points to
+                // (where the player stands), + to the right; elevation above horizontal.
+                Vector3 facing = Vector3.ProjectOnPlane(anchor.up, Vector3.up);
+                if (facing.sqrMagnitude < 1e-6f)
+                {
+                    facing = Vector3.ProjectOnPlane(-anchor.forward, Vector3.up);
+                }
+
+                fromTarget =
+                    Quaternion.AngleAxis(-azimuth, Vector3.up) *
+                    Quaternion.AngleAxis(-elevation, Vector3.Cross(Vector3.up, facing.normalized)) *
+                    facing.normalized;
+            }
+            else
+            {
+                fromTarget =
+                    Quaternion.AngleAxis(-azimuth, anchor.up) *
+                    Quaternion.AngleAxis(elevation, anchor.right) *
+                    -anchor.forward;
+            }
             Vector3 position = target + fromTarget * distance;
-            Vector3 up = Mathf.Abs(elevation) > 89.5f ? anchor.forward : anchor.up;
+            Vector3 up = levelWithWorld ? Vector3.up : anchor.up;
+            if (Vector3.Cross(target - position, up).sqrMagnitude < 1e-6f)
+            {
+                up = anchor.forward; // looking straight along up
+            }
+
             Quaternion rotation = Quaternion.LookRotation(target - position, up) * Quaternion.Euler(0f, 0f, roll);
             transform.SetPositionAndRotation(position, rotation);
         }

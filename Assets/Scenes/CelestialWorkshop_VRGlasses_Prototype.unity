@@ -298589,7 +298589,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &374979114
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -298603,12 +298603,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CinematicShotCamera
   anchor: {fileID: 330823356}
-  targetOffset: {x: -0.012, y: 0, z: 0.002}
-  azimuth: 180
-  elevation: 35
-  distance: 0.145
-  verticalFov: 25
-  roll: 180
+  targetOffset: {x: 0.01, y: 0, z: 0}
+  azimuth: -35
+  elevation: 30
+  distance: 0.36
+  verticalFov: 30
+  levelWithWorld: 1
+  roll: 0
   lensShift: {x: 0, y: 0}
   cullingMask:
     serializedVersion: 2
@@ -298618,6 +298619,8 @@ MonoBehaviour:
   hideWhileRendering:
   - {fileID: 991274339}
   - {fileID: 1473786377}
+  - {fileID: 1735069866}
+  - {fileID: 698829293}
   rendererIndex: -1
   postProcessing: 1
   nearClip: 0.01
