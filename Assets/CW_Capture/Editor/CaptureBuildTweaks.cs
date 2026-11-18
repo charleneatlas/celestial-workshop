@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 /// Capture-branch only: player builds from this branch are footage builds.
 /// While the scene is processed for a build (never in Play mode, never saved
 /// to the scene file) it turns the background music off and drops the
-/// Editor-only cinematic capture camera, so the headset doesn't render it.
+/// Editor-only cinematic cameras, so the headset doesn't render them.
 /// </summary>
 public sealed class CaptureBuildTweaks : IProcessSceneWithReport
 {
@@ -33,6 +33,11 @@ public sealed class CaptureBuildTweaks : IProcessSceneWithReport
             {
                 capture.gameObject.SetActive(false);
                 Debug.Log("Capture build: cinematic capture camera disabled in " + scene.name, capture);
+            }
+
+            foreach (CinematicShotCamera shot in root.GetComponentsInChildren<CinematicShotCamera>(true))
+            {
+                shot.gameObject.SetActive(false);
             }
         }
     }

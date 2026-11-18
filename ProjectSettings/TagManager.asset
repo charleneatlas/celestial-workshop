@@ -38,6 +38,8 @@ TagManager:
   - QDSUILineDrawing
   - QDSUIToggleThumbnail
   - CinematicCapture
+  - CinematicDiorama
+  - CinematicChart
   layers:
   - Default
   - TransparentFX
