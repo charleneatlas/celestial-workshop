@@ -298749,7 +298749,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &920087384
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -298765,15 +298765,15 @@ MonoBehaviour:
   anchor: {fileID: 2069338591}
   targetOffset: {x: 0, y: 0.045, z: -0.012}
   azimuth: 180
-  elevation: 72
-  distance: 0.17
-  verticalFov: 22
+  elevation: 30
+  distance: 0.3
+  verticalFov: 14
   roll: 0
   lensShift: {x: 0, y: 0}
   cullingMask:
     serializedVersion: 2
-    m_Bits: 4294966719
-  backgroundMode: 0
+    m_Bits: 319
+  backgroundMode: 1
   background: {r: 0.02, g: 0.02, b: 0.03, a: 1}
   hideWhileRendering:
   - {fileID: 991274339}
