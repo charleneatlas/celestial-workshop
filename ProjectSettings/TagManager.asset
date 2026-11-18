@@ -37,6 +37,7 @@ TagManager:
   - LocoText
   - QDSUILineDrawing
   - QDSUIToggleThumbnail
+  - CinematicCapture
   layers:
   - Default
   - TransparentFX
