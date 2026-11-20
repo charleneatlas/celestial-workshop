@@ -8,7 +8,8 @@ Source of truth (nothing here changes the game):
     InkCanvas Stroke/Star/Dot routines, redrawn at high resolution.
   * Layouts: NoticeboardBuilder.BuildHeader and CreditsBoardBuilder (metres).
 
-Usage: python -I render_wordmark.py <repo root> <out dir> [--verify]
+Usage: python -I render_wordmark.py <repo root> <out dir> [--verify] [--r-fix]
+  --r-fix: raise the foot of the "r" so it does not read as "n" (outputs get an _rfix suffix)
 """
 import math
 import os
@@ -203,10 +204,31 @@ def over(dst, rgb, cov):
     dst[..., 3] = na
 
 
+# ---------------------------------------------------------------- legible "r"
+R_LIFT = 300  # font units the right-hand stroke of "r" is raised at its foot
+
+
+def r_fixed_font(src, out_path, lift=R_LIFT):
+    """Meddon's copperplate "r" drops its right stroke almost to the baseline, so
+    "Workshop" reads as "Wonkshop". Raise that stroke's foot (smoothly, top fixed) so it
+    ends as a shoulder at mid x-height. Writes a working copy; the game font is untouched."""
+    f = TTFont(src)
+    gt = f["glyf"]
+    g = gt["r"]
+    c = g.getCoordinates(gt)[0]
+    for i in list(range(0, 38)) + list(range(88, 93)):   # right stroke: knob, stem, bowl, exit
+        x, y = c[i]
+        w = min(1.0, max(0.0, (760 - y) / (760 - 125)))
+        c[i] = (x, int(round(y + lift * w * w * (3 - 2 * w))))
+    g.coordinates = c
+    f.save(out_path)
+    return out_path
+
+
 # ---------------------------------------------------------------- the wordmark
 class Wordmark:
-    def __init__(self, repo, layout):
-        self.ttf_path = os.path.join(repo, "Assets", "CW_Art", "Fonts", "Meddon-Regular.ttf")
+    def __init__(self, repo, layout, ttf_path=None):
+        self.ttf_path = ttf_path or os.path.join(repo, "Assets", "CW_Art", "Fonts", "Meddon-Regular.ttf")
         self.font = TTFont(self.ttf_path)
         self.upm = self.font["head"].unitsPerEm
         self.cmap = self.font.getBestCmap()
@@ -373,10 +395,16 @@ def main():
     if "--verify" in sys.argv:
         verify(repo, out)
         return
+    ttf, suffix = None, ""
+    if "--r-fix" in sys.argv:
+        import tempfile
+        ttf = r_fixed_font(os.path.join(repo, "Assets", "CW_Art", "Fonts", "Meddon-Regular.ttf"),
+                           os.path.join(tempfile.gettempdir(), "Meddon-Regular-rfix.ttf"))
+        suffix = "_rfix"
     for layout in ("noticeboard", "credits"):
-        wm = Wordmark(repo, layout)
+        wm = Wordmark(repo, layout, ttf)
         for pname, pal in PALETTES.items():
-            base = f"CelestialWorkshop_Wordmark_{layout}_{pname}"
+            base = f"CelestialWorkshop_Wordmark_{layout}_{pname}{suffix}"
             png = wm.render(pal)
             png.save(os.path.join(out, base + ".png"), optimize=True)
             with open(os.path.join(out, base + ".svg"), "w", encoding="utf-8") as fh:

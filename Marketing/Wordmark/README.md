@@ -18,3 +18,12 @@ To regenerate: `python Marketing/Wordmark/render_wordmark.py . Marketing/Wordmar
 Font licence: Meddon (c) 2010-11 Vernon Adams, SIL Open Font License 1.1 (OFL-Meddon.txt).
 The OFL allows artwork, logos and video made with the font, including commercial and promotional use.
 Credit is not required.
+
+## Legible "r" (`--r-fix`)
+
+Meddon's copperplate "r" drops its right stroke nearly to the baseline, so "Workshop" can read as
+"Wonkshop". `--r-fix` raises the foot of that stroke by `R_LIFT` (300 font units, smoothly, top fixed)
+in a temp copy of the font, and writes `*_rfix` exports alongside the originals. The game font is unchanged.
+`python Marketing/Wordmark/render_wordmark.py . Marketing/Wordmark/Export --r-fix`
+
+The YouTube thumbnail (Marketing/Thumbnail/make_thumbnail.py) uses the noticeboard champagne rfix PNG.
